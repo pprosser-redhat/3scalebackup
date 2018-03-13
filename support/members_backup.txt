@@ -5,7 +5,7 @@ oc get secret -o yaml --export=true > secret.yaml
 oc get pvc -o yaml --export=true > pvc.yaml
 
 oc new-project membersapp --description="Members Service for 3Scale Demo"
-oc new-app --file project.yaml
+oc new-app --file project.yaml DOMAIN_NAME_SUFFIX=192.168.99.100.nip.io
 oc create -f secret.yaml
 oc create -f serviceaccount.yaml
 oc create -f pvc.yaml
