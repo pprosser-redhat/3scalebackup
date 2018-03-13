@@ -1,0 +1,33 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-class: gluster-container
+      volume.beta.kubernetes.io/storage-provisioner: kubernetes.io/glusterfs
+    creationTimestamp: 2018-01-19T17:18:56Z
+    name: membersdata
+    namespace: membersapp
+    resourceVersion: "172953530"
+    selfLink: /api/v1/namespaces/membersapp/persistentvolumeclaims/membersdata
+    uid: d48464e2-fd3c-11e7-8fbd-5254002f83b4
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    volumeName: pvc-d48464e2-fd3c-11e7-8fbd-5254002f83b4
+  status:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 1Gi
+    phase: Bound
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""

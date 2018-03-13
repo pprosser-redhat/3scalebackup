@@ -1,0 +1,16 @@
+Back up AMP
+
+oc export all -o yaml > project.yaml
+oc get rolebindings -o yaml --export=true > rolebindings.yaml
+oc get serviceaccount -o yaml --export=true > serviceaccount.yaml
+oc get secret -o yaml --export=true > secret.yaml
+oc get pvc -o yaml --export=true > pvc.yaml
+
+Restore
+
+oc new-project amp --description="3Scale API Management Platform"
+oc create -f project.yaml
+oc create -f secret.yaml
+oc create -f serviceaccount.yaml
+oc create -f pvc.yaml
+oc create -f rolebindings.yaml

@@ -1,0 +1,98 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  groupNames: null
+  kind: RoleBinding
+  metadata:
+    creationTimestamp: 2018-01-19T17:18:13Z
+    name: admin
+    namespace: membersapp
+    resourceVersion: "172950562"
+    selfLink: /oapi/v1/namespaces/membersapp/rolebindings/admin
+    uid: bb2a75ab-fd3c-11e7-8fbd-5254002f83b4
+  roleRef:
+    name: admin
+  subjects:
+  - kind: User
+    name: pprosser
+  userNames:
+  - pprosser
+- apiVersion: v1
+  groupNames: null
+  kind: RoleBinding
+  metadata:
+    creationTimestamp: 2018-01-19T17:18:13Z
+    name: system:deployers
+    namespace: membersapp
+    resourceVersion: "172950558"
+    selfLink: /oapi/v1/namespaces/membersapp/rolebindings/system%3Adeployers
+    uid: bb278be7-fd3c-11e7-8fbd-5254002f83b4
+  roleRef:
+    name: system:deployer
+  subjects:
+  - kind: ServiceAccount
+    name: deployer
+    namespace: membersapp
+  userNames:
+  - system:serviceaccount:membersapp:deployer
+- apiVersion: v1
+  groupNames: null
+  kind: RoleBinding
+  metadata:
+    creationTimestamp: 2018-01-19T17:18:13Z
+    name: system:image-builders
+    namespace: membersapp
+    resourceVersion: "172950555"
+    selfLink: /oapi/v1/namespaces/membersapp/rolebindings/system%3Aimage-builders
+    uid: bb24d3f7-fd3c-11e7-8fbd-5254002f83b4
+  roleRef:
+    name: system:image-builder
+  subjects:
+  - kind: ServiceAccount
+    name: builder
+    namespace: membersapp
+  userNames:
+  - system:serviceaccount:membersapp:builder
+- apiVersion: v1
+  groupNames:
+  - system:serviceaccounts:membersapp
+  kind: RoleBinding
+  metadata:
+    creationTimestamp: 2018-01-19T17:18:13Z
+    name: system:image-pullers
+    namespace: membersapp
+    resourceVersion: "172950552"
+    selfLink: /oapi/v1/namespaces/membersapp/rolebindings/system%3Aimage-pullers
+    uid: bb1bc862-fd3c-11e7-8fbd-5254002f83b4
+  roleRef:
+    name: system:image-puller
+  subjects:
+  - kind: SystemGroup
+    name: system:serviceaccounts:membersapp
+  userNames: null
+- apiVersion: v1
+  groupNames: null
+  kind: RoleBinding
+  metadata:
+    creationTimestamp: 2018-01-19T17:43:04Z
+    name: view
+    namespace: membersapp
+    resourceVersion: "173053899"
+    selfLink: /oapi/v1/namespaces/membersapp/rolebindings/view
+    uid: 33f5f0a4-fd40-11e7-8624-52540064f8a5
+  roleRef:
+    name: view
+  subjects:
+  - kind: ServiceAccount
+    name: eap-service-account
+    namespace: eap-demo
+  - kind: ServiceAccount
+    name: eap7-service-account
+    namespace: eap-demo
+  userNames:
+  - system:serviceaccount:eap-demo:eap-service-account
+  - system:serviceaccount:eap-demo:eap7-service-account
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""

@@ -1,0 +1,12 @@
+oc export all -o yaml > project.yaml
+oc get rolebindings -o yaml --export=true > rolebindings.yaml
+oc get serviceaccount -o yaml --export=true > serviceaccount.yaml
+oc get secret -o yaml --export=true > secret.yaml
+oc get pvc -o yaml --export=true > pvc.yaml
+
+oc new-project membersapp --description="Members Service for 3Scale Demo"
+oc create -f project.yaml
+oc create -f secret.yaml
+oc create -f serviceaccount.yaml
+oc create -f pvc.yaml
+oc create -f rolebindings.yaml

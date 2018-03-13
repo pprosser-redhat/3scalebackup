@@ -1,0 +1,2 @@
+oc rsync backend-redis-1-h8jf9:/var/lib/redis/data/appendonly.aof .
+oc rsync backend-redis-1-h8jf9:/var/lib/redis/data/dump.rdb .
