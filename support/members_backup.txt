@@ -1,4 +1,4 @@
-oc export all -o yaml > project.yaml
+oc export all --as-template=project.yaml
 oc get rolebindings -o yaml --export=true > rolebindings.yaml
 oc get serviceaccount -o yaml --export=true > serviceaccount.yaml
 oc get secret -o yaml --export=true > secret.yaml
