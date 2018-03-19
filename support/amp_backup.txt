@@ -1,5 +1,20 @@
+Backup MySQL DB
+
+mysqldump --skip-lock-tables -h $SYSTEM_MYSQL_SERVICE_HOST -P $SYSTEM_MYSQL_SERVICE_PORT   -u $MYSQL_USER --password="$MYSQL_PASSWORD" --all-databases > /var/lib/mysql/data/db_archive_dir/all.sql
+
+oc rsync  system-mysql-2-49dgn:/var/lib/mysql/data/db_archive_dir .
+
+Backup both Redis servers using simpler to example below
+
+oc rsync backend-redis-1-h8jf9:/var/lib/redis/data/appendonly.aof .
+oc rsync backend-redis-1-h8jf9:/var/lib/redis/data/dump.rdb .
+
+oc rsync system-redis-1-97p6x:/var/lib/redis/data/dump.rdb .
+oc rsync system-redis-1-97p6x:/var/lib/redis/data/appendonly.aof .
+
 Back up AMP
 
+======= Might not need this - trying to re-create from 3SCale product template =======
 oc export all -o yaml > project.yaml
 oc get rolebindings -o yaml --export=true > rolebindings.yaml
 oc get serviceaccount -o yaml --export=true > serviceaccount.yaml
@@ -14,3 +29,5 @@ oc create -f secret.yaml
 oc create -f serviceaccount.yaml
 oc create -f pvc.yaml
 oc create -f rolebindings.yaml
+
+=======================================================================================

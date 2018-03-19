@@ -20,8 +20,6 @@ items:
     resources:
       requests:
         storage: 1Gi
-    storageClassName: gluster-container
-    volumeName: pvc-2eca0356-075d-11e8-b959-52540064f8a5
   status:
     accessModes:
     - ReadWriteOnce
@@ -48,8 +46,6 @@ items:
     resources:
       requests:
         storage: 1Gi
-    storageClassName: gluster-container
-    volumeName: pvc-2ec752dd-075d-11e8-b959-52540064f8a5
   status:
     accessModes:
     - ReadWriteOnce
@@ -76,8 +72,6 @@ items:
     resources:
       requests:
         storage: 1Gi
-    storageClassName: gluster-container
-    volumeName: pvc-2ec8e126-075d-11e8-b959-52540064f8a5
   status:
     accessModes:
     - ReadWriteOnce
@@ -104,8 +98,6 @@ items:
     resources:
       requests:
         storage: 100Mi
-    storageClassName: gluster-container
-    volumeName: pvc-2ec63a7d-075d-11e8-b959-52540064f8a5
   status:
     accessModes:
     - ReadWriteMany
