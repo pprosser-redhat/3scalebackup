@@ -523,7 +523,7 @@ objects:
       xpaas: 1.4.7
     name: eap-app
   spec:
-    host: eap-app-membersapp.${DOMAIN_NAME_SUFFIX}
+    host: eap-app-members.${DOMAIN_NAME_SUFFIX}
     path: /membersweb/rest/v2/
     to:
       kind: Service
@@ -536,7 +536,7 @@ objects:
       - lastTransitionTime: 2018-01-19T17:30:23Z
         status: "True"
         type: Admitted
-      host: eap-app-membersapp.apps.demolab.local
+      host: eap-app-membersapp.${DOMAIN_NAME_SUFFIX}
       routerName: router
       wildcardPolicy: None
 - apiVersion: v1
@@ -550,7 +550,7 @@ objects:
       xpaas: 1.4.7
     name: eap-app70-v1
   spec:
-    host: eap-app-membersapp.apps.demolab.local
+    host: eap-app-membersapp.${DOMAIN_NAME_SUFFIX}
     to:
       kind: Service
       name: eap-app70-v1
@@ -726,4 +726,4 @@ parameters:
   - description: Domain name suffix - added to all routes
     displayName: Domain Name Suffix
     name: DOMAIN_NAME_SUFFIX
-    value: demolab.local
+    value: apps.demolab.local
