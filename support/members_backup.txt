@@ -5,8 +5,15 @@ oc get secret -o yaml --export=true > secret.yaml
 oc get pvc -o yaml --export=true > pvc.yaml
 
 oc new-project membersapp --description="Members Service for 3Scale Demo"
-oc new-app --file project.yaml DOMAIN_NAME_SUFFIX=192.168.99.100.nip.io
+oc new-app --file project.yaml DOMAIN_NAME_SUFFIX=192.168.99.100.nip.io MAVEN_MIRROR_URL=
 oc create -f secret.yaml
 oc create -f serviceaccount.yaml
 oc create -f pvc.yaml
 oc create -f rolebindings.yaml
+
+
+
+Note:
+
+demolab: apps.demolab.local
+Minishift: 192.168.99.100.nip.io
