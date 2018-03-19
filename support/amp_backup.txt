@@ -24,10 +24,13 @@ oc get pvc -o yaml --export=true > pvc.yaml
 Restore
 
 oc new-project amp --description="3Scale API Management Platform"
-oc create -f project.yaml
+oc new-app  --file project.yaml -p DOMAIN_NAME_SUFFIX=192.168.99.100.nip.io
+oc create -f configmap.yml
 oc create -f secret.yaml
 oc create -f serviceaccount.yaml
 oc create -f pvc.yaml
 oc create -f rolebindings.yaml
 
 =======================================================================================
+
+oc new-project amp --description="3Scale API Management Platform"

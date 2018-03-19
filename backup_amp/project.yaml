@@ -1,5 +1,9 @@
 apiVersion: v1
-items:
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: project.yaml
+objects:
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -90,15 +94,6 @@ items:
     test: false
     triggers:
     - type: ConfigChange
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - apicast-production
-        from:
-          kind: ImageStreamTag
-          name: amp-apicast:latest
-          namespace: amp
-      type: ImageChange
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -189,15 +184,6 @@ items:
     test: false
     triggers:
     - type: ConfigChange
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - apicast-staging
-        from:
-          kind: ImageStreamTag
-          name: amp-apicast:latest
-          namespace: amp
-      type: ImageChange
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -261,22 +247,6 @@ items:
     test: false
     triggers:
     - type: ConfigChange
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - apicast-wildcard-router
-        from:
-          kind: ImageStreamTag
-          name: amp-wildcard-router:latest
-          namespace: amp
-      type: ImageChange
-  status:
-    availableReplicas: 0
-    latestVersion: 0
-    observedGeneration: 0
-    replicas: 0
-    unavailableReplicas: 0
-    updatedReplicas: 0
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -332,15 +302,6 @@ items:
     test: false
     triggers:
     - type: ConfigChange
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - backend-cron
-        from:
-          kind: ImageStreamTag
-          name: amp-backend:latest
-          namespace: amp
-      type: ImageChange
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -428,22 +389,6 @@ items:
     test: false
     triggers:
     - type: ConfigChange
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - backend-listener
-        from:
-          kind: ImageStreamTag
-          name: amp-backend:latest
-          namespace: amp
-      type: ImageChange
-  status:
-    availableReplicas: 0
-    latestVersion: 0
-    observedGeneration: 0
-    replicas: 0
-    unavailableReplicas: 0
-    updatedReplicas: 0
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -583,15 +528,6 @@ items:
     test: false
     triggers:
     - type: ConfigChange
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - backend-worker
-        from:
-          kind: ImageStreamTag
-          name: amp-backend:latest
-          namespace: amp
-      type: ImageChange
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -635,7 +571,7 @@ items:
             - name: FORCE_SSL
               value: "true"
             - name: THREESCALE_SUPERDOMAIN
-              value: apps.demolab.local
+              value: ${DOMAIN_NAME_SUFFIX}
             - name: TENANT_NAME
               value: 3scale
             - name: APICAST_ACCESS_TOKEN
@@ -663,7 +599,7 @@ items:
             - name: THREESCALE_SANDBOX_PROXY_OPENSSL_VERIFY_MODE
               value: VERIFY_NONE
             - name: APICAST_BACKEND_ROOT_ENDPOINT
-              value: https://backend-3scale.apps.demolab.local
+              value: https://backend-3scale.${DOMAIN_NAME_SUFFIX}
             - name: CONFIG_INTERNAL_API_USER
               value: 3scale_api_user
             - name: CONFIG_INTERNAL_API_PASSWORD
@@ -711,7 +647,7 @@ items:
                   key: openssl.verify.mode
                   name: smtp
             - name: BACKEND_ROUTE
-              value: https://backend-3scale.apps.demolab.local
+              value: https://backend-3scale.${DOMAIN_NAME_SUFFIX}
             - name: SSL_CERT_DIR
               value: /etc/pki/tls/certs
             volumes:
@@ -747,7 +683,7 @@ items:
           - name: FORCE_SSL
             value: "false"
           - name: THREESCALE_SUPERDOMAIN
-            value: apps.demolab.local
+            value: ${DOMAIN_NAME_SUFFIX}
           - name: TENANT_NAME
             value: 3scale
           - name: APICAST_ACCESS_TOKEN
@@ -775,7 +711,7 @@ items:
           - name: THREESCALE_SANDBOX_PROXY_OPENSSL_VERIFY_MODE
             value: VERIFY_NONE
           - name: APICAST_BACKEND_ROOT_ENDPOINT
-            value: https://backend-3scale.apps.demolab.local
+            value: https://backend-3scale.${DOMAIN_NAME_SUFFIX}
           - name: CONFIG_INTERNAL_API_USER
             value: 3scale_api_user
           - name: CONFIG_INTERNAL_API_PASSWORD
@@ -823,7 +759,7 @@ items:
                 key: openssl.verify.mode
                 name: smtp
           - name: BACKEND_ROUTE
-            value: https://backend-3scale.apps.demolab.local
+            value: https://backend-3scale.${DOMAIN_NAME_SUFFIX}
           - name: SSL_CERT_DIR
             value: /etc/pki/tls/certs
           image: registry.access.redhat.com/3scale-amp21/system@sha256:41784ca2715495f9a12fd00763391847400a8d5d5a21ccba51ed47088e26ffb1
@@ -884,7 +820,7 @@ items:
           - name: FORCE_SSL
             value: "true"
           - name: THREESCALE_SUPERDOMAIN
-            value: apps.demolab.local
+            value: ${DOMAIN_NAME_SUFFIX}
           - name: TENANT_NAME
             value: 3scale
           - name: APICAST_ACCESS_TOKEN
@@ -912,7 +848,7 @@ items:
           - name: THREESCALE_SANDBOX_PROXY_OPENSSL_VERIFY_MODE
             value: VERIFY_NONE
           - name: APICAST_BACKEND_ROOT_ENDPOINT
-            value: https://backend-3scale.apps.demolab.local
+            value: https://backend-3scale.${DOMAIN_NAME_SUFFIX}
           - name: CONFIG_INTERNAL_API_USER
             value: 3scale_api_user
           - name: CONFIG_INTERNAL_API_PASSWORD
@@ -960,7 +896,7 @@ items:
                 key: openssl.verify.mode
                 name: smtp
           - name: BACKEND_ROUTE
-            value: https://backend-3scale.apps.demolab.local
+            value: https://backend-3scale.${DOMAIN_NAME_SUFFIX}
           - name: SSL_CERT_DIR
             value: /etc/pki/tls/certs
           image: registry.access.redhat.com/3scale-amp21/system@sha256:41784ca2715495f9a12fd00763391847400a8d5d5a21ccba51ed47088e26ffb1
@@ -1025,16 +961,6 @@ items:
     test: false
     triggers:
     - type: ConfigChange
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - system-provider
-        - system-developer
-        from:
-          kind: ImageStreamTag
-          name: amp-system:latest
-          namespace: amp
-      type: ImageChange
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -1316,7 +1242,7 @@ items:
           - name: FORCE_SSL
             value: "true"
           - name: THREESCALE_SUPERDOMAIN
-            value: apps.demolab.local
+            value: ${DOMAIN_NAME_SUFFIX}
           - name: TENANT_NAME
             value: 3scale
           - name: APICAST_ACCESS_TOKEN
@@ -1344,7 +1270,7 @@ items:
           - name: THREESCALE_SANDBOX_PROXY_OPENSSL_VERIFY_MODE
             value: VERIFY_NONE
           - name: APICAST_BACKEND_ROOT_ENDPOINT
-            value: https://backend-3scale.apps.demolab.local
+            value: https://backend-3scale.${DOMAIN_NAME_SUFFIX}
           - name: CONFIG_INTERNAL_API_USER
             value: 3scale_api_user
           - name: CONFIG_INTERNAL_API_PASSWORD
@@ -1392,7 +1318,7 @@ items:
                 key: openssl.verify.mode
                 name: smtp
           - name: BACKEND_ROUTE
-            value: https://backend-3scale.apps.demolab.local
+            value: https://backend-3scale.${DOMAIN_NAME_SUFFIX}
           - name: SSL_CERT_DIR
             value: /etc/pki/tls/certs
           image: registry.access.redhat.com/3scale-amp21/system@sha256:41784ca2715495f9a12fd00763391847400a8d5d5a21ccba51ed47088e26ffb1
@@ -1416,7 +1342,7 @@ items:
           - name: FORCE_SSL
             value: "true"
           - name: THREESCALE_SUPERDOMAIN
-            value: apps.demolab.local
+            value: ${DOMAIN_NAME_SUFFIX}
           - name: TENANT_NAME
             value: 3scale
           - name: APICAST_ACCESS_TOKEN
@@ -1444,7 +1370,7 @@ items:
           - name: THREESCALE_SANDBOX_PROXY_OPENSSL_VERIFY_MODE
             value: VERIFY_NONE
           - name: APICAST_BACKEND_ROOT_ENDPOINT
-            value: https://backend-3scale.apps.demolab.local
+            value: https://backend-3scale.${DOMAIN_NAME_SUFFIX}
           - name: CONFIG_INTERNAL_API_USER
             value: 3scale_api_user
           - name: CONFIG_INTERNAL_API_PASSWORD
@@ -1492,7 +1418,7 @@ items:
                 key: openssl.verify.mode
                 name: smtp
           - name: BACKEND_ROUTE
-            value: https://backend-3scale.apps.demolab.local
+            value: https://backend-3scale.${DOMAIN_NAME_SUFFIX}
           - name: SSL_CERT_DIR
             value: /etc/pki/tls/certs
           image: registry.access.redhat.com/3scale-amp21/system@sha256:41784ca2715495f9a12fd00763391847400a8d5d5a21ccba51ed47088e26ffb1
@@ -1513,16 +1439,6 @@ items:
     test: false
     triggers:
     - type: ConfigChange
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - system-scheduler
-        - system-resque
-        from:
-          kind: ImageStreamTag
-          name: amp-system:latest
-          namespace: amp
-      type: ImageChange
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -1566,7 +1482,7 @@ items:
           - name: FORCE_SSL
             value: "true"
           - name: THREESCALE_SUPERDOMAIN
-            value: apps.demolab.local
+            value: ${DOMAIN_NAME_SUFFIX}
           - name: TENANT_NAME
             value: 3scale
           - name: APICAST_ACCESS_TOKEN
@@ -1594,7 +1510,7 @@ items:
           - name: THREESCALE_SANDBOX_PROXY_OPENSSL_VERIFY_MODE
             value: VERIFY_NONE
           - name: APICAST_BACKEND_ROOT_ENDPOINT
-            value: https://backend-3scale.apps.demolab.local
+            value: https://backend-3scale.${DOMAIN_NAME_SUFFIX}
           - name: CONFIG_INTERNAL_API_USER
             value: 3scale_api_user
           - name: CONFIG_INTERNAL_API_PASSWORD
@@ -1642,7 +1558,7 @@ items:
                 key: openssl.verify.mode
                 name: smtp
           - name: BACKEND_ROUTE
-            value: https://backend-3scale.apps.demolab.local
+            value: https://backend-3scale.${DOMAIN_NAME_SUFFIX}
           - name: SSL_CERT_DIR
             value: /etc/pki/tls/certs
           image: registry.access.redhat.com/3scale-amp21/system@sha256:41784ca2715495f9a12fd00763391847400a8d5d5a21ccba51ed47088e26ffb1
@@ -1681,15 +1597,6 @@ items:
     test: false
     triggers:
     - type: ConfigChange
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - system-sidekiq
-        from:
-          kind: ImageStreamTag
-          name: amp-system:latest
-          namespace: amp
-      type: ImageChange
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -1768,22 +1675,6 @@ items:
     test: false
     triggers:
     - type: ConfigChange
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - system-sphinx
-        from:
-          kind: ImageStreamTag
-          name: amp-system:latest
-          namespace: amp
-      type: ImageChange
-  status:
-    availableReplicas: 0
-    latestVersion: 0
-    observedGeneration: 0
-    replicas: 0
-    unavailableReplicas: 0
-    updatedReplicas: 0
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -1883,22 +1774,6 @@ items:
     test: false
     triggers:
     - type: ConfigChange
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - zync
-        from:
-          kind: ImageStreamTag
-          name: amp-zync:latest
-          namespace: amp
-      type: ImageChange
-  status:
-    availableReplicas: 0
-    latestVersion: 0
-    observedGeneration: 0
-    replicas: 0
-    unavailableReplicas: 0
-    updatedReplicas: 0
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -1981,15 +1856,6 @@ items:
           name: zync-database-data
     test: false
     triggers:
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - postgresql
-        from:
-          kind: ImageStreamTag
-          name: postgresql:9.5
-          namespace: amp
-      type: ImageChange
     - type: ConfigChange
 - apiVersion: v1
   kind: Route
@@ -2001,7 +1867,7 @@ items:
       app: apicast-production
     name: api-apicast-production-route
   spec:
-    host: api-3scale-apicast-production.apps.demolab.local
+    host: api-3scale-apicast-production.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: gateway
     tls:
@@ -2018,7 +1884,7 @@ items:
       - lastTransitionTime: 2018-02-01T14:35:44Z
         status: "True"
         type: Admitted
-      host: api-3scale-apicast-production.apps.demolab.local
+      host: api-3scale-apicast-production.${DOMAIN_NAME_SUFFIX}
       routerName: router
       wildcardPolicy: None
 - apiVersion: v1
@@ -2031,7 +1897,7 @@ items:
       app: apicast-staging
     name: api-apicast-staging-route
   spec:
-    host: api-3scale-apicast-staging.apps.demolab.local
+    host: api-3scale-apicast-staging.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: gateway
     tls:
@@ -2048,7 +1914,7 @@ items:
       - lastTransitionTime: 2018-02-01T14:35:44Z
         status: "True"
         type: Admitted
-      host: api-3scale-apicast-staging.apps.demolab.local
+      host: api-3scale-apicast-staging.${DOMAIN_NAME_SUFFIX}
       routerName: router
       wildcardPolicy: None
 - apiVersion: v1
@@ -2057,7 +1923,7 @@ items:
     creationTimestamp: null
     name: apicast-production-membersapp
   spec:
-    host: membersregistrationservice-3scale-apicast-production.apps.demolab.local
+    host: membersregistrationservice-3scale-apicast-production.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: gateway
     tls:
@@ -2073,7 +1939,7 @@ items:
       - lastTransitionTime: 2018-02-02T09:24:46Z
         status: "True"
         type: Admitted
-      host: membersregistrationservice-3scale-apicast-production.apps.demolab.local
+      host: membersregistrationservice-3scale-apicast-production.${DOMAIN_NAME_SUFFIX}
       routerName: router
       wildcardPolicy: None
 - apiVersion: v1
@@ -2082,7 +1948,7 @@ items:
     creationTimestamp: null
     name: apicast-production-membersapp-oauth
   spec:
-    host: membersregistrationservice-oauth-3scale-apicast-production.apps.demolab.local
+    host: membersregistrationservice-oauth-3scale-apicast-production.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: gateway
     tls:
@@ -2098,7 +1964,7 @@ items:
       - lastTransitionTime: 2018-02-02T15:02:59Z
         status: "True"
         type: Admitted
-      host: membersregistrationservice-oauth-3scale-apicast-production.apps.demolab.local
+      host: membersregistrationservice-oauth-3scale-apicast-production.${DOMAIN_NAME_SUFFIX}
       routerName: router
       wildcardPolicy: None
 - apiVersion: v1
@@ -2107,7 +1973,7 @@ items:
     creationTimestamp: null
     name: apicast-staging-members
   spec:
-    host: membersregistrationservice-3scale-apicast-staging.apps.demolab.local
+    host: membersregistrationservice-3scale-apicast-staging.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: gateway
     tls:
@@ -2123,7 +1989,7 @@ items:
       - lastTransitionTime: 2018-02-02T09:31:03Z
         status: "True"
         type: Admitted
-      host: membersregistrationservice-3scale-apicast-staging.apps.demolab.local
+      host: membersregistrationservice-3scale-apicast-staging.${DOMAIN_NAME_SUFFIX}
       routerName: router
       wildcardPolicy: None
 - apiVersion: v1
@@ -2132,7 +1998,7 @@ items:
     creationTimestamp: null
     name: apicast-staging-members-oauth
   spec:
-    host: membersregistrationservice-oauth-3scale-apicast-staging.apps.demolab.local
+    host: membersregistrationservice-oauth-3scale-apicast-staging.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: gateway
     tls:
@@ -2148,7 +2014,7 @@ items:
       - lastTransitionTime: 2018-02-02T15:01:05Z
         status: "True"
         type: Admitted
-      host: membersregistrationservice-oauth-3scale-apicast-staging.apps.demolab.local
+      host: membersregistrationservice-oauth-3scale-apicast-staging.${DOMAIN_NAME_SUFFIX}
       routerName: router
       wildcardPolicy: None
 - apiVersion: v1
@@ -2161,7 +2027,7 @@ items:
       app: apicast-wildcard-router
     name: apicast-wildcard-router-route
   spec:
-    host: apicast-wildcard.apps.demolab.local
+    host: apicast-wildcard.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: http
     tls:
@@ -2178,7 +2044,7 @@ items:
       - lastTransitionTime: 2018-02-01T14:35:44Z
         status: "True"
         type: Admitted
-      host: apicast-wildcard.apps.demolab.local
+      host: apicast-wildcard.${DOMAIN_NAME_SUFFIX}
       routerName: router
       wildcardPolicy: None
 - apiVersion: v1
@@ -2191,7 +2057,7 @@ items:
       app: system-route
     name: backend-route
   spec:
-    host: backend-3scale.apps.demolab.local
+    host: backend-3scale.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: http
     tls:
@@ -2208,7 +2074,7 @@ items:
       - lastTransitionTime: 2018-02-01T14:35:43Z
         status: "True"
         type: Admitted
-      host: backend-3scale.apps.demolab.local
+      host: backend-3scale.${DOMAIN_NAME_SUFFIX}
       routerName: router
       wildcardPolicy: None
 - apiVersion: v1
@@ -2217,7 +2083,7 @@ items:
     creationTimestamp: null
     name: fis-demo-apicast-production
   spec:
-    host: fisdemo-3scale-apicast-production.apps.demolab.local
+    host: fisdemo-3scale-apicast-production.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: gateway
     tls:
@@ -2233,7 +2099,7 @@ items:
       - lastTransitionTime: 2018-02-27T09:22:04Z
         status: "True"
         type: Admitted
-      host: fisdemo-3scale-apicast-production.apps.demolab.local
+      host: fisdemo-3scale-apicast-production.${DOMAIN_NAME_SUFFIX}
       routerName: router
       wildcardPolicy: None
 - apiVersion: v1
@@ -2242,7 +2108,7 @@ items:
     creationTimestamp: null
     name: fis-demo-apicast-production-oauth
   spec:
-    host: oauth-fisdemo-3scale-apicast-production.apps.demolab.local
+    host: oauth-fisdemo-3scale-apicast-production.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: gateway
     tls:
@@ -2258,7 +2124,7 @@ items:
       - lastTransitionTime: 2018-02-27T12:46:30Z
         status: "True"
         type: Admitted
-      host: oauth-fisdemo-3scale-apicast-production.apps.demolab.local
+      host: oauth-fisdemo-3scale-apicast-production.${DOMAIN_NAME_SUFFIX}
       routerName: router
       wildcardPolicy: None
 - apiVersion: v1
@@ -2267,7 +2133,7 @@ items:
     creationTimestamp: null
     name: fisdemo-apicast-staging
   spec:
-    host: fisdemo-3scale-apicast-staging.apps.demolab.local
+    host: fisdemo-3scale-apicast-staging.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: gateway
     tls:
@@ -2283,7 +2149,7 @@ items:
       - lastTransitionTime: 2018-02-27T09:24:08Z
         status: "True"
         type: Admitted
-      host: fisdemo-3scale-apicast-staging.apps.demolab.local
+      host: fisdemo-3scale-apicast-staging.${DOMAIN_NAME_SUFFIX}
       routerName: router
       wildcardPolicy: None
 - apiVersion: v1
@@ -2292,7 +2158,7 @@ items:
     creationTimestamp: null
     name: fisdemo-apicast-staging-oauth
   spec:
-    host: oauth-fisdemo-3scale-apicast-staging.apps.demolab.local
+    host: oauth-fisdemo-3scale-apicast-staging.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: gateway
     tls:
@@ -2308,7 +2174,7 @@ items:
       - lastTransitionTime: 2018-02-27T12:48:03Z
         status: "True"
         type: Admitted
-      host: oauth-fisdemo-3scale-apicast-staging.apps.demolab.local
+      host: oauth-fisdemo-3scale-apicast-staging.${DOMAIN_NAME_SUFFIX}
       routerName: router
       wildcardPolicy: None
 - apiVersion: v1
@@ -2321,7 +2187,7 @@ items:
       app: system-route
     name: system-developer-route
   spec:
-    host: 3scale.apps.demolab.local
+    host: 3scale.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: http
     tls:
@@ -2338,7 +2204,7 @@ items:
       - lastTransitionTime: 2018-02-01T14:35:43Z
         status: "True"
         type: Admitted
-      host: 3scale.apps.demolab.local
+      host: 3scale.${DOMAIN_NAME_SUFFIX}
       routerName: router
       wildcardPolicy: None
 - apiVersion: v1
@@ -2351,7 +2217,7 @@ items:
       app: system-route
     name: system-provider-admin-route
   spec:
-    host: 3scale-admin.apps.demolab.local
+    host: 3scale-admin.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: http
     tls:
@@ -2368,7 +2234,7 @@ items:
       - lastTransitionTime: 2018-02-01T14:35:43Z
         status: "True"
         type: Admitted
-      host: 3scale-admin.apps.demolab.local
+      host: 3scale-admin.${DOMAIN_NAME_SUFFIX}
       routerName: router
       wildcardPolicy: None
 - apiVersion: v1
@@ -2700,5 +2566,8 @@ items:
     type: ClusterIP
   status:
     loadBalancer: {}
-kind: List
-metadata: {}
+parameters:
+  - description: Domain name suffix - added to all routes
+    displayName: Domain Name Suffix
+    name: DOMAIN_NAME_SUFFIX
+    value: apps.demolab.local

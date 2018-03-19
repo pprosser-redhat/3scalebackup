@@ -1,109 +1,45 @@
 apiVersion: v1
 items:
-- apiVersion: v1
-  kind: PersistentVolumeClaim
+- apiVersion: "v1"
+  kind: "PersistentVolumeClaim"
   metadata:
-    annotations:
-      openshift.io/generated-by: OpenShiftNewApp
-      pv.kubernetes.io/bind-completed: "yes"
-      pv.kubernetes.io/bound-by-controller: "yes"
-      volume.beta.kubernetes.io/storage-provisioner: kubernetes.io/glusterfs
-    creationTimestamp: 2018-02-01T14:35:43Z
-    name: backend-redis-storage
-    namespace: amp
-    resourceVersion: "242427932"
-    selfLink: /api/v1/namespaces/amp/persistentvolumeclaims/backend-redis-storage
-    uid: 2eca0356-075d-11e8-b959-52540064f8a5
+    name: "system-storage"
   spec:
     accessModes:
-    - ReadWriteOnce
+      - "ReadWriteMany"
     resources:
       requests:
-        storage: 1Gi
-  status:
-    accessModes:
-    - ReadWriteOnce
-    capacity:
-      storage: 1Gi
-    phase: Bound
-- apiVersion: v1
-  kind: PersistentVolumeClaim
+        storage: "100Mi"
+- apiVersion: "v1"
+  kind: "PersistentVolumeClaim"
   metadata:
-    annotations:
-      openshift.io/generated-by: OpenShiftNewApp
-      pv.kubernetes.io/bind-completed: "yes"
-      pv.kubernetes.io/bound-by-controller: "yes"
-      volume.beta.kubernetes.io/storage-provisioner: kubernetes.io/glusterfs
-    creationTimestamp: 2018-02-01T14:35:43Z
-    name: mysql-storage
-    namespace: amp
-    resourceVersion: "242427851"
-    selfLink: /api/v1/namespaces/amp/persistentvolumeclaims/mysql-storage
-    uid: 2ec752dd-075d-11e8-b959-52540064f8a5
+    name: "mysql-storage"
   spec:
     accessModes:
-    - ReadWriteOnce
+      - "ReadWriteOnce"
     resources:
       requests:
-        storage: 1Gi
-  status:
-    accessModes:
-    - ReadWriteOnce
-    capacity:
-      storage: 1Gi
-    phase: Bound
-- apiVersion: v1
-  kind: PersistentVolumeClaim
+        storage: "1Gi"
+- apiVersion: "v1"
+  kind: "PersistentVolumeClaim"
   metadata:
-    annotations:
-      openshift.io/generated-by: OpenShiftNewApp
-      pv.kubernetes.io/bind-completed: "yes"
-      pv.kubernetes.io/bound-by-controller: "yes"
-      volume.beta.kubernetes.io/storage-provisioner: kubernetes.io/glusterfs
-    creationTimestamp: 2018-02-01T14:35:43Z
-    name: system-redis-storage
-    namespace: amp
-    resourceVersion: "242428415"
-    selfLink: /api/v1/namespaces/amp/persistentvolumeclaims/system-redis-storage
-    uid: 2ec8e126-075d-11e8-b959-52540064f8a5
+    name: "system-redis-storage"
   spec:
     accessModes:
-    - ReadWriteOnce
+      - "ReadWriteOnce"
     resources:
       requests:
-        storage: 1Gi
-  status:
-    accessModes:
-    - ReadWriteOnce
-    capacity:
-      storage: 1Gi
-    phase: Bound
-- apiVersion: v1
-  kind: PersistentVolumeClaim
+        storage: "1Gi"
+- apiVersion: "v1"
+  kind: "PersistentVolumeClaim"
   metadata:
-    annotations:
-      openshift.io/generated-by: OpenShiftNewApp
-      pv.kubernetes.io/bind-completed: "yes"
-      pv.kubernetes.io/bound-by-controller: "yes"
-      volume.beta.kubernetes.io/storage-provisioner: kubernetes.io/glusterfs
-    creationTimestamp: 2018-02-01T14:35:43Z
-    name: system-storage
-    namespace: amp
-    resourceVersion: "242428370"
-    selfLink: /api/v1/namespaces/amp/persistentvolumeclaims/system-storage
-    uid: 2ec63a7d-075d-11e8-b959-52540064f8a5
+    name: "backend-redis-storage"
   spec:
     accessModes:
-    - ReadWriteMany
+      - "ReadWriteOnce"
     resources:
       requests:
-        storage: 100Mi
-  status:
-    accessModes:
-    - ReadWriteMany
-    capacity:
-      storage: 1Gi
-    phase: Bound
+        storage: "1Gi"
 kind: List
 metadata:
   resourceVersion: ""
