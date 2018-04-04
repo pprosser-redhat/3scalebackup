@@ -523,7 +523,7 @@ objects:
       xpaas: 1.4.7
     name: eap-app
   spec:
-    host: eap-app-members.${DOMAIN_NAME_SUFFIX}
+    host: eap-app-membersapp.${DOMAIN_NAME_SUFFIX}
     path: /membersweb/rest/v2/
     to:
       kind: Service

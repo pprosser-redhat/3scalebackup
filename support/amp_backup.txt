@@ -59,4 +59,65 @@ oc rsync ~/projects/demolab/3scalebackup/3Scale_backup/system_redis/data system-
 
 restart both the backend redis, and rhe system redis
 
+
+========================
+Update Gateway endpoints
+========================
+
+Need to update all service endpoints for the new environment
+
+Token to use to perform updates
+
+c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838
+
+By way of example, we need to replace apps.demolab.local with 192.168.99.100.nip.io - we'll script this when we get to Ansible
+
+Members Registration Service - service = 5
+
+demolab original api end point - https://membersregistrationservice-3scale-apicast-production.apps.demolab.local:443
+
+demolab original api back end = http://eap-app-membersapp.apps.demolab.local:80
+
+Sandbox endpoint = https://membersregistrationservice-3scale-apicast-staging.apps.demolab.local:443
+
+example urls for minishift based on above
+
+https://membersregistrationservice-3scale-apicast-production.192.168.99.100.nip.io:443
+http://eap-app-membersapp.192.168.99.100.nip.io:80
+https://membersregistrationservice-3scale-apicast-staging.192.168.99.100.nip.io:443
+
+curl command to make the change (amp running on minishift):-
+
+curl -v  -X PATCH "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/5/proxy.xml" -d 'access_token=c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838&endpoint=https%3A%2F%2Fmembersregistrationservice-3scale-apicast-production.192.168.99.100.nip.io%3A443&api_backend=http%3A%2F%2Feap-app-membersapp.192.168.99.100.nip.io%3A80&sandbox_endpoint=https%3A%2F%2Fmembersregistrationservice-3scale-apicast-staging.192.168.99.100.nip.io%3A443'
+
+Can use the following command to find the latest sandbox version to promote to production
+
+curl -v  -X GET "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/5/proxy/configs/sandbox/latest.json?access_token=c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838"
+
+Promote to production command
+
+curl -v  -X POST "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/5/proxy/configs/sandbox/22/promote.json" -d 'access_token=c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838&to=production'
+
+Update Members OAuth service = service 6
+
+end point = https://membersregistrationservice-oauth-3scale-apicast-production.192.168.99.100.nip.io:443
+back end = http://eap-app-membersapp.192.168.99.100.nip.io:80
+sandbox https://membersregistrationservice-oauth-3scale-apicast-staging.apps.192.168.99.100.nip.io:443
+
+Update command
+
+curl -v  -X PATCH "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/6/proxy.xml" -d 'access_token=c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838&endpoint=https%3A%2F%2Fmembersregistrationservice-oauth-3scale-apicast-production.192.168.99.100.nip.io%3A443&api_backend=http%3A%2F%2Feap-app-membersapp.192.168.99.100.nip.io%3A80&sandbox_endpoint=https%3A%2F%2Fmembersregistrationservice-oauth-3scale-apicast-staging.apps.192.168.99.100.nip.io%3A443'
+
+find the latest sandbox version
+
+curl -v  -X GET "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/6/proxy/configs/sandbox/latest.json?access_token=c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838"
+
+promote the latest sandbox version to production
+
+curl -v  -X POST "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/6/proxy/configs/sandbox/14/promote.json" -d 'access_token=c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838&to=production'
+
+
+
+
+
 =======================================================================================
