@@ -4,7 +4,7 @@ mysqldump --skip-lock-tables -h $SYSTEM_MYSQL_SERVICE_HOST -P $SYSTEM_MYSQL_SERV
 
 oc rsync  system-mysql-2-49dgn:/var/lib/mysql/data/db_archive_dir .
 
-Backup both Redis servers using simpler to example below
+Backup both Redis servers using similer to example below
 
 oc rsync backend-redis-1-h8jf9:/var/lib/redis/data/appendonly.aof .
 oc rsync backend-redis-1-h8jf9:/var/lib/redis/data/dump.rdb .
@@ -49,7 +49,14 @@ mysql -u root
 MySQL back up seems restored - on to Redis next
 =======================
 
+Restore backend redis
+
+oc rsync ~/projects/demolab/3scalebackup/3Scale_backup/backend_redis/data backend-redis-1-6jvxh:/var/lib/redis
+
+Restore system redis
+
+oc rsync ~/projects/demolab/3scalebackup/3Scale_backup/system_redis/data system-redis-1-8k29m:/var/lib/redis
+
+restart both the backend redis, and rhe system redis
 
 =======================================================================================
-
-oc new-project amp --description="3Scale API Management Platform"
