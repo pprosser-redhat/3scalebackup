@@ -2,4 +2,23 @@ Backup MySQL DB
 
 mysqldump --skip-lock-tables -h $SSO_MYSQL_PORT_3306_TCP_ADDR -P $SSO_MYSQL_SERVICE_PORT   -u $MYSQL_USER --password="$MYSQL_PASSWORD" --all-databases > /var/lib/mysql/data/db_archive_dir/all.sql
 
-oc rsync  system-mysql-2-49dgn:/var/lib/mysql/data/db_archive_dir .
+oc rsync  sso-mysql-1-glsp8:/var/lib/mysql/data/db_archive_dir .
+
+Backup application
+
+oc export all -o yaml > project.yaml
+oc get rolebindings -o yaml --export=true > rolebindings.yaml
+oc get serviceaccount -o yaml --export=true > serviceaccount.yaml
+oc get secret -o yaml --export=true > secret.yaml
+oc get pvc -o yaml --export=true > pvc.yaml
+
+Restore
+
+oc new-project sso --description="RH SSO"
+
+oc new-app  --file project.yaml -p DOMAIN_NAME_SUFFIX=192.168.99.100.nip.io
+oc create -f configmap.yml
+oc create -f secret.yaml
+oc create -f serviceaccount.yaml
+oc create -f pvc.yaml
+oc create -f rolebindings.yaml
