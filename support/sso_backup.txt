@@ -1,0 +1,5 @@
+Backup MySQL DB
+
+mysqldump --skip-lock-tables -h $SYSTEM_MYSQL_SERVICE_HOST -P $SYSTEM_MYSQL_SERVICE_PORT   -u $MYSQL_USER --password="$MYSQL_PASSWORD" --all-databases > /var/lib/mysql/data/db_archive_dir/all.sql
+
+oc rsync  system-mysql-2-49dgn:/var/lib/mysql/data/db_archive_dir .
