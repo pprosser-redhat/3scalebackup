@@ -43,7 +43,7 @@ oc rsync ~/projects/demolab/3scalebackup/3Scale_backup/db_archive_dir system-mys
 
 cd to the db_archive_dir, and type :-
 
-mysql -u root
+mysql -u root < all.sql
 
 =======================
 MySQL back up seems restored - on to Redis next

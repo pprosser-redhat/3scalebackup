@@ -16,9 +16,17 @@ Restore
 
 oc new-project sso --description="RH SSO"
 
-oc new-app  --file project.yaml -p DOMAIN_NAME_SUFFIX=192.168.99.100.nip.io
 oc create -f configmap.yml
 oc create -f secret.yaml
 oc create -f serviceaccount.yaml
 oc create -f pvc.yaml
 oc create -f rolebindings.yaml
+oc new-app  --file project.yaml -p DOMAIN_NAME_SUFFIX=192.168.99.100.nip.io
+
+restore database
+
+oc rsync ~/projects/demolab/3scalebackup/3Scale_backup/sso/db_archive_dir sso-mysql-1-qvp6q:/var/lib/mysql/data
+
+cd to the db_archive_dir, and type :-
+
+mysql -u root < all.sql
