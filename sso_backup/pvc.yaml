@@ -1,0 +1,33 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-class: gluster-container
+      volume.beta.kubernetes.io/storage-provisioner: kubernetes.io/glusterfs
+    creationTimestamp: 2018-02-01T10:00:07Z
+    name: sso-mysql-claim
+    namespace: sso
+    resourceVersion: "241430713"
+    selfLink: /api/v1/namespaces/sso/persistentvolumeclaims/sso-mysql-claim
+    uid: aead3eb8-0736-11e8-9e1b-5254002f83b4
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+    volumeName: pvc-aead3eb8-0736-11e8-9e1b-5254002f83b4
+  status:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 1Gi
+    phase: Bound
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
