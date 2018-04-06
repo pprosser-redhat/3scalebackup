@@ -30,19 +30,5 @@ cd to the db_archive_dir, and type :-
 
 mysql -u root < all.sql
 
-oc rsh sso-mysql-1-mzs7b -n sso
+oc rsh sso-mysql-1-mzs7b
 mysql -u root < /var/lib/mysql/data/db_archive_dir/all.sql
-
-
-Update SSO location for the members oauth service in 3SCale
-
-*** Note 6 in the URL is the current service id - assuming this will not change but need to be careful
-
-curl -v  -X PATCH "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/6/proxy.xml" -d 'access_token=c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838&oidc_issuer_endpoint=http%3A%2F%2F3scale-admin%3A4515e009-ee60-4039-8d5a-1578ecec4349%40sso-sso.192.168.99.100.nip.io%2Fauth%2Frealms%2F3scale'
-
-promote to production gateway - need to check
-
-*** Note 15 in the URL is the latest version after the change above, assuming this will not change, but might need to script the finding out of the latest version and use variable substitution
-
-
-curl -v  -X POST "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/6/proxy/configs/sandbox/15/promote.json" -d 'access_token=c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838&to=production'

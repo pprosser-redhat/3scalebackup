@@ -24,26 +24,23 @@ oc get pvc -o yaml --export=true > pvc.yaml
 Restore
 
 oc new-project amp --description="3Scale API Management Platform"
-oc new-app  --file project.yaml -p DOMAIN_NAME_SUFFIX=192.168.99.100.nip.io
 oc create -f configmap.yml
 oc create -f secret.yaml
 oc create -f serviceaccount.yaml
 oc create -f pvc.yaml
 oc create -f rolebindings.yaml
+oc new-app  --file project.yaml -p DOMAIN_NAME_SUFFIX=192.168.99.100.nip.io
 
 Restore Mysql
-
-Create folder called :-
-
-/var/lib/mysql/data/db_archive_dir in the MySQL product
 
 Copy all.sql to mysql container :-
 
 oc rsync ~/projects/demolab/3scalebackup/3Scale_backup/db_archive_dir system-mysql-1-qtgl7:/var/lib/mysql/data
 
-cd to the db_archive_dir, and type :-
+oc rsh system-mysql-1-vkfgz
 
-mysql -u root < all.sql
+mysql -u root < /var/lib/mysql/data/db_archive_dir/all.sql
+exit
 
 =======================
 MySQL back up seems restored - on to Redis next
@@ -58,7 +55,6 @@ Restore system redis
 oc rsync ~/projects/demolab/3scalebackup/3Scale_backup/system_redis/data system-redis-1-8k29m:/var/lib/redis
 
 restart both the backend redis, and rhe system redis
-
 
 ========================
 Update Gateway endpoints
@@ -85,36 +81,38 @@ example urls for minishift based on above
 https://membersregistrationservice-3scale-apicast-production.192.168.99.100.nip.io:443
 http://eap-app-membersapp.192.168.99.100.nip.io:80
 https://membersregistrationservice-3scale-apicast-staging.192.168.99.100.nip.io:443
+http://3scale-admin:4515e009-ee60-4039-8d5a-1578ecec4349@sso-sso.192.168.99.100.nip.io/auth/realms/3scale
 
 curl command to make the change (amp running on minishift):-
 
-curl -v  -X PATCH "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/5/proxy.xml" -d 'access_token=c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838&endpoint=https%3A%2F%2Fmembersregistrationservice-3scale-apicast-production.192.168.99.100.nip.io%3A443&api_backend=http%3A%2F%2Feap-app-membersapp.192.168.99.100.nip.io%3A80&sandbox_endpoint=https%3A%2F%2Fmembersregistrationservice-3scale-apicast-staging.192.168.99.100.nip.io%3A443'
+curl -v  -X PATCH "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/5/proxy.xml" -d 'access_token=c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838&endpoint=https%3A%2F%2Fmembersregistrationservice-3scale-apicast-production.192.168.99.100.nip.io%3A443&api_backend=http%3A%2F%2Feap-app-membersapp.192.168.99.100.nip.io%3A80&sandbox_endpoint=https%3A%2F%2Fmembersregistrationservice-3scale-apicast-staging.192.168.99.100.nip.io%3A443' -k
 
 Can use the following command to find the latest sandbox version to promote to production
 
-curl -v  -X GET "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/5/proxy/configs/sandbox/latest.json?access_token=c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838"
+curl -v  -X GET "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/5/proxy/configs/sandbox/latest.json?access_token=c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838" -k
 
 Promote to production command
 
-curl -v  -X POST "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/5/proxy/configs/sandbox/22/promote.json" -d 'access_token=c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838&to=production'
+curl -v  -X POST "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/5/proxy/configs/sandbox/21/promote.json" -d 'access_token=c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838&to=production' -k
 
 Update Members OAuth service = service 6
 
 end point = https://membersregistrationservice-oauth-3scale-apicast-production.192.168.99.100.nip.io:443
 back end = http://eap-app-membersapp.192.168.99.100.nip.io:80
 sandbox https://membersregistrationservice-oauth-3scale-apicast-staging.apps.192.168.99.100.nip.io:443
+SSO endpoint = http://3scale-admin:4515e009-ee60-4039-8d5a-1578ecec4349@sso-sso.192.168.99.100.nip.io/auth/realms/3scale
 
 Update command
 
-curl -v  -X PATCH "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/6/proxy.xml" -d 'access_token=c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838&endpoint=https%3A%2F%2Fmembersregistrationservice-oauth-3scale-apicast-production.192.168.99.100.nip.io%3A443&api_backend=http%3A%2F%2Feap-app-membersapp.192.168.99.100.nip.io%3A80&sandbox_endpoint=https%3A%2F%2Fmembersregistrationservice-oauth-3scale-apicast-staging.apps.192.168.99.100.nip.io%3A443'
+curl -v  -X PATCH "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/6/proxy.xml" -d 'access_token=c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838&endpoint=https%3A%2F%2Fmembersregistrationservice-oauth-3scale-apicast-production.192.168.99.100.nip.io%3A443&api_backend=http%3A%2F%2Feap-app-membersapp.192.168.99.100.nip.io%3A80&sandbox_endpoint=https%3A%2F%2Fmembersregistrationservice-oauth-3scale-apicast-staging.apps.192.168.99.100.nip.io%3A443&oidc_issuer_endpoint=http%3A%2F%2F3scale-admin%3A4515e009-ee60-4039-8d5a-1578ecec4349%40sso-sso.192.168.99.100.nip.io%2Fauth%2Frealms%2F3scale' -k
 
 find the latest sandbox version
 
-curl -v  -X GET "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/6/proxy/configs/sandbox/latest.json?access_token=c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838"
+curl -v  -X GET "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/6/proxy/configs/sandbox/latest.json?access_token=c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838" -k
 
 promote the latest sandbox version to production
 
-curl -v  -X POST "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/6/proxy/configs/sandbox/14/promote.json" -d 'access_token=c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838&to=production'
+curl -v  -X POST "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/6/proxy/configs/sandbox/14/promote.json" -d 'access_token=c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838&to=production' -k
 
 
 

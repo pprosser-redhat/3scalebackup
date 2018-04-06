@@ -40,7 +40,7 @@ objects:
           - name: THREESCALE_PORTAL_ENDPOINT
             value: http://ohnchca2@system-provider:3000
           - name: APICAST_CONFIGURATION_LOADER
-            value: boot
+            value: lazy
           - name: APICAST_CONFIGURATION_CACHE
             value: "300"
           - name: THREESCALE_DEPLOYMENT_ENV
