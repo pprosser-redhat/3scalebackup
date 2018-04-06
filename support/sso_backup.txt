@@ -30,6 +30,10 @@ cd to the db_archive_dir, and type :-
 
 mysql -u root < all.sql
 
+oc rsh sso-mysql-1-mzs7b -n sso
+mysql -u root < /var/lib/mysql/data/db_archive_dir/all.sql
+
+
 Update SSO location for the members oauth service in 3SCale
 
 *** Note 6 in the URL is the current service id - assuming this will not change but need to be careful
