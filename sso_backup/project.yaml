@@ -64,7 +64,7 @@ objects:
           - name: HTTPS_KEYSTORE_TYPE
           - name: HTTPS_NAME
           - name: HTTPS_PASSWORD
-            value: redhat123
+            value: ${KEYSTORE_PASSWORD}
           - name: JGROUPS_ENCRYPT_SECRET
             value: sso-ssl-secret
           - name: JGROUPS_ENCRYPT_KEYSTORE_DIR
@@ -73,13 +73,13 @@ objects:
             value: jgroups.jceks
           - name: JGROUPS_ENCRYPT_NAME
           - name: JGROUPS_ENCRYPT_PASSWORD
-            value: redhat123
+            value: ${KEYSTORE_PASSWORD}
           - name: JGROUPS_CLUSTER_PASSWORD
-            value: redhat123
+            value: ${KEYSTORE_PASSWORD}
           - name: SSO_ADMIN_USERNAME
             value: admin
           - name: SSO_ADMIN_PASSWORD
-            value: redhat123
+            value: ${KEYSTORE_PASSWORD}
           - name: SSO_REALM
             value: 3Scale
           - name: SSO_SERVICE_USERNAME
@@ -89,7 +89,7 @@ objects:
           - name: SSO_TRUSTSTORE_DIR
             value: /etc/sso-secret-volume
           - name: SSO_TRUSTSTORE_PASSWORD
-            value: redhat123
+            value: ${KEYSTORE_PASSWORD}
           image: registry.access.redhat.com/redhat-sso-7/sso71-openshift@sha256:8c8aa52c1dc52cb3fe19ab9df5d129e3dc8bae754fb3a84d5194b445071b0ca8
           imagePullPolicy: Always
           lifecycle:
@@ -397,3 +397,7 @@ parameters:
     displayName: Domain Name Suffix
     name: DOMAIN_NAME_SUFFIX
     value: apps.demolab.local
+  - description: keystore password
+    displayName: Keystore Password
+    name: KEYSTORE_PASSWORD
+    value: test
