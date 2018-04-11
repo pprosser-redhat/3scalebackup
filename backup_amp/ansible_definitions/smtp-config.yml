@@ -1,5 +1,12 @@
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  creationTimestamp: null
+  name: smtp
+  namespace: amp
 data:
   address:
   authentication:
@@ -8,10 +15,3 @@ data:
   password:
   port:
   username: 
-kind: ConfigMap
-metadata:
-  annotations:
-    openshift.io/generated-by: OpenShiftNewApp
-  creationTimestamp: null
-  name: smtp
-  namespace: amp
