@@ -6,6 +6,7 @@ metadata:
     openshift.io/generated-by: OpenShiftNewApp
   name: smtp
   namespace: amp
+  selfLink: /api/v1/namespaces/amp/configmaps/smtp
 data:
   address: ''
   authentication: ''
