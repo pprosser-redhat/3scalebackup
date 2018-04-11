@@ -4,14 +4,13 @@ kind: ConfigMap
 metadata:
   annotations:
     openshift.io/generated-by: OpenShiftNewApp
-  creationTimestamp: null
   name: smtp
   namespace: amp
 data:
-  address: ""
-  authentication: ""
-  domain: ""
+  address: ''
+  authentication: ''
+  domain: ''
   openssl.verify.mode: ""
-  password: ""
-  port: ""
-  username: ""
+  password: ''
+  port: ''
+  username: ''
