@@ -1,17 +1,17 @@
 ---
 apiVersion: v1
 kind: ConfigMap
+data:
+  address: ''
+  authentication: ''
+  domain: ''
+  openssl.verify.mode: ""
+  password: ''
+  port: ''
+  username: ''
 metadata:
   annotations:
     openshift.io/generated-by: OpenShiftNewApp
   name: smtp
   namespace: amp
   selfLink: /api/v1/namespaces/amp/configmaps/smtp
-data:
-    address: ''
-    authentication: ''
-    domain: ''
-    openssl.verify.mode: ""
-    password: ''
-    port: ''
-    username: ''
