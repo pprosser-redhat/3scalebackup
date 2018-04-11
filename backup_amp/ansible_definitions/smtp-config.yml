@@ -1,13 +1,13 @@
 ---
 apiVersion: v1
 data:
-  address: ""
-  authentication: ""
-  domain: ""
-  openssl.verify.mode: ""
-  password: ""
-  port: ""
-  username: ""
+  address:
+  authentication:
+  domain:
+  openssl.verify.mode:
+  password:
+  port:
+  username: 
 kind: ConfigMap
 metadata:
   annotations:
