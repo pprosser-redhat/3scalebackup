@@ -14,3 +14,4 @@ metadata:
     openshift.io/generated-by: OpenShiftNewApp
   creationTimestamp: null
   name: smtp
+  namespace: amp
