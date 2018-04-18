@@ -1,14 +1,9 @@
 ---
 apiVersion: v1
-groupNames: null
 kind: RoleBinding
 metadata:
-  creationTimestamp: 2018-02-01T09:37:59Z
   name: view
   namespace: sso
-  resourceVersion: "241343796"
-  selfLink: /oapi/v1/namespaces/sso/rolebindings/view
-  uid: 9765f56a-0733-11e8-b959-52540064f8a5
 roleRef:
   name: view
 subjects:
