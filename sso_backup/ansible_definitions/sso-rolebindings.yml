@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+groupNames: null
+kind: RoleBinding
+metadata:
+  name: view
+  namespace: sso
+roleRef:
+  name: view
+subjects:
+- kind: ServiceAccount
+  name: sso-service-account
+  namespace: sso
+userNames:
+- system:serviceaccount:sso:sso-service-account
