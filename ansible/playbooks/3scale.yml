@@ -1,0 +1,444 @@
+---
+
+# Documentation:
+# This playbook is used to deploy 3Scale, and a restful service
+#
+# If you would like to test out Admin portal and/or developer portal SSO based access then you have to manually
+# change the SSO URL in the 3Scale Admin console - you will see that it has apps.demolab.local as the domain suffix,
+# changa this to wildcard domain of your Openshift Cluster - this is because there isn't a 3Scale API to automate this change.
+# Do this once the playbook has completed.
+#
+- name:               Create 3Scale AMP and deploy members api
+  hosts:              localhost
+  connection:         local
+  gather_facts: no
+
+  vars_prompt:
+    - name:           ocp_username
+      prompt:         "Please provide Openshift Login username"
+      default:        developer
+      private:        no
+    - name:           ocp_password
+      prompt:         "Please provide your Openshift Login password"
+      default:        developer
+      private:        yes
+    - name:           ocp_url
+      prompt:         "Please provide your Openshift URL"
+      default:        https://192.168.99.100:8443
+      private:        no
+    - name:           domain_name_suffix
+      prompt:         "Please Enter the domain name wildcard suffix for all OCP routes"
+      default:        apps.demolab.local
+      private:        no
+    - name:           keystore_password
+      prompt:         "Please enter the default password for keystores"
+      default:        redhat123
+    - name:           git_repo
+      prompt:         "Please Enter the Git repo to clone to get hold of artefacts"
+      default:        https://github.com/pprosser-redhat/3scalebackup.git
+      private:        no
+    - name:           clone_destination
+      prompt:         "Please Enter the local destination to store the repo"
+      default:        /tmp/3scale
+      private:        no
+    - name:           amp_token
+      prompt:         "Please Enter the 3SCale token that is required for 3Scale API calls. Defaults to a valid one in the DB"
+      default:        c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838
+      private:        no
+
+#  vars:
+#    DOMAIN_NAME_SUFFIX: apps.demolab.local
+#    KEYSTORE_PASSWORD: test
+
+  tasks:
+
+    - name: Clone base git repo from "{{git_repo}}"
+      git:
+        repo: "{{git_repo}}"
+        dest: "{{clone_destination}}"
+        update: yes
+        clone: yes
+# Login to Openshift using oc client - I can't get the openshift_raw module to authenticate
+    - name:           login to Openshift at the specified URL
+      shell:          oc login {{ocp_url}} --username={{ocp_username}} --password={{ocp_password}}
+
+####################################################
+# Create the members service api to use as part of the
+# 3Scale demo
+#####################################################
+
+    - name:           Create members api project
+      openshift_raw:
+        host:         "{{ocp_url}}"
+        username:     "{{ocp_username}}"
+        password:     "{{ocp_password}}"
+        api_version:  v1
+        verify_ssl:   no
+        kind:         Project
+        name:         membersapp
+        description:  Members Service for 3Scale Demo
+        display_name: "Members Service for 3Scale Demo"
+        state:        present
+
+    - name: Create service account - eap
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        definition: "{{ lookup('file', '{{clone_destination}}/members_backup/ansible_definitions/eap-serviceaccount.yml') | from_yaml }}"
+        state: present
+
+    - name: Create service account - eap7
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        definition: "{{ lookup('file', '{{clone_destination}}/members_backup/ansible_definitions/eap7-serviceaccount.yml') | from_yaml }}"
+        state: present
+
+    - name: Create secrets - eap service account
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        definition: "{{ lookup('file', '{{clone_destination}}/members_backup/ansible_definitions/members-secret-eap-serviceaccount.yml') | from_yaml }}"
+        state: present
+
+    - name: Create secrets - eap7 service account
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        definition: "{{ lookup('file', '{{clone_destination}}/members_backup/ansible_definitions/members-secret-eap7-serviceaccount.yml') | from_yaml }}"
+        state: present
+#
+#    - name: Create members rolebindings
+#      openshift_raw:
+#        host:           "{{ocp_url}}"
+##        username:       "{{ocp_username}}"
+#        password:       "{{ocp_password}}"
+#        definition: "{{ lookup('file', '{{clone_destination}}/members_backup/ansible_definitions/rolebindings.yml') | from_yaml }}"
+#        state: present
+
+    - name: Create members application from cloned repo
+      shell: oc new-app  --file "{{clone_destination}}/members_backup/project.yaml" -n membersapp -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" -p MAVEN_MIRROR_URL=""
+
+
+
+#####################################################
+# Start by deploying RH SSO - this is uses for oauth
+# api authentication, and oauth login to admin/dev portals
+#####################################################
+
+    - name:           Create RH SSO project
+      openshift_raw:
+        host:         "{{ocp_url}}"
+        username:     "{{ocp_username}}"
+        password:     "{{ocp_password}}"
+        api_version:  v1
+        verify_ssl:   no
+        kind:         Project
+        name:         sso
+        description:  RH SSO
+        display_name: "RH SSO"
+        state:        present
+
+    - name: Create sso service account
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        definition: "{{ lookup('file', '{{clone_destination}}/sso_backup/ansible_definitions/sso-serviceaccounts.yml') | from_yaml }}"
+        state: present
+
+    - name: Create secrets - jgroups
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        definition: "{{ lookup('file', '{{clone_destination}}/sso_backup/ansible_definitions/sso-secrets-jgroups.yml') | from_yaml }}"
+        state: present
+
+    - name: Create secrets - https
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        definition: "{{ lookup('file', '{{clone_destination}}/sso_backup/ansible_definitions/sso-secrets-https.yml') | from_yaml }}"
+        state: present
+
+    - name: Create sso pvc
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        definition: "{{ lookup('file', '{{clone_destination}}/sso_backup/ansible_definitions/sso-pvc.yml') | from_yaml }}"
+        state: present
+
+    - name: Create SSO application from cloned repo
+      shell: oc new-app  --file "{{clone_destination}}/sso_backup/project.yaml" -n sso -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" -p KEYSTORE_PASSWORD="{{keystore_password}}"
+
+# Wait for SSO to start before continuing
+    - name: Is SSO started?
+      uri:
+        validate_certs: no
+        url: https://secure-sso-sso.{{domain_name_suffix}}/auth/
+      register: testsso
+      until: testsso.status == 200
+      retries: 120
+      delay: 5
+
+    - name: Get OCP bearer token for API call
+      shell: oc whoami -t
+      register: ocptoken_sso
+
+    - name: Get SSO mysql Pod
+      uri:
+        validate_certs: no
+        url: "{{ocp_url}}/api/v1/namespaces/sso/pods?labelSelector=deploymentConfig=sso-mysql"
+        headers:
+          Authorization: "Bearer {{ocptoken_sso.stdout}}"
+      register: ssomysql_pod
+
+    - name: Capture ssomysql pod name
+      set_fact:
+        ssomysql_container: "{{ssomysql_pod|json_query('json.items[0].metadata.name')}}"
+
+    - name: "Inject sso mysql backup into container {{ssomysql_container}}"
+      shell: oc rsync {{clone_destination}}/3Scale_backup/sso/db_archive_dir {{ssomysql_container}}:/var/lib/mysql/data -n sso
+
+    - name: "Loading data into mysql"
+      shell: oc exec {{ssomysql_container}} -n sso -- bash -c "mysql -u root < /var/lib/mysql/data/db_archive_dir/all.sql"
+
+#####################################################
+# Create project to deploy 3Scale Management Platform
+#####################################################
+    - name:           Create 3Scale AMP project
+      openshift_raw:
+        host:         "{{ocp_url}}"
+        username:     "{{ocp_username}}"
+        password:     "{{ocp_password}}"
+        api_version:  v1
+        verify_ssl:   no
+        kind:         Project
+        name:         amp
+        description:  3Scale API Management Platform
+        display_name: "3Scale API Management Platform"
+        state:        present
+
+#####################################################
+# Create all AMP artefacts
+#####################################################
+    - name:          Create config maps for amp - redis configmap
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        verify_ssl:     no
+        state:          present
+        definition: "{{ lookup('file', '{{clone_destination}}/backup_amp/ansible_definitions/redis-config.yml') | from_yaml }}"
+
+    - name:          Create config maps for amp - smtp configmap part 1
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        verify_ssl:     no
+        state:          present
+        definition: "{{ lookup('file', '{{clone_destination}}/backup_amp/ansible_definitions/smtp-config.yml') | from_yaml }}"
+
+# Not sure why, but having to run this config map creation twice to get the data populated.
+    - name:          Create config maps for amp - smtp configmap part 2
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        verify_ssl:     no
+        state:          present
+        definition: "{{ lookup('file', '{{clone_destination}}/backup_amp/ansible_definitions/smtp-config.yml') | from_yaml }}"
+
+    - name:          Create config maps for amp - system configmap
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        verify_ssl:     no
+        state:          present
+        definition: "{{ lookup('file', '{{clone_destination}}/backup_amp/ansible_definitions/system-config.yml') | from_yaml }}"
+
+    - name: Create persistent volumes for amp - System Storage
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        definition: "{{ lookup('file', '{{clone_destination}}/backup_amp/ansible_definitions/system-storage.yml') | from_yaml }}"
+        verify_ssl:     no
+        state:          present
+
+    - name: Create persistent volumes for amp - mysql-storage
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        definition: "{{ lookup('file', '{{clone_destination}}/backup_amp/ansible_definitions/mysql-storage.yml') | from_yaml }}"
+        verify_ssl:     no
+        state:          present
+
+    - name: Create persistent volumes for amp - system-redis-storage
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        definition: "{{ lookup('file', '{{clone_destination}}/backup_amp/ansible_definitions/system-redis-storage.yml') | from_yaml }}"
+        verify_ssl:     no
+        state:          present
+
+    - name: Create persistent volumes for amp - backend-redis-storage
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        definition: "{{ lookup('file', '{{clone_destination}}/backup_amp/ansible_definitions/backend-redis-storage.yml') | from_yaml }}"
+        verify_ssl:     no
+        state:          present
+
+    - name: Create secrets - zync
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        definition: "{{ lookup('file', '{{clone_destination}}/backup_amp/ansible_definitions/zync-secrets.yml') | from_yaml }}"
+        state: present
+
+# I found this easier to do with oc cli
+    - name: Create AMP application from cloned repo
+      shell: oc new-app  --file "{{clone_destination}}/backup_amp/project.yaml" -n amp -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" KEYSTORE_PASSWORD={{keystore_password}}
+
+# Wait for 3Scale to start before continuing
+    - name: Is 3Scale started?
+      uri:
+        validate_certs: no
+        url: https://3scale-admin.{{domain_name_suffix}}/p/login
+      register: test
+      until: test.status == 200
+      retries: 120
+      delay: 5
+
+# Capture pods names that need files injecting to recover 3SCale Correctly
+
+    - name: Get OCP bearer token for API call
+      shell: oc whoami -t
+      register: ocptoken
+
+    - name: Get mysql Pod
+      uri:
+        validate_certs: no
+        url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=name=system-mysql"
+        headers:
+          Authorization: "Bearer {{ocptoken.stdout}}"
+      register: mysql_pod
+
+    - name: Capture mysql pod name
+      set_fact:
+        mysql_container: "{{mysql_pod|json_query('json.items[0].metadata.name')}}"
+
+    - name: Get backend_redis pod
+      uri:
+        validate_certs: no
+        url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=name=backend-redis"
+        headers:
+          Authorization: "Bearer {{ocptoken.stdout}}"
+      register: backend_redis_pod
+
+    - name: Capture backend_redis_pod pod name
+      set_fact:
+        backend_redis_container: "{{backend_redis_pod|json_query('json.items[0].metadata.name')}}"
+
+    - name: Get system_redis pod
+      uri:
+        validate_certs: no
+        url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=name=system-redis"
+        headers:
+          Authorization: "Bearer {{ocptoken.stdout}}"
+      register: system_redis_pod
+
+    - name: Capture backend_redis_pod pod name
+      set_fact:
+        system_redis_container: "{{system_redis_pod|json_query('json.items[0].metadata.name')}}"
+
+# Copy the mysql backup file into the mysql container
+    - name: "Inject mysql backup into container {{mysql_container}}"
+      shell: oc rsync {{clone_destination}}/3Scale_backup/db_archive_dir {{mysql_container}}:/var/lib/mysql/data -n amp
+
+# execute
+    - name: "Loading data into mysql"
+      shell: oc exec {{mysql_container}} -n amp -- bash -c "mysql -u root < /var/lib/mysql/data/db_archive_dir/all.sql"
+
+# load backend_redis cache
+
+    - name: "Inject backend_redis cache backup into container {{backend_redis_container}}"
+      shell: oc rsync {{clone_destination}}/3Scale_backup/backend_redis/data {{backend_redis_container}}:/var/lib/redis -n amp
+
+    - name: "restart backend_redis_container {{backend_redis_container}}"
+      shell: oc delete pod {{backend_redis_container}} -n amp
+
+# load system_redis cache
+
+    - name: "Inject system_redis cache backup into container {{system_redis_container}}"
+      shell: oc rsync {{clone_destination}}/3Scale_backup/backend_redis/data {{system_redis_container}}:/var/lib/redis -n amp
+
+    - name: "restart backend_redis_container {{system_redis_container}}"
+      shell: oc delete pod {{system_redis_container}} -n amp
+
+######## 3Scale physical setup complete ################################################
+# Now, a number of API calls to 3Scale will be made to change the wildcard domain name #
+########################################################################################
+
+# members (api-key)
+
+    - name: update members (api-key) with new endpoints
+      shell: curl -v  -X PATCH "https://3scale-admin.{{domain_name_suffix}}/admin/api/services/5/proxy.xml" -d 'access_token={{amp_token}}&endpoint=https%3A%2F%2Fmembersregistrationservice-3scale-apicast-production.{{domain_name_suffix}}%3A443&api_backend=http%3A%2F%2Feap-app-membersapp.{{domain_name_suffix}}%3A80&sandbox_endpoint=https%3A%2F%2Fmembersregistrationservice-3scale-apicast-staging.{{domain_name_suffix}}%3A443' -k
+
+    - name: Get latest members (api-key) sandbox version to promote
+      uri:
+        validate_certs: no
+        method: GET
+        body_format: raw
+        headers:
+          Content-Type: "application/xml"
+        url: "https://3scale-admin.{{domain_name_suffix}}/admin/api/services/5/proxy/configs/sandbox/latest.json?access_token={{amp_token}}"
+      register: sandbox_membersapi_result
+
+    - name: Save the latest sandbox members (api-key) version
+      set_fact:
+        sandbox_membersapi_version: "{{sandbox_membersapi_result|json_query('json.proxy_config.version')}}"
+
+    - name: Promote members (api-key) to production gateway
+      shell: curl -v  -X POST "https://3scale-admin.{{domain_name_suffix}}/admin/api/services/5/proxy/configs/sandbox/{{sandbox_membersapi_version}}/promote.json" -d 'access_token={{amp_token}}&to=production' -k
+
+# members (oauth)
+
+    - name: update members (oauth) with new endpoints
+      shell: curl -v  -X PATCH "https://3scale-admin.{{domain_name_suffix}}/admin/api/services/6/proxy.xml" -d 'access_token={{amp_token}}&endpoint=https%3A%2F%2Fmembersregistrationservice-oauth-3scale-apicast-production.{{domain_name_suffix}}%3A443&api_backend=http%3A%2F%2Feap-app-membersapp.{{domain_name_suffix}}%3A80&sandbox_endpoint=https%3A%2F%2Fmembersregistrationservice-oauth-3scale-apicast-staging.apps.{{domain_name_suffix}}%3A443&oidc_issuer_endpoint=http%3A%2F%2F3scale-admin%3A4515e009-ee60-4039-8d5a-1578ecec4349%40sso-sso.{{domain_name_suffix}}%2Fauth%2Frealms%2F3scale' -k
+
+    - name: Get latest members (oauth) sandbox version to promote
+      uri:
+        validate_certs: no
+        method: GET
+        body_format: raw
+        headers:
+          Content-Type: "application/xml"
+        url: "https://3scale-admin.{{domain_name_suffix}}/admin/api/services/6/proxy/configs/sandbox/latest.json?access_token={{amp_token}}"
+      register: sandbox_membersoauth_result
+
+    - name: Save the latest sandbox members (oauth) version
+      set_fact:
+        sandbox_membersoauth_version: "{{sandbox_membersoauth_result|json_query('json.proxy_config.version')}}"
+
+    - name: Promote members (oauth) to production gateway
+      shell: curl -v  -X POST "https://3scale-admin.{{domain_name_suffix}}/admin/api/services/6/proxy/configs/sandbox/{{sandbox_membersoauth_version}}/promote.json" -d 'access_token={{amp_token}}&to=production' -k
+
+
+# Logout of Openshift
+    - name:           logout of Openshift
+      shell:          oc logout
