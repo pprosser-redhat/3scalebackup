@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+groupNames: null
+kind: RoleBinding
+metadata:
+  name: view
+  namespace: membersapp
+roleRef:
+  name: view
+subjects:
+- kind: ServiceAccount
+  name: eap-service-account
+  namespace: membersapp
+- kind: ServiceAccount
+  name: eap7-service-account
+  namespace: membersapp
+userNames:
+- system:serviceaccount:membersapp:eap-service-account
+- system:serviceaccount:membersapp:eap7-service-account
