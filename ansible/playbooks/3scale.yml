@@ -385,7 +385,7 @@
 # load system_redis cache
 
     - name: "Inject system_redis cache backup into container {{system_redis_container}}"
-      shell: oc rsync {{clone_destination}}/3Scale_backup/backend_redis/data {{system_redis_container}}:/var/lib/redis -n amp
+      shell: oc rsync {{clone_destination}}/3Scale_backup/system_redis/data {{system_redis_container}}:/var/lib/redis -n amp
 
     - name: "restart backend_redis_container {{system_redis_container}}"
       shell: oc delete pod {{system_redis_container}} -n amp
