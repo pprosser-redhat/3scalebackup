@@ -122,7 +122,7 @@ objects:
     - annotations: null
       from:
         kind: DockerImage
-        name: docker-registry.default.svc:5000/membersapp/eap-app:latest
+        name: docker-registry:5000/membersapp/eap-app:latest
       generation: null
       importPolicy: {}
       name: latest
@@ -148,7 +148,7 @@ objects:
     - annotations: null
       from:
         kind: DockerImage
-        name: docker-registry.default.svc:5000/membersapp/eap-app70-v1:latest
+        name: docker-registry:5000/membersapp/eap-app70-v1:latest
       generation: null
       importPolicy: {}
       name: latest
@@ -448,7 +448,7 @@ objects:
             value: eap-app-mysql
           - name: TIMER_SERVICE_DATA_STORE
             value: eap-app-mysql
-          image: docker-registry.default.svc:5000/membersapp/eap-app70-v1@sha256:ab326d1235fe5515ee8a53e78d252dc69c9d15af51b86f414035563af60014da
+          image: docker-registry:5000/membersapp/eap-app70-v1@sha256:ab326d1235fe5515ee8a53e78d252dc69c9d15af51b86f414035563af60014da
           imagePullPolicy: Always
           livenessProbe:
             exec:
