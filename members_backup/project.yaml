@@ -5,6 +5,14 @@ metadata:
   name: project.yaml
 objects:
 - apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: eap-app
+    namespace: membersapp
+  spec:
+    lookupPolicy:
+      local: false
+- apiVersion: v1
   kind: BuildConfig
   metadata:
     annotations:
@@ -21,7 +29,7 @@ objects:
     output:
       to:
         kind: ImageStreamTag
-        name: eap-app:latest
+        name: 'eap-app:latest'
     postCommit: {}
     resources: {}
     runPolicy: Serial
@@ -54,6 +62,14 @@ objects:
     - type: ConfigChange
   status:
     lastVersion: 0
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: eap-app70-v1
+    namespace: membersapp
+  spec:
+    lookupPolicy:
+      local: false
 - apiVersion: v1
   kind: BuildConfig
   metadata:
@@ -102,60 +118,7 @@ objects:
     - type: ConfigChange
   status:
     lastVersion: 0
-- apiVersion: v1
-  kind: ImageStream
-  metadata:
-    annotations:
-      openshift.io/generated-by: OpenShiftNewApp
-    creationTimestamp: null
-    generation: 1
-    labels:
-      app: eap70-mysql-s2i
-      application: eap-app
-      template: eap70-mysql-s2i
-      xpaas: 1.4.7
-    name: eap-app
-  spec:
-    lookupPolicy:
-      local: false
-    tags:
-    - annotations: null
-      from:
-        kind: DockerImage
-        name: docker-registry.default.svc:5000/membersapp/eap-app:latest
-      generation: null
-      importPolicy: {}
-      name: latest
-      referencePolicy:
-        type: ""
-  status:
-    dockerImageRepository: ""
-- apiVersion: v1
-  kind: ImageStream
-  metadata:
-    creationTimestamp: null
-    generation: 1
-    labels:
-      app: eap70-basic-s2i
-      application: eap-app70-v1
-      template: eap70-basic-s2i
-      xpaas: 1.4.7
-    name: eap-app70-v1
-  spec:
-    lookupPolicy:
-      local: false
-    tags:
-    - annotations: null
-      from:
-        kind: DockerImage
-        name: docker-registry.default.svc:5000/membersapp/eap-app70-v1:latest
-      generation: null
-      importPolicy: {}
-      name: latest
-      referencePolicy:
-        type: ""
-  status:
-    dockerImageRepository: ""
+
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
