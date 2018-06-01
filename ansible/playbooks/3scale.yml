@@ -185,7 +185,7 @@
         url: https://secure-sso-sso.{{domain_name_suffix}}/auth/
       register: testsso
       until: testsso.status == 200
-      retries: 120
+      retries: 200
       delay: 5
 
     - name: Get OCP bearer token for API call
@@ -321,7 +321,7 @@
         url: https://3scale-admin.{{domain_name_suffix}}/p/login
       register: test
       until: test.status == 200
-      retries: 120
+      retries: 200
       delay: 5
 
 # Capture pods names that need files injecting to recover 3SCale Correctly
