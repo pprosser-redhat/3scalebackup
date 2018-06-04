@@ -13,7 +13,7 @@ subjects:
 - kind: ServiceAccount
   name: default
   namespace: fisdemo
-- kind: SystemGroup
+- kind: ServiceAccount
   name: system:serviceaccounts:fisdemocicd
 - kind: ServiceAccount
   name: jenkins
