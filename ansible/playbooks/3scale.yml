@@ -413,9 +413,6 @@
       set_fact:
         sandbox_membersapi_version: "{{sandbox_membersapi_result|json_query('json.proxy_config.version')}}"
 
-    - name: Promote members (api-key) to production gateway
-      shell: curl -v  -X POST "https://3scale-admin.{{domain_name_suffix}}/admin/api/services/5/proxy/configs/sandbox/{{sandbox_membersapi_version}}/promote.json" -d 'access_token={{amp_token}}&to=production' -k
-
 # members (oauth)
 
     - name: update members (oauth) with new endpoints
@@ -435,10 +432,25 @@
       set_fact:
         sandbox_membersoauth_version: "{{sandbox_membersoauth_result|json_query('json.proxy_config.version')}}"
 
+# Pause to make sure that 3Scale has fully revoverd from redis caches backups being installed
+
+# A helpful reminder of what to look out for post-update.
+    - pause:
+      prompt: "Has the Redis caches fully recovered?"
+
+# Promote the update gateways to production
+
+    - name: Promote members (api-key) to production gateway
+      shell: curl -v  -X POST "https://3scale-admin.{{domain_name_suffix}}/admin/api/services/5/proxy/configs/sandbox/{{sandbox_membersapi_version}}/promote.json" -d 'access_token={{amp_token}}&to=production' -k
+
     - name: Promote members (oauth) to production gateway
       shell: curl -v  -X POST "https://3scale-admin.{{domain_name_suffix}}/admin/api/services/6/proxy/configs/sandbox/{{sandbox_membersoauth_version}}/promote.json" -d 'access_token={{amp_token}}&to=production' -k
-
 
 # Logout of Openshift
     - name:           logout of Openshift
       shell:          oc logout
+
+    - name: Remove git folder (cleanup)
+      file:
+        path: "{{git_repo}}"
+        state: absent
