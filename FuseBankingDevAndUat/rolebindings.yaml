@@ -1,33 +1,13 @@
 apiVersion: v1
 items:
 - apiVersion: v1
-  groupNames: null
-  kind: RoleBinding
-  metadata:
-    creationTimestamp: 2018-02-07T15:33:58Z
-    name: admin
-    namespace: fisdemo
-    resourceVersion: "340118114"
-    selfLink: /oapi/v1/namespaces/fisdemo/rolebindings/admin
-    uid: 5085a0ed-0c1c-11e8-8448-52540064f8a5
-  roleRef:
-    name: admin
-  subjects:
-  - kind: User
-    name: pprosser
-  userNames:
-  - pprosser
-- apiVersion: v1
   groupNames:
   - system:serviceaccounts:fisdemocicd
   kind: RoleBinding
   metadata:
-    creationTimestamp: 2018-02-07T16:39:25Z
     name: edit
     namespace: fisdemo
-    resourceVersion: "340117914"
     selfLink: /oapi/v1/namespaces/fisdemo/rolebindings/edit
-    uid: 750f33f1-0c25-11e8-8448-52540064f8a5
   roleRef:
     name: edit
   subjects:
@@ -45,66 +25,6 @@ items:
   - system:serviceaccount:fisdemo:default
   - system:serviceaccount:fisdemocicd:jenkins
   - mmusaji
-- apiVersion: v1
-  groupNames: null
-  kind: RoleBinding
-  metadata:
-    creationTimestamp: 2018-02-07T15:33:58Z
-    name: system:deployers
-    namespace: fisdemo
-    resourceVersion: "260352179"
-    selfLink: /oapi/v1/namespaces/fisdemo/rolebindings/system%3Adeployers
-    uid: 50835a6d-0c1c-11e8-8448-52540064f8a5
-  roleRef:
-    name: system:deployer
-  subjects:
-  - kind: ServiceAccount
-    name: deployer
-    namespace: fisdemo
-  userNames:
-  - system:serviceaccount:fisdemo:deployer
-- apiVersion: v1
-  groupNames: null
-  kind: RoleBinding
-  metadata:
-    creationTimestamp: 2018-02-07T15:33:58Z
-    name: system:image-builders
-    namespace: fisdemo
-    resourceVersion: "260352176"
-    selfLink: /oapi/v1/namespaces/fisdemo/rolebindings/system%3Aimage-builders
-    uid: 50814619-0c1c-11e8-8448-52540064f8a5
-  roleRef:
-    name: system:image-builder
-  subjects:
-  - kind: ServiceAccount
-    name: builder
-    namespace: fisdemo
-  userNames:
-  - system:serviceaccount:fisdemo:builder
-- apiVersion: v1
-  groupNames:
-  - system:serviceaccounts:fisdemo
-  - system:serviceaccounts:fisdemoprod
-  kind: RoleBinding
-  metadata:
-    creationTimestamp: 2018-02-07T15:33:58Z
-    name: system:image-pullers
-    namespace: fisdemo
-    resourceVersion: "285635985"
-    selfLink: /oapi/v1/namespaces/fisdemo/rolebindings/system%3Aimage-pullers
-    uid: 50801364-0c1c-11e8-8448-52540064f8a5
-  roleRef:
-    name: system:image-puller
-  subjects:
-  - kind: SystemGroup
-    name: system:serviceaccounts:fisdemo
-  - kind: ServiceAccount
-    name: default
-    namespace: fisdemoprod
-  - kind: SystemGroup
-    name: system:serviceaccounts:fisdemoprod
-  userNames:
-  - system:serviceaccount:fisdemoprod:default
 kind: List
 metadata:
   resourceVersion: ""
