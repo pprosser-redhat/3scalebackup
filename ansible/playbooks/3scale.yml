@@ -37,10 +37,6 @@
       prompt:         "Please Enter the Git repo to clone to get hold of artefacts"
       default:        https://github.com/pprosser-redhat/3scalebackup.git
       private:        no
-    - name:           fuse_repo
-      prompt:         "Please Enter the Git repo to download the Fuse Agile Integration demo from"
-      default:        http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisdemo.git
-      private:        no
     - name:           clone_destination
       prompt:         "Please Enter the local destination to store the repo"
       default:        /tmp/3scaletmp
@@ -68,7 +64,77 @@
     - name:           login to Openshift at the specified URL
       shell:          oc login {{ocp_url}} --username={{ocp_username}} --password={{ocp_password}}
 
-####################################################
+
+###################################################
+# Create shared services gogs and nexus
+#####################################################
+
+# Create gogs repo
+
+    - name:           Create Shared Services Project
+      openshift_raw:
+        host:         "{{ocp_url}}"
+        username:     "{{ocp_username}}"
+        password:     "{{ocp_password}}"
+        api_version:  v1
+        verify_ssl:   no
+        kind:         Project
+        name:         sharedservices
+        description:  Shared Services Project
+        display_name: "Shared Services Project"
+        state:        present
+
+    - name: Create members application from cloned repo
+      shell: oc new-app  -f http://bit.ly/openshift-gogs-persistent-template -n sharedservices --param=HOSTNAME=gogs-persistent.{{domain_name_suffix}}
+
+# Create Persistent Nexus Repository
+    - name: Download nexus template
+      shell: oc create -f https://raw.githubusercontent.com/OpenShiftDemos/nexus/master/nexus3-persistent-template.yaml -n sharedservices
+    - name: Create Nexus Repository
+      shell: oc new-app nexus3-persistent -n sharedservices
+
+    # Go and create a use in gogs before continuing.
+    - pause:
+      prompt: "Manually provision a user in Gogs, and clone repo from https://github.com/pprosser-redhat/fuse-financial-cicd.git and call the new repo fuse-financial-cicd"
+
+###################################################
+# Create the fis demo project and application
+#####################################################
+    - name: Create fisdemo
+      openshift_raw:
+        host:         "{{ocp_url}}"
+        username:     "{{ocp_username}}"
+        password:     "{{ocp_password}}"
+        api_version:  v1
+        verify_ssl:   no
+        kind:         Project
+        name:         fisdemo
+        description:  Development and UAT environment for Agile Integration Banking Demo - Power by Red Hat Fuse
+        display_name: "Fuse Banking Demo - Dev and UAT"
+        state:        present
+
+    - name: Create fisdemo secrets
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        namespace:      "fisdemo"
+        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/FuseBankingDevAndUat/ansible_definitions/secret.yaml') | from_yaml }}"
+        state: present
+
+    - name: Create fisdemo rolebindings
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        namespace:      "fisdemo"
+        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/FuseBankingDevAndUat/ansible_definitions/rolebindings.yaml') | from_yaml }}"
+        state: present
+
+    - name: Create fisdemo
+      shell: oc new-app --file --file "{{clone_destination}}/3Scale/FuseBankingDevAndUat/project.yaml" -p DOMAIN_NAME_SUFFIX={{DOMAIN_NAME_SUFFIX} -p MAVEN_MIRROR_URL={{MAVEN_MIRROR_URL}}
+
+###################################################
 # Create the members service api to use as part of the
 # 3Scale demo
 #####################################################
@@ -127,7 +193,7 @@
 #        state: present
 
     - name: Create members application from cloned repo
-      shell: oc new-app  --file "{{clone_destination}}/3Scale/members_backup/project.yaml" -n membersapp -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" -p MAVEN_MIRROR_URL=""
+      shell: oc new-app  --file "{{clone_destination}}/3Scale/members_backup/project.yaml" -n membersapp -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" -p MAVEN_MIRROR_URL="nexus2-sharedservicespersistent.{{domain_name_suffix}}"
 
 
 
@@ -451,6 +517,9 @@
 
     - name: Promote members (oauth) to production gateway
       shell: curl -v  -X POST "https://3scale-admin.{{domain_name_suffix}}/admin/api/services/6/proxy/configs/sandbox/{{sandbox_membersoauth_version}}/promote.json" -d 'access_token={{amp_token}}&to=production' -k
+
+# Set up Fisdemo
+
 
 # Logout of Openshift
     - name:           logout of Openshift

@@ -8,4 +8,4 @@ oc get pvc -o yaml --export=true > pvc.yaml
 oc new-project fisdemo --description="Development and UAT environment for Agile Integration Banking Demo - Power by Red Hat Fuse" --display-name="Fuse Banking Demo - Dev and UAT"
 oc create -f secret.yaml
 oc create -f rolebindings.yaml
-oc new-app --file project.yaml -p DOMAIN_NAME_SUFFIX=192.168.99.100.nip.io -p MAVEN_MIRROR_URL=
+oc new-app --file project.yaml -p DOMAIN_NAME_SUFFIX=192.168.99.100.nip.io -p MAVEN_MIRROR_URL=http://nexus-sharedservices.192.168.99.102.nip.io/repository/maven-all-public/
