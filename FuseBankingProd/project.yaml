@@ -1240,8 +1240,6 @@ objects:
       version: 1.0.28
     name: hystrix-dashboard
   spec:
-    externalIPs:
-    - 172.29.127.3
     externalTrafficPolicy: Cluster
     ports:
     - nodePort: 32156
@@ -1294,8 +1292,6 @@ objects:
       version: 1.0.28
     name: turbine-server
   spec:
-    externalIPs:
-    - 172.29.100.37
     externalTrafficPolicy: Cluster
     ports:
     - nodePort: 30511
