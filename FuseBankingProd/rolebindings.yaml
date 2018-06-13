@@ -1,0 +1,129 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  groupNames:
+  - system:serviceaccounts:fisdemoprod
+  - system:serviceaccounts:fisdemocicd
+  kind: RoleBinding
+  metadata:
+    creationTimestamp: 2018-02-09T16:19:58Z
+    name: admin
+    namespace: fisdemoprod
+    resourceVersion: "340120268"
+    selfLink: /oapi/v1/namespaces/fisdemoprod/rolebindings/admin
+    uid: 124dc8ce-0db5-11e8-91ce-52540064f8a5
+  roleRef:
+    name: admin
+  subjects:
+  - kind: User
+    name: pprosser
+  - kind: SystemGroup
+    name: system:serviceaccounts:fisdemoprod
+  - kind: User
+    name: jenkins
+  - kind: ServiceAccount
+    name: jenkins
+    namespace: fisdemocicd
+  - kind: SystemGroup
+    name: system:serviceaccounts:fisdemocicd
+  userNames:
+  - pprosser
+  - jenkins
+  - system:serviceaccount:fisdemocicd:jenkins
+- apiVersion: v1
+  groupNames: null
+  kind: RoleBinding
+  metadata:
+    creationTimestamp: 2018-02-13T11:43:45Z
+    labels:
+      template: jenkins-ephemeral-template
+    name: jenkins_edit
+    namespace: fisdemoprod
+    resourceVersion: "340120665"
+    selfLink: /oapi/v1/namespaces/fisdemoprod/rolebindings/jenkins_edit
+    uid: 26074c7d-10b3-11e8-91ce-52540064f8a5
+  roleRef:
+    name: edit
+  subjects:
+  - kind: ServiceAccount
+    name: jenkins
+  - kind: ServiceAccount
+    name: default
+    namespace: fisdemocicd
+  - kind: User
+    name: mmusaji
+  userNames:
+  - system:serviceaccount:fisdemoprod:jenkins
+  - system:serviceaccount:fisdemocicd:default
+  - mmusaji
+- apiVersion: v1
+  groupNames: null
+  kind: RoleBinding
+  metadata:
+    creationTimestamp: 2018-02-09T16:19:58Z
+    name: system:deployers
+    namespace: fisdemoprod
+    resourceVersion: "270692973"
+    selfLink: /oapi/v1/namespaces/fisdemoprod/rolebindings/system%3Adeployers
+    uid: 124d2156-0db5-11e8-91ce-52540064f8a5
+  roleRef:
+    name: system:deployer
+  subjects:
+  - kind: ServiceAccount
+    name: deployer
+    namespace: fisdemoprod
+  userNames:
+  - system:serviceaccount:fisdemoprod:deployer
+- apiVersion: v1
+  groupNames: null
+  kind: RoleBinding
+  metadata:
+    creationTimestamp: 2018-02-09T16:19:58Z
+    name: system:image-builders
+    namespace: fisdemoprod
+    resourceVersion: "270692970"
+    selfLink: /oapi/v1/namespaces/fisdemoprod/rolebindings/system%3Aimage-builders
+    uid: 124c7585-0db5-11e8-91ce-52540064f8a5
+  roleRef:
+    name: system:image-builder
+  subjects:
+  - kind: ServiceAccount
+    name: builder
+    namespace: fisdemoprod
+  userNames:
+  - system:serviceaccount:fisdemoprod:builder
+- apiVersion: v1
+  groupNames:
+  - system:serviceaccounts:fisdemocicd
+  kind: RoleBinding
+  metadata:
+    creationTimestamp: 2018-02-09T16:34:11Z
+    labels:
+      group: io.fabric8.kubeflix
+      package: kubeflix
+      project: hystrix-dashboard
+      provider: fabric8
+      version: 1.0.28
+    name: turbine_edit
+    namespace: fisdemoprod
+    resourceVersion: "285573672"
+    selfLink: /oapi/v1/namespaces/fisdemoprod/rolebindings/turbine_edit
+    uid: 0f0bc6c3-0db7-11e8-91ce-52540064f8a5
+  roleRef:
+    name: edit
+  subjects:
+  - kind: ServiceAccount
+    name: turbine
+    namespace: fisdemoprod
+  - kind: ServiceAccount
+    name: jenkins
+    namespace: fisdemocicd
+  - kind: SystemGroup
+    name: system:serviceaccounts:fisdemocicd
+  userNames:
+  - system:serviceaccount:fisdemoprod:turbine
+  - system:serviceaccount:fisdemocicd:jenkins
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
