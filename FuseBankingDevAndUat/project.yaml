@@ -1,7 +1,6 @@
 apiVersion: v1
 kind: Template
 metadata:
-  creationTimestamp: null
   name: project.yaml
 objects:
 - apiVersion: v1
@@ -47,9 +46,17 @@ objects:
           namespace: openshift
         incremental: true
       type: Source
-    triggers: []
-  status:
-    lastVersion: 0
+    triggers:
+    - github:
+        secret: KAfy3Csu
+      type: GitHub
+    - generic:
+        secret: bjDIScma
+      type: Generic
+    - imageChange: {}
+      type: ImageChange
+    - type: ConfigChange
+
 - apiVersion: v1
   kind: BuildConfig
   metadata:
@@ -93,7 +100,16 @@ objects:
           namespace: openshift
         incremental: true
       type: Source
-    triggers: []
+    triggers:
+    - github:
+        secret: KAfy3Csu
+      type: GitHub
+    - generic:
+        secret: bjDIScma
+      type: Generic
+    - imageChange: {}
+      type: ImageChange
+    - type: ConfigChange
   status:
     lastVersion: 0
 - apiVersion: v1
@@ -145,8 +161,12 @@ objects:
     - github:
         secret: de77c355bf59fdb5
       type: GitHub
-  status:
-    lastVersion: 0
+    - generic:
+        secret: bjDIScma
+      type: Generic
+    - imageChange: {}
+      type: ImageChange
+    - type: ConfigChange
 - apiVersion: v1
   kind: ImageStream
   metadata:
@@ -188,10 +208,6 @@ objects:
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
-    annotations:
-      openshift.io/generated-by: OpenShiftNewApp
-    creationTimestamp: null
-    generation: 1
     labels:
       app: 3scale-gateway
     name: apicast
@@ -212,9 +228,6 @@ objects:
       type: Rolling
     template:
       metadata:
-        annotations:
-          openshift.io/generated-by: OpenShiftNewApp
-        creationTimestamp: null
         labels:
           app: 3scale-gateway
           deploymentconfig: apicast
@@ -297,10 +310,6 @@ objects:
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
-    annotations:
-      openshift.io/generated-by: OpenShiftNewApp
-    creationTimestamp: null
-    generation: 1
     labels:
       app: amq62-basic
       application: broker
@@ -324,9 +333,6 @@ objects:
       type: Rolling
     template:
       metadata:
-        annotations:
-          openshift.io/generated-by: OpenShiftNewApp
-        creationTimestamp: null
         labels:
           app: amq62-basic
           application: broker
@@ -886,11 +892,6 @@ objects:
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
-    annotations:
-      openshift.io/generated-by: OpenShiftNewApp
-      template.alpha.openshift.io/wait-for-ready: "true"
-    creationTimestamp: null
-    generation: 1
     labels:
       app: mysql-ephemeral
       template: mysql-ephemeral-template
@@ -908,9 +909,6 @@ objects:
       type: Recreate
     template:
       metadata:
-        annotations:
-          openshift.io/generated-by: OpenShiftNewApp
-        creationTimestamp: null
         labels:
           app: mysql-ephemeral
           name: mysql
@@ -1030,9 +1028,6 @@ objects:
 - apiVersion: v1
   kind: Route
   metadata:
-    annotations:
-      openshift.io/host.generated: "true"
-    creationTimestamp: null
     labels:
       app: fisgateway-service
       component: fisgateway-service
@@ -1063,9 +1058,6 @@ objects:
 - apiVersion: v1
   kind: Route
   metadata:
-    annotations:
-      openshift.io/host.generated: "true"
-    creationTimestamp: null
     labels:
       app: fisgateway-service
       component: fisgateway-service-uat
@@ -1096,9 +1088,6 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
-    annotations:
-      openshift.io/generated-by: OpenShiftNewApp
-    creationTimestamp: null
     labels:
       app: 3scale-gateway
     name: apicast
@@ -1121,9 +1110,6 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
-    annotations:
-      description: The broker's AMQP port.
-      openshift.io/generated-by: OpenShiftNewApp
     creationTimestamp: null
     labels:
       app: amq62-basic
@@ -1145,10 +1131,6 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
-    annotations:
-      description: The broker's MQTT port.
-      openshift.io/generated-by: OpenShiftNewApp
-    creationTimestamp: null
     labels:
       app: amq62-basic
       application: broker
@@ -1169,10 +1151,6 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
-    annotations:
-      description: The broker's STOMP port.
-      openshift.io/generated-by: OpenShiftNewApp
-    creationTimestamp: null
     labels:
       app: amq62-basic
       application: broker
@@ -1193,13 +1171,6 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
-    annotations:
-      description: The broker's OpenWire port.
-      openshift.io/generated-by: OpenShiftNewApp
-      service.alpha.openshift.io/dependencies: '[{"name": "broker-amq-amqp", "kind":
-        "Service"},{"name": "broker-amq-mqtt", "kind": "Service"},{"name": "broker-amq-stomp",
-        "kind": "Service"}]'
-    creationTimestamp: null
     labels:
       app: amq62-basic
       application: broker
@@ -1332,10 +1303,6 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
-    annotations:
-      openshift.io/generated-by: OpenShiftNewApp
-      template.openshift.io/expose-uri: mysql://{.spec.clusterIP}:{.spec.ports[?(.name=="mysql")].port}
-    creationTimestamp: null
     labels:
       app: mysql-ephemeral
       template: mysql-ephemeral-template
