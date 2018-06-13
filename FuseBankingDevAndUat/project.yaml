@@ -27,7 +27,7 @@ objects:
       contextDir: /fisdemoaccount
       git:
         ref: master
-        uri: http://gogs-persistent.${DOMAIN_NAME_SUFFIX}/pprosser/fuse-financial-cicd.git
+        uri: "http://gogs-persistent.${DOMAIN_NAME_SUFFIX}/pprosser/fuse-financial-cicd.git"
       type: Git
     strategy:
       sourceStrategy:
@@ -73,7 +73,7 @@ objects:
       contextDir: /fisdemoblockchain
       git:
         ref: master
-        uri: http://gogs-persistent.${DOMAIN_NAME_SUFFIX}/pprosser/fuse-financial-cicd.git
+        uri: "http://gogs-persistent.${DOMAIN_NAME_SUFFIX}/pprosser/fuse-financial-cicd.git"
       type: Git
     strategy:
       sourceStrategy:
@@ -121,7 +121,7 @@ objects:
       contextDir: /fisdemoaggregator
       git:
         ref: master
-        uri: http://gogs-persistent.${DOMAIN_NAME_SUFFIX}/pprosser/fuse-financial-cicd.git
+        uri: "http://gogs-persistent.${DOMAIN_NAME_SUFFIX}/pprosser/fuse-financial-cicd.git"
       type: Git
     strategy:
       sourceStrategy:
