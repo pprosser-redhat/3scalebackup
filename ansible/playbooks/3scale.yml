@@ -113,13 +113,22 @@
         display_name: "Fuse Banking Demo - Dev and UAT"
         state:        present
 
-    - name: Create fisdemo secrets
+    - name: Create fisdemo apicast secrets
       openshift_raw:
         host:           "{{ocp_url}}"
         username:       "{{ocp_username}}"
         password:       "{{ocp_password}}"
         namespace:      "fisdemo"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/FuseBankingDevAndUat/ansible_definitions/secret.yaml') | from_yaml }}"
+        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/FuseBankingDevAndUat/ansible_definitions/secret-apicast.yaml') | from_yaml }}"
+        state: present
+
+    - name: Create fisdemo mysql secrets
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        namespace:      "fisdemo"
+        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/FuseBankingDevAndUat/ansible_definitions/secret-mysql.yaml') | from_yaml }}"
         state: present
 
     - name: Create fisdemo rolebindings
@@ -132,7 +141,7 @@
         state: present
 
     - name: Create fisdemo
-      shell: oc new-app --file "{{clone_destination}}/3Scale/FuseBankingDevAndUat/project.yaml" -n fisdemo -p DOMAIN_NAME_SUFFIX="{{DOMAIN_NAME_SUFFIX}}" -p MAVEN_MIRROR_URL="nexus-sharedservices.{{domain_name_suffix}}"
+      shell: oc new-app --file {{clone_destination}}/3Scale/FuseBankingDevAndUat/project.yaml -n fisdemo -p MAVEN_MIRROR_URL=nexus-sharedservices.{{domain_name_suffix}} -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
 
 ###################################################
 # Create the members service api to use as part of the
