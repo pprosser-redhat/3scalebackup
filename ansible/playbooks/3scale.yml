@@ -131,15 +131,6 @@
         definition: "{{ lookup('file', '{{clone_destination}}/3Scale/FuseBankingDevAndUat/ansible_definitions/secret-mysql.yaml') | from_yaml }}"
         state: present
 
-    - name: Create fisdemo rolebindings
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        namespace:      "fisdemo"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/FuseBankingDevAndUat/ansible_definitions/rolebindings.yaml') | from_yaml }}"
-        state: present
-
     - name: Create fisdemo
       shell: oc new-app --file {{clone_destination}}/3Scale/FuseBankingDevAndUat/project.yaml -n fisdemo -p MAVEN_MIRROR_URL=nexus-sharedservices.{{domain_name_suffix}} -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
 
