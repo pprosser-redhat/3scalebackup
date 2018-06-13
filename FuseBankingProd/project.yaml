@@ -22,16 +22,39 @@ objects:
     resources: {}
     runPolicy: Serial
     source:
-      binary: {}
-      type: Binary
+      contextDir: /fisdemoaccount
+      git:
+        ref: master
+        uri: "http://gogs-persistent.${DOMAIN_NAME_SUFFIX}/pprosser/fuse-financial-cicd.git"
+      type: Git
     strategy:
       sourceStrategy:
+        env:
+        - name: BUILD_LOGLEVEL
+          value: "5"
+        - name: ARTIFACT_DIR
+        - name: MAVEN_ARGS
+          value: package -DskipTests -Dfabric8.skip -e -B
+        - name: MAVEN_ARGS_APPEND
+        - name: MAVEN_MIRROR_URL
+          value: ${MAVEN_MIRROR_URL}
+        forcePull: true
         from:
           kind: ImageStreamTag
           name: fis-java-openshift:2.0
           namespace: openshift
+        incremental: true
       type: Source
-    triggers: []
+    triggers:
+      - github:
+          secret: KAfy3Csu
+        type: GitHub
+      - generic:
+          secret: bjDIScma
+        type: Generic
+      - imageChange: {}
+        type: ImageChange
+      - type: ConfigChange
 - apiVersion: v1
   kind: BuildConfig
   metadata:
@@ -51,132 +74,39 @@ objects:
     resources: {}
     runPolicy: Serial
     source:
-      binary: {}
-      type: Binary
+      contextDir: /fisdemoblockchain
+      git:
+        ref: master
+        uri: "http://gogs-persistent.${DOMAIN_NAME_SUFFIX}/pprosser/fuse-financial-cicd.git"
+      type: Git
     strategy:
       sourceStrategy:
+        env:
+        - name: BUILD_LOGLEVEL
+          value: "5"
+        - name: ARTIFACT_DIR
+        - name: MAVEN_ARGS
+          value: package -DskipTests -Dfabric8.skip -e -B
+        - name: MAVEN_ARGS_APPEND
+        - name: MAVEN_MIRROR_URL
+          value: ${MAVEN_MIRROR_URL}
+        forcePull: true
         from:
           kind: ImageStreamTag
           name: fis-java-openshift:2.0
           namespace: openshift
+        incremental: true
       type: Source
-    triggers: []
-- apiVersion: v1
-  kind: Build
-  metadata:
-    annotations:
-      openshift.io/build-config.name: fisaccount-service-s2i
-      openshift.io/build.number: "1"
-      openshift.io/build.pod-name: fisaccount-service-s2i-1-build
-    labels:
-      buildconfig: fisaccount-service-s2i
-      group: com.redhat
-      openshift.io/build-config.name: fisaccount-service-s2i
-      openshift.io/build.start-policy: Serial
-      project: fisaccount-service
-      provider: fabric8
-      version: 0.0.1-SNAPSHOT
-    name: fisaccount-service-s2i-1
-    ownerReferences:
-    - apiVersion: build.openshift.io/v1
-      controller: true
-      kind: BuildConfig
-      name: fisaccount-service-s2i
-      uid: 1d1e71f2-0db5-11e8-91ce-52540064f8a5
-  spec:
-    nodeSelector: null
-    output:
-      pushSecret:
-        name: builder-dockercfg-ppz2s
-      to:
-        kind: ImageStreamTag
-        name: fisaccount-service:latest
-    postCommit: {}
-    resources: {}
-    serviceAccount: builder
-    source:
-      binary: {}
-      type: Binary
-    strategy:
-      sourceStrategy:
-        from:
-          kind: DockerImage
-          name: registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d
-      type: Source
-    triggeredBy: []
-  status:
-    config:
-      name: fisaccount-service-s2i
-    output:
-      to:
-        imageDigest: sha256:1a7688393219de4b9f80bb2f337f9f596a825cf98a7c7ede2eb940bcbf4239ed
-    outputDockerImageReference: docker-registry.default.svc:5000/fisdemoprod/fisaccount-service:latest
-    phase: New
-    stages:
-    - durationMilliseconds: 2650
-      name: CommitContainer
-      startTime: 2018-02-09T16:20:27Z
-      steps:
-      - durationMilliseconds: 2650
-        name: CommitContainer
-        startTime: 2018-02-09T16:20:27Z
-    - durationMilliseconds: 3695
-      name: Assemble
-      startTime: 2018-02-09T16:20:26Z
-      steps:
-      - durationMilliseconds: 3695
-        name: AssembleBuildScripts
-        startTime: 2018-02-09T16:20:26Z
-    - durationMilliseconds: 17253
-      name: PushImage
-      startTime: 2018-02-09T16:20:30Z
-      steps:
-      - durationMilliseconds: 17253
-        name: PushImage
-        startTime: 2018-02-09T16:20:30Z
-- apiVersion: v1
-  kind: Build
-  metadata:
-    annotations:
-      openshift.io/build-config.name: fisblockchain-service-s2i
-      openshift.io/build.number: "1"
-      openshift.io/build.pod-name: fisblockchain-service-s2i-1-build
-    labels:
-      buildconfig: fisblockchain-service-s2i
-      group: com.redhat
-      openshift.io/build-config.name: fisblockchain-service-s2i
-      openshift.io/build.start-policy: Serial
-      project: fisblockchain-service
-      provider: fabric8
-      version: 0.0.1-SNAPSHOT
-    name: fisblockchain-service-s2i-1
-    ownerReferences:
-    - apiVersion: build.openshift.io/v1
-      controller: true
-      kind: BuildConfig
-      name: fisblockchain-service-s2i
-      uid: 4a3a9be8-0db5-11e8-91ce-52540064f8a5
-  spec:
-    nodeSelector: null
-    output:
-      pushSecret:
-        name: builder-dockercfg-ppz2s
-      to:
-        kind: ImageStreamTag
-        name: fisblockchain-service:latest
-    postCommit: {}
-    resources: {}
-    serviceAccount: builder
-    source:
-      binary: {}
-      type: Binary
-    strategy:
-      sourceStrategy:
-        from:
-          kind: DockerImage
-          name: registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d
-      type: Source
-    triggeredBy: []
+    triggers:
+      - github:
+          secret: KAfy3Csu
+        type: GitHub
+      - generic:
+          secret: bjDIScma
+        type: Generic
+      - imageChange: {}
+        type: ImageChange
+      - type: ConfigChange
 - apiVersion: v1
   kind: ImageStream
   metadata:
@@ -191,16 +121,6 @@ objects:
   spec:
     lookupPolicy:
       local: false
-    tags:
-    - annotations: null
-      from:
-        kind: DockerImage
-        name: docker-registry.default.svc:5000/fisdemoprod/fisaccount-service:latest
-      generation: null
-      importPolicy: {}
-      name: latest
-      referencePolicy:
-        type: ""
 - apiVersion: v1
   kind: ImageStream
   metadata:
@@ -214,16 +134,6 @@ objects:
   spec:
     lookupPolicy:
       local: false
-    tags:
-    - annotations: null
-      from:
-        kind: DockerImage
-        name: docker-registry.default.svc:5000/fisdemoprod/fisblockchain-service:latest
-      generation: null
-      importPolicy: {}
-      name: latest
-      referencePolicy:
-        type: ""
 - apiVersion: v1
   kind: ImageStream
   metadata:
@@ -234,16 +144,6 @@ objects:
   spec:
     lookupPolicy:
       local: false
-    tags:
-    - annotations: null
-      from:
-        kind: DockerImage
-        name: docker-registry.default.svc:5000/fisdemoprod/fisgateway-service:latest
-      generation: 6
-      importPolicy: {}
-      name: latest
-      referencePolicy:
-        type: Source
 - apiVersion: v1
   kind: ImageStream
   metadata:
@@ -253,16 +153,6 @@ objects:
   spec:
     lookupPolicy:
       local: false
-    tags:
-    - annotations: null
-      from:
-        kind: DockerImage
-        name: docker-registry.default.svc:5000/fisdemoprod/fisgateway-service-new:latest
-      generation: 34
-      importPolicy: {}
-      name: latest
-      referencePolicy:
-        type: Source
 - apiVersion: v1
   kind: ImageStream
   metadata:
@@ -274,16 +164,6 @@ objects:
   spec:
     lookupPolicy:
       local: false
-    tags:
-    - annotations: null
-      from:
-        kind: DockerImage
-        name: docker-registry.default.svc:5000/fisdemoprod/fisgateway-service-stable:latest
-      generation: 34
-      importPolicy: {}
-      name: latest
-      referencePolicy:
-        type: Source
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
