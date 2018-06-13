@@ -73,7 +73,7 @@ objects:
       contextDir: /fisdemoblockchain
       git:
         ref: master
-        uri: http://gogs-persistent.{DOMAIN_NAME_SUFFIX}/pprosser/fuse-financial-cicd.git
+        uri: http://gogs-persistent.${DOMAIN_NAME_SUFFIX}/pprosser/fuse-financial-cicd.git
       type: Git
     strategy:
       sourceStrategy:
@@ -121,7 +121,7 @@ objects:
       contextDir: /fisdemoaggregator
       git:
         ref: master
-        uri: http://gogs-persistent.{DOMAIN_NAME_SUFFIX}/pprosser/fuse-financial-cicd.git
+        uri: http://gogs-persistent.${DOMAIN_NAME_SUFFIX}/pprosser/fuse-financial-cicd.git
       type: Git
     strategy:
       sourceStrategy:
@@ -1010,7 +1010,7 @@ objects:
       app: 3scale-gateway
     name: apicast
   spec:
-    host: fisdemo-dev.{DOMAIN_NAME_SUFFIX}
+    host: fisdemo-dev.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: proxy
     to:
@@ -1024,7 +1024,7 @@ objects:
       - lastTransitionTime: 2018-02-09T15:03:07Z
         status: "True"
         type: Admitted
-      host: fisdemo-dev.{DOMAIN_NAME_SUFFIX}
+      host: fisdemo-dev.${DOMAIN_NAME_SUFFIX}
       routerName: router
       wildcardPolicy: None
 - apiVersion: v1
@@ -1043,7 +1043,7 @@ objects:
       version: 1.0.0
     name: fisgateway-service
   spec:
-    host: fisgateway-service-fisdemo.{DOMAIN_NAME_SUFFIX}
+    host: fisgateway-service-fisdemo.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: 8080
     to:
@@ -1057,7 +1057,7 @@ objects:
       - lastTransitionTime: 2018-02-07T16:16:20Z
         status: "True"
         type: Admitted
-      host: fisgateway-service-fisdemo.{DOMAIN_NAME_SUFFIX}
+      host: fisgateway-service-fisdemo.${DOMAIN_NAME_SUFFIX}
       routerName: router
       wildcardPolicy: None
 - apiVersion: v1
@@ -1076,7 +1076,7 @@ objects:
       version: 1.0.0
     name: fisgateway-service-uat
   spec:
-    host: fisgateway-service-uat-fisdemo.{DOMAIN_NAME_SUFFIX}
+    host: fisgateway-service-uat-fisdemo.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: 8080
     to:
@@ -1090,7 +1090,7 @@ objects:
       - lastTransitionTime: 2018-02-07T16:16:20Z
         status: "True"
         type: Admitted
-      host: fisgateway-service-uat-fisdemo.{DOMAIN_NAME_SUFFIX}
+      host: fisgateway-service-uat-fisdemo.${DOMAIN_NAME_SUFFIX}
       routerName: router
       wildcardPolicy: None
 - apiVersion: v1
@@ -1353,11 +1353,6 @@ objects:
   status:
     loadBalancer: {}
 parameters:
-  - description: The URL of the repository with your application source code.
-    displayName: Git Repository URL
-    name: GIT_REPO
-    required: true
-    value: 'https://github.com/pprosser-redhat/members.git'
   - description: MAVEN_MIRROR_URL
     displayName: MAVEN_MIRROR_URL
     name: MAVEN_MIRROR_URL
