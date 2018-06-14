@@ -90,7 +90,8 @@ objects:
             value: /etc/sso-secret-volume
           - name: SSO_TRUSTSTORE_PASSWORD
             value: ${KEYSTORE_PASSWORD}
-          image: registry.access.redhat.com/redhat-sso-7/sso71-openshift@sha256:8c8aa52c1dc52cb3fe19ab9df5d129e3dc8bae754fb3a84d5194b445071b0ca8
+          image: registry.access.redhat.com/redhat-sso-7/sso71-openshift
+#          image: registry.access.redhat.com/redhat-sso-7/sso71-openshift@sha256:8c8aa52c1dc52cb3fe19ab9df5d129e3dc8bae754fb3a84d5194b445071b0ca8
           imagePullPolicy: Always
           lifecycle:
             preStop:
@@ -212,7 +213,8 @@ objects:
           - name: MYSQL_FT_MIN_WORD_LEN
           - name: MYSQL_FT_MAX_WORD_LEN
           - name: MYSQL_AIO
-          image: registry.access.redhat.com/rhscl/mysql-57-rhel7@sha256:3abe773161b613b57f653c10ea1019ef7d9a05b2313390a8627be74df98dae77
+          image: registry.access.redhat.com/rhscl/mysql-57-rhel7
+#          image: registry.access.redhat.com/rhscl/mysql-57-rhel7@sha256:3abe773161b613b57f653c10ea1019ef7d9a05b2313390a8627be74df98dae77
           imagePullPolicy: Always
           name: sso-mysql
           ports:
