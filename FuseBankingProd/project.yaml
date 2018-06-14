@@ -223,7 +223,8 @@ objects:
             value: status
           - name: OPENSSL_VERIFY
             value: "false"
-          image: 3scale-amp20/apicast-gateway:1.0-3
+          image: 3scale-amp21/apicast-gateway
+#          image: 3scale-amp20/apicast-gateway:1.0-3
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 3
@@ -326,7 +327,7 @@ objects:
           - name: AMQ_STORAGE_USAGE_LIMIT
             value: 100 gb
           - name: AMQ_QUEUE_MEMORY_LIMIT
-          image: registry.access.redhat.com/jboss-amq-6/amq62-openshift@sha256:d4d938efa4dd6b35379c04d0633db5810ef26802b9067c7b8589cdfbf1bd947e
+          image: registry.access.redhat.com/jboss-amq-6/amq62-openshift
           imagePullPolicy: Always
           name: broker-amq
           ports:
@@ -437,7 +438,8 @@ objects:
                 fieldPath: metadata.namespace
           - name: JAVA_APP_DIR
             value: /deployments
-          image: docker-registry.default.svc:5000/fisdemoprod/fisaccount-service@sha256:1a7688393219de4b9f80bb2f337f9f596a825cf98a7c7ede2eb940bcbf4239ed
+          image: docker-registry.default.svc:5000/fisdemoprod/fisaccount-service
+#          image: docker-registry.default.svc:5000/fisdemoprod/fisaccount-service@sha256:1a7688393219de4b9f80bb2f337f9f596a825cf98a7c7ede2eb940bcbf4239ed
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 3
@@ -552,7 +554,8 @@ objects:
                 fieldPath: metadata.namespace
           - name: JAVA_APP_DIR
             value: /deployments
-          image: docker-registry.default.svc:5000/fisdemoprod/fisblockchain-service@sha256:c1bb955b7b17ca5d518115c5c1c2ecaf14c34569ae36a895f3aa60ad075f6937
+          image: docker-registry.default.svc:5000/fisdemoprod/fisblockchain-service
+#          image: docker-registry.default.svc:5000/fisdemoprod/fisblockchain-service@sha256:c1bb955b7b17ca5d518115c5c1c2ecaf14c34569ae36a895f3aa60ad075f6937
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 3
@@ -660,7 +663,8 @@ objects:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.namespace
-          image: docker-registry.default.svc:5000/fisdemoprod/fisgateway-service-new@sha256:95d156923db58ba39e52eb5e1a719561a763b84ee0c256780cdf4e124125af3d
+          image: docker-registry.default.svc:5000/fisdemoprod/fisgateway-service-new
+#          image: docker-registry.default.svc:5000/fisdemoprod/fisgateway-service-new@sha256:95d156923db58ba39e52eb5e1a719561a763b84ee0c256780cdf4e124125af3d
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 3
@@ -762,7 +766,8 @@ objects:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.namespace
-          image: docker-registry.default.svc:5000/fisdemoprod/fisgateway-service-stable@sha256:95d156923db58ba39e52eb5e1a719561a763b84ee0c256780cdf4e124125af3d
+          image: docker-registry.default.svc:5000/fisdemoprod/fisgateway-service-stable
+#          image: docker-registry.default.svc:5000/fisdemoprod/fisgateway-service-stable@sha256:95d156923db58ba39e52eb5e1a719561a763b84ee0c256780cdf4e124125af3d
           imagePullPolicy: Always
           livenessProbe:
             failureThreshold: 3
@@ -867,7 +872,7 @@ objects:
               secretKeyRef:
                 key: database-name
                 name: mysql
-          image: registry.access.redhat.com/rhscl/mysql-57-rhel7@sha256:3abe773161b613b57f653c10ea1019ef7d9a05b2313390a8627be74df98dae77
+          image: registry.access.redhat.com/rhscl/mysql-57-rhel7
           imagePullPolicy: IfNotPresent
           livenessProbe:
             failureThreshold: 3

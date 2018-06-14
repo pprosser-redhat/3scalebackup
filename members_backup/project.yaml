@@ -203,7 +203,8 @@ objects:
             value: eap-app-mysql
           - name: TIMER_SERVICE_DATA_STORE
             value: eap-app-mysql
-          image: docker-registry.default.svc:5000/membersapp/eap-app@sha256:c9cbd40cac6ffd18b98271746b9adae5ff1e8428bfa24558802fd40b7b22550b
+          image: docker-registry.default.svc:5000/membersapp/eap-app
+#          image: docker-registry.default.svc:5000/membersapp/eap-app@sha256:c9cbd40cac6ffd18b98271746b9adae5ff1e8428bfa24558802fd40b7b22550b
           imagePullPolicy: Always
           livenessProbe:
             exec:
@@ -315,7 +316,7 @@ objects:
           - name: MYSQL_FT_MIN_WORD_LEN
           - name: MYSQL_FT_MAX_WORD_LEN
           - name: MYSQL_AIO
-          image: registry.access.redhat.com/rhscl/mysql-57-rhel7@sha256:3abe773161b613b57f653c10ea1019ef7d9a05b2313390a8627be74df98dae77
+          image: registry.access.redhat.com/rhscl/mysql-57-rhel7
           imagePullPolicy: Always
           name: eap-app-mysql
           ports:
@@ -410,7 +411,8 @@ objects:
             value: eap-app-mysql
           - name: TIMER_SERVICE_DATA_STORE
             value: eap-app-mysql
-          image: docker-registry.default.svc:5000/membersapp/eap-app70-v1@sha256:ab326d1235fe5515ee8a53e78d252dc69c9d15af51b86f414035563af60014da
+          image: docker-registry.default.svc:5000/membersapp/eap-app70-v1
+#          image: docker-registry.default.svc:5000/membersapp/eap-app70-v1@sha256:ab326d1235fe5515ee8a53e78d252dc69c9d15af51b86f414035563af60014da
           imagePullPolicy: Always
           livenessProbe:
             exec:
