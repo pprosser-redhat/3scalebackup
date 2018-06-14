@@ -327,7 +327,7 @@ objects:
           - name: AMQ_STORAGE_USAGE_LIMIT
             value: 100 gb
           - name: AMQ_QUEUE_MEMORY_LIMIT
-          image: registry.access.redhat.com/jboss-amq-6/amq62-openshift
+          image: registry.access.redhat.com/jboss-amq-6/amq63-openshift
           imagePullPolicy: Always
           name: broker-amq
           ports:
