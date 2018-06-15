@@ -1,0 +1,768 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: project.yaml
+objects:
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewBuild
+    creationTimestamp: null
+    labels:
+      build: fisdemogui
+    name: fisdemogui
+  spec:
+    failedBuildsHistoryLimit: 5
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: fisdemogui:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      binary: {}
+      type: Binary
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: nodejs:6
+          namespace: openshift
+      type: Source
+    successfulBuildsHistoryLimit: 5
+    triggers:
+    - github:
+        secret: E6UepKM3AQA0ndBOmZMy
+      type: GitHub
+    - generic:
+        secret: -eXH7rUp8R7YIEBKoIch
+      type: Generic
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: Build
+  metadata:
+    annotations:
+      openshift.io/build-config.name: fisdemogui
+      openshift.io/build.number: "1"
+      openshift.io/build.pod-name: fisdemogui-1-build
+    creationTimestamp: null
+    labels:
+      build: fisdemogui
+      buildconfig: fisdemogui
+      openshift.io/build-config.name: fisdemogui
+      openshift.io/build.start-policy: Serial
+    name: fisdemogui-1
+    ownerReferences:
+    - apiVersion: build.openshift.io/v1
+      controller: true
+      kind: BuildConfig
+      name: fisdemogui
+      uid: f2d88cad-0c2e-11e8-8448-52540064f8a5
+  spec:
+    nodeSelector: null
+    output:
+      pushSecret:
+        name: builder-dockercfg-v74hp
+      to:
+        kind: ImageStreamTag
+        name: fisdemogui:latest
+    postCommit: {}
+    resources: {}
+    revision:
+      git:
+        author:
+          email: weimeilin@gmail.com
+          name: Christina Lin
+        commit: 21778b8afb2d67f0c75992b5dab6ddbc78bd65ef
+        committer:
+          email: noreply@github.com
+          name: GitHub
+        message: Work
+      type: Git
+    serviceAccount: builder
+    source:
+      binary: {}
+      type: Binary
+    strategy:
+      sourceStrategy:
+        from:
+          kind: DockerImage
+          name: registry.access.redhat.com/rhscl/nodejs-6-rhel7@sha256:65d0bcbfd601587ca17f231b324a851d86566ea5938a3ca1467344f3aeb49299
+      type: Source
+    triggeredBy: []
+  status:
+    config:
+      name: fisdemogui
+    output:
+      to:
+        imageDigest: sha256:bb23263a69ba4dd489d2069ab0140fdb847938e2350d16f0f5e680c6c1777ed2
+    outputDockerImageReference: docker-registry.default.svc:5000/fisdemogui/fisdemogui:latest
+    phase: New
+    stages:
+    - durationMilliseconds: 8249
+      name: CommitContainer
+      startTime: 2018-02-07T17:48:13Z
+      steps:
+      - durationMilliseconds: 8249
+        name: CommitContainer
+        startTime: 2018-02-07T17:48:13Z
+    - durationMilliseconds: 15210
+      name: Assemble
+      startTime: 2018-02-07T17:48:06Z
+      steps:
+      - durationMilliseconds: 15210
+        name: AssembleBuildScripts
+        startTime: 2018-02-07T17:48:06Z
+    - durationMilliseconds: 17765
+      name: PushImage
+      startTime: 2018-02-07T17:48:21Z
+      steps:
+      - durationMilliseconds: 17765
+        name: PushImage
+        startTime: 2018-02-07T17:48:21Z
+- apiVersion: v1
+  kind: Build
+  metadata:
+    annotations:
+      openshift.io/build-config.name: fisdemogui
+      openshift.io/build.number: "2"
+      openshift.io/build.pod-name: fisdemogui-2-build
+    creationTimestamp: null
+    labels:
+      build: fisdemogui
+      buildconfig: fisdemogui
+      openshift.io/build-config.name: fisdemogui
+      openshift.io/build.start-policy: Serial
+    name: fisdemogui-2
+    ownerReferences:
+    - apiVersion: build.openshift.io/v1
+      controller: true
+      kind: BuildConfig
+      name: fisdemogui
+      uid: f2d88cad-0c2e-11e8-8448-52540064f8a5
+  spec:
+    nodeSelector: null
+    output:
+      pushSecret:
+        name: builder-dockercfg-v74hp
+      to:
+        kind: ImageStreamTag
+        name: fisdemogui:latest
+    postCommit: {}
+    resources: {}
+    revision:
+      git:
+        author:
+          email: pprosser@192.168.1.103
+          name: pprosser
+        commit: 75496e61806c5602e442496b5f19da366d2e80d5
+        committer:
+          email: pprosser@192.168.1.103
+          name: pprosser
+        message: Back to original
+      type: Git
+    serviceAccount: builder
+    source:
+      binary: {}
+      type: Binary
+    strategy:
+      sourceStrategy:
+        from:
+          kind: DockerImage
+          name: registry.access.redhat.com/rhscl/nodejs-6-rhel7@sha256:65d0bcbfd601587ca17f231b324a851d86566ea5938a3ca1467344f3aeb49299
+      type: Source
+    triggeredBy: []
+  status:
+    config:
+      name: fisdemogui
+    output:
+      to:
+        imageDigest: sha256:236870f0b21a06601567c323e793308eb5b7280d3ae9aef71a9045dcc822f40d
+    outputDockerImageReference: docker-registry.default.svc:5000/fisdemogui/fisdemogui:latest
+    phase: New
+    stages:
+    - durationMilliseconds: 8268
+      name: CommitContainer
+      startTime: 2018-03-12T13:32:22Z
+      steps:
+      - durationMilliseconds: 8268
+        name: CommitContainer
+        startTime: 2018-03-12T13:32:22Z
+    - durationMilliseconds: 16524
+      name: Assemble
+      startTime: 2018-03-12T13:32:14Z
+      steps:
+      - durationMilliseconds: 16524
+        name: AssembleBuildScripts
+        startTime: 2018-03-12T13:32:14Z
+    - durationMilliseconds: 7947
+      name: PushImage
+      startTime: 2018-03-12T13:32:31Z
+      steps:
+      - durationMilliseconds: 7947
+        name: PushImage
+        startTime: 2018-03-12T13:32:31Z
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewBuild
+    creationTimestamp: null
+    generation: 1
+    labels:
+      build: fisdemogui
+    name: fisdemogui
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/fisdemogui/fisdemogui:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: fisdemogui
+    name: fisdemogui
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      app: fisdemogui
+      deploymentconfig: fisdemogui
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: fisdemogui
+          deploymentconfig: fisdemogui
+      spec:
+        containers:
+        - image: docker-registry.default.svc:5000/fisdemogui/fisdemogui@sha256:236870f0b21a06601567c323e793308eb5b7280d3ae9aef71a9045dcc822f40d
+          imagePullPolicy: Always
+          name: fisdemogui
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - fisdemogui
+        from:
+          kind: ImageStreamTag
+          name: fisdemogui:latest
+          namespace: fisdemogui
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: fisdemogui
+    name: fisdemogui
+  spec:
+    host: fisdemogui-fisdemogui.apps.demolab.local
+    port:
+      targetPort: 8080-tcp
+    to:
+      kind: Service
+      name: fisdemogui
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: 2018-02-07T17:49:51Z
+        status: "True"
+        type: Admitted
+      host: fisdemogui-fisdemogui.apps.demolab.local
+      routerName: router
+      wildcardPolicy: None
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      openshift.io/build.name: fisdemogui-2
+      openshift.io/scc: privileged
+      pod.alpha.kubernetes.io/init-containers: '[{"name":"git-clone","image":"openshift3/ose-sti-builder:v3.7.9","command":["openshift-git-clone"],"args":["--loglevel=0"],"env":[{"name":"BUILD","value":"{\"kind\":\"Build\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\"fisdemogui-2\",\"namespace\":\"fisdemogui\",\"selfLink\":\"/apis/build.openshift.io/v1/namespaces/fisdemogui/builds/fisdemogui-2\",\"uid\":\"be9408e6-25f9-11e8-937f-52540064f8a5\",\"resourceVersion\":\"383841538\",\"creationTimestamp\":\"2018-03-12T13:32:00Z\",\"labels\":{\"build\":\"fisdemogui\",\"buildconfig\":\"fisdemogui\",\"openshift.io/build-config.name\":\"fisdemogui\",\"openshift.io/build.start-policy\":\"Serial\"},\"annotations\":{\"openshift.io/build-config.name\":\"fisdemogui\",\"openshift.io/build.number\":\"2\"},\"ownerReferences\":[{\"apiVersion\":\"build.openshift.io/v1\",\"kind\":\"BuildConfig\",\"name\":\"fisdemogui\",\"uid\":\"f2d88cad-0c2e-11e8-8448-52540064f8a5\",\"controller\":true}]},\"spec\":{\"serviceAccount\":\"builder\",\"source\":{\"type\":\"Binary\",\"binary\":{}},\"revision\":{\"type\":\"Git\",\"git\":{\"commit\":\"75496e61806c5602e442496b5f19da366d2e80d5\",\"author\":{\"name\":\"pprosser\",\"email\":\"pprosser@192.168.1.103\"},\"committer\":{\"name\":\"pprosser\",\"email\":\"pprosser@192.168.1.103\"},\"message\":\"Back
+        to original\"}},\"strategy\":{\"type\":\"Source\",\"sourceStrategy\":{\"from\":{\"kind\":\"DockerImage\",\"name\":\"registry.access.redhat.com/rhscl/nodejs-6-rhel7@sha256:65d0bcbfd601587ca17f231b324a851d86566ea5938a3ca1467344f3aeb49299\"}}},\"output\":{\"to\":{\"kind\":\"DockerImage\",\"name\":\"docker-registry.default.svc:5000/fisdemogui/fisdemogui:latest\"},\"pushSecret\":{\"name\":\"builder-dockercfg-v74hp\"}},\"resources\":{},\"postCommit\":{},\"nodeSelector\":null,\"triggeredBy\":[]},\"status\":{\"phase\":\"New\",\"outputDockerImageReference\":\"docker-registry.default.svc:5000/fisdemogui/fisdemogui:latest\",\"config\":{\"kind\":\"BuildConfig\",\"namespace\":\"fisdemogui\",\"name\":\"fisdemogui\"},\"output\":{}}}\n"},{"name":"ORIGIN_VERSION","value":"v3.7.9"},{"name":"ALLOWED_UIDS","value":"1-"},{"name":"DROP_CAPS","value":"KILL,MKNOD,SETGID,SETUID"}],"resources":{},"volumeMounts":[{"name":"buildworkdir","mountPath":"/tmp/build"},{"name":"builder-token-28m5d","readOnly":true,"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount"}],"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"FallbackToLogsOnError","imagePullPolicy":"IfNotPresent","securityContext":{"privileged":false},"stdin":true,"stdinOnce":true},{"name":"manage-dockerfile","image":"openshift3/ose-sti-builder:v3.7.9","command":["openshift-manage-dockerfile"],"args":["--loglevel=0"],"env":[{"name":"BUILD","value":"{\"kind\":\"Build\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\"fisdemogui-2\",\"namespace\":\"fisdemogui\",\"selfLink\":\"/apis/build.openshift.io/v1/namespaces/fisdemogui/builds/fisdemogui-2\",\"uid\":\"be9408e6-25f9-11e8-937f-52540064f8a5\",\"resourceVersion\":\"383841538\",\"creationTimestamp\":\"2018-03-12T13:32:00Z\",\"labels\":{\"build\":\"fisdemogui\",\"buildconfig\":\"fisdemogui\",\"openshift.io/build-config.name\":\"fisdemogui\",\"openshift.io/build.start-policy\":\"Serial\"},\"annotations\":{\"openshift.io/build-config.name\":\"fisdemogui\",\"openshift.io/build.number\":\"2\"},\"ownerReferences\":[{\"apiVersion\":\"build.openshift.io/v1\",\"kind\":\"BuildConfig\",\"name\":\"fisdemogui\",\"uid\":\"f2d88cad-0c2e-11e8-8448-52540064f8a5\",\"controller\":true}]},\"spec\":{\"serviceAccount\":\"builder\",\"source\":{\"type\":\"Binary\",\"binary\":{}},\"revision\":{\"type\":\"Git\",\"git\":{\"commit\":\"75496e61806c5602e442496b5f19da366d2e80d5\",\"author\":{\"name\":\"pprosser\",\"email\":\"pprosser@192.168.1.103\"},\"committer\":{\"name\":\"pprosser\",\"email\":\"pprosser@192.168.1.103\"},\"message\":\"Back
+        to original\"}},\"strategy\":{\"type\":\"Source\",\"sourceStrategy\":{\"from\":{\"kind\":\"DockerImage\",\"name\":\"registry.access.redhat.com/rhscl/nodejs-6-rhel7@sha256:65d0bcbfd601587ca17f231b324a851d86566ea5938a3ca1467344f3aeb49299\"}}},\"output\":{\"to\":{\"kind\":\"DockerImage\",\"name\":\"docker-registry.default.svc:5000/fisdemogui/fisdemogui:latest\"},\"pushSecret\":{\"name\":\"builder-dockercfg-v74hp\"}},\"resources\":{},\"postCommit\":{},\"nodeSelector\":null,\"triggeredBy\":[]},\"status\":{\"phase\":\"New\",\"outputDockerImageReference\":\"docker-registry.default.svc:5000/fisdemogui/fisdemogui:latest\",\"config\":{\"kind\":\"BuildConfig\",\"namespace\":\"fisdemogui\",\"name\":\"fisdemogui\"},\"output\":{}}}\n"},{"name":"ORIGIN_VERSION","value":"v3.7.9"},{"name":"ALLOWED_UIDS","value":"1-"},{"name":"DROP_CAPS","value":"KILL,MKNOD,SETGID,SETUID"}],"resources":{},"volumeMounts":[{"name":"buildworkdir","mountPath":"/tmp/build"},{"name":"builder-token-28m5d","readOnly":true,"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount"}],"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"FallbackToLogsOnError","imagePullPolicy":"IfNotPresent","securityContext":{"privileged":false}}]'
+      pod.beta.kubernetes.io/init-containers: '[{"name":"git-clone","image":"openshift3/ose-sti-builder:v3.7.9","command":["openshift-git-clone"],"args":["--loglevel=0"],"env":[{"name":"BUILD","value":"{\"kind\":\"Build\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\"fisdemogui-2\",\"namespace\":\"fisdemogui\",\"selfLink\":\"/apis/build.openshift.io/v1/namespaces/fisdemogui/builds/fisdemogui-2\",\"uid\":\"be9408e6-25f9-11e8-937f-52540064f8a5\",\"resourceVersion\":\"383841538\",\"creationTimestamp\":\"2018-03-12T13:32:00Z\",\"labels\":{\"build\":\"fisdemogui\",\"buildconfig\":\"fisdemogui\",\"openshift.io/build-config.name\":\"fisdemogui\",\"openshift.io/build.start-policy\":\"Serial\"},\"annotations\":{\"openshift.io/build-config.name\":\"fisdemogui\",\"openshift.io/build.number\":\"2\"},\"ownerReferences\":[{\"apiVersion\":\"build.openshift.io/v1\",\"kind\":\"BuildConfig\",\"name\":\"fisdemogui\",\"uid\":\"f2d88cad-0c2e-11e8-8448-52540064f8a5\",\"controller\":true}]},\"spec\":{\"serviceAccount\":\"builder\",\"source\":{\"type\":\"Binary\",\"binary\":{}},\"revision\":{\"type\":\"Git\",\"git\":{\"commit\":\"75496e61806c5602e442496b5f19da366d2e80d5\",\"author\":{\"name\":\"pprosser\",\"email\":\"pprosser@192.168.1.103\"},\"committer\":{\"name\":\"pprosser\",\"email\":\"pprosser@192.168.1.103\"},\"message\":\"Back
+        to original\"}},\"strategy\":{\"type\":\"Source\",\"sourceStrategy\":{\"from\":{\"kind\":\"DockerImage\",\"name\":\"registry.access.redhat.com/rhscl/nodejs-6-rhel7@sha256:65d0bcbfd601587ca17f231b324a851d86566ea5938a3ca1467344f3aeb49299\"}}},\"output\":{\"to\":{\"kind\":\"DockerImage\",\"name\":\"docker-registry.default.svc:5000/fisdemogui/fisdemogui:latest\"},\"pushSecret\":{\"name\":\"builder-dockercfg-v74hp\"}},\"resources\":{},\"postCommit\":{},\"nodeSelector\":null,\"triggeredBy\":[]},\"status\":{\"phase\":\"New\",\"outputDockerImageReference\":\"docker-registry.default.svc:5000/fisdemogui/fisdemogui:latest\",\"config\":{\"kind\":\"BuildConfig\",\"namespace\":\"fisdemogui\",\"name\":\"fisdemogui\"},\"output\":{}}}\n"},{"name":"ORIGIN_VERSION","value":"v3.7.9"},{"name":"ALLOWED_UIDS","value":"1-"},{"name":"DROP_CAPS","value":"KILL,MKNOD,SETGID,SETUID"}],"resources":{},"volumeMounts":[{"name":"buildworkdir","mountPath":"/tmp/build"},{"name":"builder-token-28m5d","readOnly":true,"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount"}],"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"FallbackToLogsOnError","imagePullPolicy":"IfNotPresent","securityContext":{"privileged":false},"stdin":true,"stdinOnce":true},{"name":"manage-dockerfile","image":"openshift3/ose-sti-builder:v3.7.9","command":["openshift-manage-dockerfile"],"args":["--loglevel=0"],"env":[{"name":"BUILD","value":"{\"kind\":\"Build\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\"fisdemogui-2\",\"namespace\":\"fisdemogui\",\"selfLink\":\"/apis/build.openshift.io/v1/namespaces/fisdemogui/builds/fisdemogui-2\",\"uid\":\"be9408e6-25f9-11e8-937f-52540064f8a5\",\"resourceVersion\":\"383841538\",\"creationTimestamp\":\"2018-03-12T13:32:00Z\",\"labels\":{\"build\":\"fisdemogui\",\"buildconfig\":\"fisdemogui\",\"openshift.io/build-config.name\":\"fisdemogui\",\"openshift.io/build.start-policy\":\"Serial\"},\"annotations\":{\"openshift.io/build-config.name\":\"fisdemogui\",\"openshift.io/build.number\":\"2\"},\"ownerReferences\":[{\"apiVersion\":\"build.openshift.io/v1\",\"kind\":\"BuildConfig\",\"name\":\"fisdemogui\",\"uid\":\"f2d88cad-0c2e-11e8-8448-52540064f8a5\",\"controller\":true}]},\"spec\":{\"serviceAccount\":\"builder\",\"source\":{\"type\":\"Binary\",\"binary\":{}},\"revision\":{\"type\":\"Git\",\"git\":{\"commit\":\"75496e61806c5602e442496b5f19da366d2e80d5\",\"author\":{\"name\":\"pprosser\",\"email\":\"pprosser@192.168.1.103\"},\"committer\":{\"name\":\"pprosser\",\"email\":\"pprosser@192.168.1.103\"},\"message\":\"Back
+        to original\"}},\"strategy\":{\"type\":\"Source\",\"sourceStrategy\":{\"from\":{\"kind\":\"DockerImage\",\"name\":\"registry.access.redhat.com/rhscl/nodejs-6-rhel7@sha256:65d0bcbfd601587ca17f231b324a851d86566ea5938a3ca1467344f3aeb49299\"}}},\"output\":{\"to\":{\"kind\":\"DockerImage\",\"name\":\"docker-registry.default.svc:5000/fisdemogui/fisdemogui:latest\"},\"pushSecret\":{\"name\":\"builder-dockercfg-v74hp\"}},\"resources\":{},\"postCommit\":{},\"nodeSelector\":null,\"triggeredBy\":[]},\"status\":{\"phase\":\"New\",\"outputDockerImageReference\":\"docker-registry.default.svc:5000/fisdemogui/fisdemogui:latest\",\"config\":{\"kind\":\"BuildConfig\",\"namespace\":\"fisdemogui\",\"name\":\"fisdemogui\"},\"output\":{}}}\n"},{"name":"ORIGIN_VERSION","value":"v3.7.9"},{"name":"ALLOWED_UIDS","value":"1-"},{"name":"DROP_CAPS","value":"KILL,MKNOD,SETGID,SETUID"}],"resources":{},"volumeMounts":[{"name":"buildworkdir","mountPath":"/tmp/build"},{"name":"builder-token-28m5d","readOnly":true,"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount"}],"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"FallbackToLogsOnError","imagePullPolicy":"IfNotPresent","securityContext":{"privileged":false}}]'
+    creationTimestamp: null
+    labels:
+      openshift.io/build.name: fisdemogui-2
+    name: fisdemogui-2-build
+    ownerReferences:
+    - apiVersion: build.openshift.io/v1
+      controller: true
+      kind: Build
+      name: fisdemogui-2
+      uid: be9408e6-25f9-11e8-937f-52540064f8a5
+  spec:
+    containers:
+    - args:
+      - --loglevel=0
+      command:
+      - openshift-sti-build
+      env:
+      - name: BUILD
+        value: |
+          {"kind":"Build","apiVersion":"v1","metadata":{"name":"fisdemogui-2","namespace":"fisdemogui","selfLink":"/apis/build.openshift.io/v1/namespaces/fisdemogui/builds/fisdemogui-2","uid":"be9408e6-25f9-11e8-937f-52540064f8a5","resourceVersion":"383841538","creationTimestamp":"2018-03-12T13:32:00Z","labels":{"build":"fisdemogui","buildconfig":"fisdemogui","openshift.io/build-config.name":"fisdemogui","openshift.io/build.start-policy":"Serial"},"annotations":{"openshift.io/build-config.name":"fisdemogui","openshift.io/build.number":"2"},"ownerReferences":[{"apiVersion":"build.openshift.io/v1","kind":"BuildConfig","name":"fisdemogui","uid":"f2d88cad-0c2e-11e8-8448-52540064f8a5","controller":true}]},"spec":{"serviceAccount":"builder","source":{"type":"Binary","binary":{}},"revision":{"type":"Git","git":{"commit":"75496e61806c5602e442496b5f19da366d2e80d5","author":{"name":"pprosser","email":"pprosser@192.168.1.103"},"committer":{"name":"pprosser","email":"pprosser@192.168.1.103"},"message":"Back to original"}},"strategy":{"type":"Source","sourceStrategy":{"from":{"kind":"DockerImage","name":"registry.access.redhat.com/rhscl/nodejs-6-rhel7@sha256:65d0bcbfd601587ca17f231b324a851d86566ea5938a3ca1467344f3aeb49299"}}},"output":{"to":{"kind":"DockerImage","name":"docker-registry.default.svc:5000/fisdemogui/fisdemogui:latest"},"pushSecret":{"name":"builder-dockercfg-v74hp"}},"resources":{},"postCommit":{},"nodeSelector":null,"triggeredBy":[]},"status":{"phase":"New","outputDockerImageReference":"docker-registry.default.svc:5000/fisdemogui/fisdemogui:latest","config":{"kind":"BuildConfig","namespace":"fisdemogui","name":"fisdemogui"},"output":{}}}
+      - name: ORIGIN_VERSION
+        value: v3.7.9
+      - name: ALLOWED_UIDS
+        value: 1-
+      - name: DROP_CAPS
+        value: KILL,MKNOD,SETGID,SETUID
+      - name: PUSH_DOCKERCFG_PATH
+        value: /var/run/secrets/openshift.io/push
+      image: openshift3/ose-sti-builder:v3.7.9
+      imagePullPolicy: IfNotPresent
+      name: sti-build
+      resources: {}
+      securityContext:
+        privileged: true
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: FallbackToLogsOnError
+      volumeMounts:
+      - mountPath: /tmp/build
+        name: buildworkdir
+      - mountPath: /var/run/docker.sock
+        name: docker-socket
+      - mountPath: /var/run/crio.sock
+        name: crio-socket
+      - mountPath: /var/run/secrets/openshift.io/push
+        name: builder-dockercfg-v74hp-push
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: builder-token-28m5d
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    imagePullSecrets:
+    - name: builder-dockercfg-v74hp
+    initContainers:
+    - args:
+      - --loglevel=0
+      command:
+      - openshift-git-clone
+      env:
+      - name: BUILD
+        value: |
+          {"kind":"Build","apiVersion":"v1","metadata":{"name":"fisdemogui-2","namespace":"fisdemogui","selfLink":"/apis/build.openshift.io/v1/namespaces/fisdemogui/builds/fisdemogui-2","uid":"be9408e6-25f9-11e8-937f-52540064f8a5","resourceVersion":"383841538","creationTimestamp":"2018-03-12T13:32:00Z","labels":{"build":"fisdemogui","buildconfig":"fisdemogui","openshift.io/build-config.name":"fisdemogui","openshift.io/build.start-policy":"Serial"},"annotations":{"openshift.io/build-config.name":"fisdemogui","openshift.io/build.number":"2"},"ownerReferences":[{"apiVersion":"build.openshift.io/v1","kind":"BuildConfig","name":"fisdemogui","uid":"f2d88cad-0c2e-11e8-8448-52540064f8a5","controller":true}]},"spec":{"serviceAccount":"builder","source":{"type":"Binary","binary":{}},"revision":{"type":"Git","git":{"commit":"75496e61806c5602e442496b5f19da366d2e80d5","author":{"name":"pprosser","email":"pprosser@192.168.1.103"},"committer":{"name":"pprosser","email":"pprosser@192.168.1.103"},"message":"Back to original"}},"strategy":{"type":"Source","sourceStrategy":{"from":{"kind":"DockerImage","name":"registry.access.redhat.com/rhscl/nodejs-6-rhel7@sha256:65d0bcbfd601587ca17f231b324a851d86566ea5938a3ca1467344f3aeb49299"}}},"output":{"to":{"kind":"DockerImage","name":"docker-registry.default.svc:5000/fisdemogui/fisdemogui:latest"},"pushSecret":{"name":"builder-dockercfg-v74hp"}},"resources":{},"postCommit":{},"nodeSelector":null,"triggeredBy":[]},"status":{"phase":"New","outputDockerImageReference":"docker-registry.default.svc:5000/fisdemogui/fisdemogui:latest","config":{"kind":"BuildConfig","namespace":"fisdemogui","name":"fisdemogui"},"output":{}}}
+      - name: ORIGIN_VERSION
+        value: v3.7.9
+      - name: ALLOWED_UIDS
+        value: 1-
+      - name: DROP_CAPS
+        value: KILL,MKNOD,SETGID,SETUID
+      image: openshift3/ose-sti-builder:v3.7.9
+      imagePullPolicy: IfNotPresent
+      name: git-clone
+      resources: {}
+      securityContext:
+        privileged: false
+      stdin: true
+      stdinOnce: true
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: FallbackToLogsOnError
+      volumeMounts:
+      - mountPath: /tmp/build
+        name: buildworkdir
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: builder-token-28m5d
+        readOnly: true
+    - args:
+      - --loglevel=0
+      command:
+      - openshift-manage-dockerfile
+      env:
+      - name: BUILD
+        value: |
+          {"kind":"Build","apiVersion":"v1","metadata":{"name":"fisdemogui-2","namespace":"fisdemogui","selfLink":"/apis/build.openshift.io/v1/namespaces/fisdemogui/builds/fisdemogui-2","uid":"be9408e6-25f9-11e8-937f-52540064f8a5","resourceVersion":"383841538","creationTimestamp":"2018-03-12T13:32:00Z","labels":{"build":"fisdemogui","buildconfig":"fisdemogui","openshift.io/build-config.name":"fisdemogui","openshift.io/build.start-policy":"Serial"},"annotations":{"openshift.io/build-config.name":"fisdemogui","openshift.io/build.number":"2"},"ownerReferences":[{"apiVersion":"build.openshift.io/v1","kind":"BuildConfig","name":"fisdemogui","uid":"f2d88cad-0c2e-11e8-8448-52540064f8a5","controller":true}]},"spec":{"serviceAccount":"builder","source":{"type":"Binary","binary":{}},"revision":{"type":"Git","git":{"commit":"75496e61806c5602e442496b5f19da366d2e80d5","author":{"name":"pprosser","email":"pprosser@192.168.1.103"},"committer":{"name":"pprosser","email":"pprosser@192.168.1.103"},"message":"Back to original"}},"strategy":{"type":"Source","sourceStrategy":{"from":{"kind":"DockerImage","name":"registry.access.redhat.com/rhscl/nodejs-6-rhel7@sha256:65d0bcbfd601587ca17f231b324a851d86566ea5938a3ca1467344f3aeb49299"}}},"output":{"to":{"kind":"DockerImage","name":"docker-registry.default.svc:5000/fisdemogui/fisdemogui:latest"},"pushSecret":{"name":"builder-dockercfg-v74hp"}},"resources":{},"postCommit":{},"nodeSelector":null,"triggeredBy":[]},"status":{"phase":"New","outputDockerImageReference":"docker-registry.default.svc:5000/fisdemogui/fisdemogui:latest","config":{"kind":"BuildConfig","namespace":"fisdemogui","name":"fisdemogui"},"output":{}}}
+      - name: ORIGIN_VERSION
+        value: v3.7.9
+      - name: ALLOWED_UIDS
+        value: 1-
+      - name: DROP_CAPS
+        value: KILL,MKNOD,SETGID,SETUID
+      image: openshift3/ose-sti-builder:v3.7.9
+      imagePullPolicy: IfNotPresent
+      name: manage-dockerfile
+      resources: {}
+      securityContext:
+        privileged: false
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: FallbackToLogsOnError
+      volumeMounts:
+      - mountPath: /tmp/build
+        name: buildworkdir
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: builder-token-28m5d
+        readOnly: true
+    nodeName: ocp-app-1.demolab.local
+    nodeSelector:
+      purpose: apps
+    restartPolicy: Never
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: builder
+    serviceAccountName: builder
+    terminationGracePeriodSeconds: 30
+    volumes:
+    - emptyDir: {}
+      name: buildworkdir
+    - hostPath:
+        path: /var/run/docker.sock
+      name: docker-socket
+    - hostPath:
+        path: /var/run/crio.sock
+      name: crio-socket
+    - name: builder-dockercfg-v74hp-push
+      secret:
+        defaultMode: 384
+        secretName: builder-dockercfg-v74hp
+    - name: builder-token-28m5d
+      secret:
+        defaultMode: 420
+        secretName: builder-token-28m5d
+  status:
+    phase: Pending
+    qosClass: BestEffort
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/created-by: |
+        {"kind":"SerializedReference","apiVersion":"v1","reference":{"kind":"ReplicationController","namespace":"fisdemogui","name":"fisdemogui-3","uid":"d56cb17b-25f9-11e8-afe0-5254002f83b4","apiVersion":"v1","resourceVersion":"383841747"}}
+      openshift.io/deployment-config.latest-version: "3"
+      openshift.io/deployment-config.name: fisdemogui
+      openshift.io/deployment.name: fisdemogui-3
+      openshift.io/generated-by: OpenShiftNewApp
+      openshift.io/scc: restricted
+    creationTimestamp: null
+    generateName: fisdemogui-3-
+    labels:
+      app: fisdemogui
+      deployment: fisdemogui-3
+      deploymentconfig: fisdemogui
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicationController
+      name: fisdemogui-3
+      uid: d56cb17b-25f9-11e8-afe0-5254002f83b4
+  spec:
+    containers:
+    - image: docker-registry.default.svc:5000/fisdemogui/fisdemogui@sha256:236870f0b21a06601567c323e793308eb5b7280d3ae9aef71a9045dcc822f40d
+      imagePullPolicy: Always
+      name: fisdemogui
+      ports:
+      - containerPort: 8080
+        protocol: TCP
+      resources: {}
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+        privileged: false
+        runAsUser: 1000380000
+        seLinuxOptions:
+          level: s0:c20,c0
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-gd5cg
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    imagePullSecrets:
+    - name: default-dockercfg-pqbdj
+    nodeName: ocp-app-3.demolab.local
+    nodeSelector:
+      purpose: apps
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000380000
+      seLinuxOptions:
+        level: s0:c20,c0
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    volumes:
+    - name: default-token-gd5cg
+      secret:
+        defaultMode: 420
+        secretName: default-token-gd5cg
+  status:
+    phase: Pending
+    qosClass: BestEffort
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/original-replicas: "1"
+      openshift.io/deployer-pod.completed-at: 2018-02-07 17:49:48 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2018-02-07 17:49:25 +0000 UTC
+      openshift.io/deployer-pod.name: fisdemogui-1-deploy
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: fisdemogui
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "1"
+      openshift.io/deployment.status-reason: config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"fisdemogui","namespace":"fisdemogui","selfLink":"/apis/apps.openshift.io/v1/namespaces/fisdemogui/deploymentconfigs/fisdemogui","uid":"3cbcdeea-0c2f-11e8-8448-52540064f8a5","resourceVersion":"260846477","generation":2,"creationTimestamp":"2018-02-07T17:49:25Z","labels":{"app":"fisdemogui"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"},{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["fisdemogui"],"from":{"kind":"ImageStreamTag","namespace":"fisdemogui","name":"fisdemogui:latest"},"lastTriggeredImage":"docker-registry.default.svc:5000/fisdemogui/fisdemogui@sha256:bb23263a69ba4dd489d2069ab0140fdb847938e2350d16f0f5e680c6c1777ed2"}}],"replicas":1,"revisionHistoryLimit":10,"test":false,"selector":{"app":"fisdemogui","deploymentconfig":"fisdemogui"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"fisdemogui","deploymentconfig":"fisdemogui"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"containers":[{"name":"fisdemogui","image":"docker-registry.default.svc:5000/fisdemogui/fisdemogui@sha256:bb23263a69ba4dd489d2069ab0140fdb847938e2350d16f0f5e680c6c1777ed2","ports":[{"containerPort":8080,"protocol":"TCP"}],"resources":{},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":1,"observedGeneration":2,"replicas":0,"updatedReplicas":0,"availableReplicas":0,"unavailableReplicas":0,"details":{"message":"config change","causes":[{"type":"ConfigChange"}]},"conditions":[{"type":"Available","status":"False","lastUpdateTime":"2018-02-07T17:49:25Z","lastTransitionTime":"2018-02-07T17:49:25Z","message":"Deployment config does not have minimum availability."}]}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: fisdemogui
+      openshift.io/deployment-config.name: fisdemogui
+    name: fisdemogui-1
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: fisdemogui
+      uid: 3cbcdeea-0c2f-11e8-8448-52540064f8a5
+  spec:
+    replicas: 0
+    selector:
+      app: fisdemogui
+      deployment: fisdemogui-1
+      deploymentconfig: fisdemogui
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "1"
+          openshift.io/deployment-config.name: fisdemogui
+          openshift.io/deployment.name: fisdemogui-1
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: fisdemogui
+          deployment: fisdemogui-1
+          deploymentconfig: fisdemogui
+      spec:
+        containers:
+        - image: docker-registry.default.svc:5000/fisdemogui/fisdemogui@sha256:bb23263a69ba4dd489d2069ab0140fdb847938e2350d16f0f5e680c6c1777ed2
+          imagePullPolicy: Always
+          name: fisdemogui
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/original-replicas: "1"
+      openshift.io/deployer-pod.completed-at: 2018-02-09 15:25:42 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2018-02-09 15:24:18 +0000 UTC
+      openshift.io/deployer-pod.name: fisdemogui-2-deploy
+      openshift.io/deployment-config.latest-version: "2"
+      openshift.io/deployment-config.name: fisdemogui
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: ""
+      openshift.io/deployment.status-reason: manual change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"fisdemogui","namespace":"fisdemogui","selfLink":"/apis/apps.openshift.io/v1/namespaces/fisdemogui/deploymentconfigs/fisdemogui","uid":"3cbcdeea-0c2f-11e8-8448-52540064f8a5","resourceVersion":"270486737","generation":3,"creationTimestamp":"2018-02-07T17:49:25Z","labels":{"app":"fisdemogui"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"},{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["fisdemogui"],"from":{"kind":"ImageStreamTag","namespace":"fisdemogui","name":"fisdemogui:latest"},"lastTriggeredImage":"docker-registry.default.svc:5000/fisdemogui/fisdemogui@sha256:bb23263a69ba4dd489d2069ab0140fdb847938e2350d16f0f5e680c6c1777ed2"}}],"replicas":1,"revisionHistoryLimit":10,"test":false,"selector":{"app":"fisdemogui","deploymentconfig":"fisdemogui"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"fisdemogui","deploymentconfig":"fisdemogui"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"containers":[{"name":"fisdemogui","image":"docker-registry.default.svc:5000/fisdemogui/fisdemogui@sha256:bb23263a69ba4dd489d2069ab0140fdb847938e2350d16f0f5e680c6c1777ed2","ports":[{"containerPort":8080,"protocol":"TCP"}],"resources":{},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":2,"observedGeneration":2,"replicas":1,"updatedReplicas":1,"availableReplicas":1,"unavailableReplicas":0,"details":{"message":"manual change","causes":[{"type":"Manual"}]},"conditions":[{"type":"Available","status":"True","lastUpdateTime":"2018-02-07T17:49:48Z","lastTransitionTime":"2018-02-07T17:49:48Z","message":"Deployment config has minimum availability."},{"type":"Progressing","status":"True","lastUpdateTime":"2018-02-07T17:49:49Z","lastTransitionTime":"2018-02-07T17:49:49Z","reason":"NewReplicationControllerAvailable","message":"replication controller \"fisdemogui-1\" successfully rolled out"}],"readyReplicas":1}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: fisdemogui
+      openshift.io/deployment-config.name: fisdemogui
+    name: fisdemogui-2
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: fisdemogui
+      uid: 3cbcdeea-0c2f-11e8-8448-52540064f8a5
+  spec:
+    replicas: 0
+    selector:
+      app: fisdemogui
+      deployment: fisdemogui-2
+      deploymentconfig: fisdemogui
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "2"
+          openshift.io/deployment-config.name: fisdemogui
+          openshift.io/deployment.name: fisdemogui-2
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: fisdemogui
+          deployment: fisdemogui-2
+          deploymentconfig: fisdemogui
+      spec:
+        containers:
+        - image: docker-registry.default.svc:5000/fisdemogui/fisdemogui@sha256:bb23263a69ba4dd489d2069ab0140fdb847938e2350d16f0f5e680c6c1777ed2
+          imagePullPolicy: Always
+          name: fisdemogui
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      openshift.io/deployer-pod.completed-at: 2018-03-12 13:32:51 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2018-03-12 13:32:39 +0000 UTC
+      openshift.io/deployer-pod.name: fisdemogui-3-deploy
+      openshift.io/deployment-config.latest-version: "3"
+      openshift.io/deployment-config.name: fisdemogui
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: ""
+      openshift.io/deployment.status-reason: image change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"fisdemogui","namespace":"fisdemogui","selfLink":"/apis/apps.openshift.io/v1/namespaces/fisdemogui/deploymentconfigs/fisdemogui","uid":"3cbcdeea-0c2f-11e8-8448-52540064f8a5","resourceVersion":"383841713","generation":4,"creationTimestamp":"2018-02-07T17:49:25Z","labels":{"app":"fisdemogui"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"},{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["fisdemogui"],"from":{"kind":"ImageStreamTag","namespace":"fisdemogui","name":"fisdemogui:latest"},"lastTriggeredImage":"docker-registry.default.svc:5000/fisdemogui/fisdemogui@sha256:236870f0b21a06601567c323e793308eb5b7280d3ae9aef71a9045dcc822f40d"}}],"replicas":1,"revisionHistoryLimit":10,"test":false,"selector":{"app":"fisdemogui","deploymentconfig":"fisdemogui"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"fisdemogui","deploymentconfig":"fisdemogui"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"containers":[{"name":"fisdemogui","image":"docker-registry.default.svc:5000/fisdemogui/fisdemogui@sha256:236870f0b21a06601567c323e793308eb5b7280d3ae9aef71a9045dcc822f40d","ports":[{"containerPort":8080,"protocol":"TCP"}],"resources":{},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":3,"observedGeneration":4,"replicas":1,"updatedReplicas":0,"availableReplicas":1,"unavailableReplicas":0,"details":{"message":"image change","causes":[{"type":"ImageChange","imageTrigger":{"from":{"kind":"DockerImage","name":"docker-registry.default.svc:5000/fisdemogui/fisdemogui@sha256:236870f0b21a06601567c323e793308eb5b7280d3ae9aef71a9045dcc822f40d"}}}]},"conditions":[{"type":"Progressing","status":"True","lastUpdateTime":"2018-02-09T15:25:52Z","lastTransitionTime":"2018-02-09T15:25:41Z","reason":"NewReplicationControllerAvailable","message":"replication controller \"fisdemogui-2\" successfully rolled out"},{"type":"Available","status":"True","lastUpdateTime":"2018-03-02T14:46:36Z","lastTransitionTime":"2018-03-02T14:46:36Z","message":"Deployment config has minimum availability."}],"readyReplicas":1}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: fisdemogui
+      openshift.io/deployment-config.name: fisdemogui
+    name: fisdemogui-3
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: fisdemogui
+      uid: 3cbcdeea-0c2f-11e8-8448-52540064f8a5
+  spec:
+    replicas: 1
+    selector:
+      app: fisdemogui
+      deployment: fisdemogui-3
+      deploymentconfig: fisdemogui
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "3"
+          openshift.io/deployment-config.name: fisdemogui
+          openshift.io/deployment.name: fisdemogui-3
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: fisdemogui
+          deployment: fisdemogui-3
+          deploymentconfig: fisdemogui
+      spec:
+        containers:
+        - image: docker-registry.default.svc:5000/fisdemogui/fisdemogui@sha256:236870f0b21a06601567c323e793308eb5b7280d3ae9aef71a9045dcc822f40d
+          imagePullPolicy: Always
+          name: fisdemogui
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: fisdemogui
+    name: fisdemogui
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: fisdemogui
+      deploymentconfig: fisdemogui
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}

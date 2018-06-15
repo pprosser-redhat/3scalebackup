@@ -1,0 +1,76 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  groupNames: null
+  kind: RoleBinding
+  metadata:
+    creationTimestamp: 2018-02-07T17:47:04Z
+    name: admin
+    namespace: fisdemogui
+    resourceVersion: "260837859"
+    selfLink: /oapi/v1/namespaces/fisdemogui/rolebindings/admin
+    uid: e8d0e403-0c2e-11e8-8448-52540064f8a5
+  roleRef:
+    name: admin
+  subjects:
+  - kind: User
+    name: pprosser
+  userNames:
+  - pprosser
+- apiVersion: v1
+  groupNames: null
+  kind: RoleBinding
+  metadata:
+    creationTimestamp: 2018-02-07T17:47:04Z
+    name: system:deployers
+    namespace: fisdemogui
+    resourceVersion: "260837853"
+    selfLink: /oapi/v1/namespaces/fisdemogui/rolebindings/system%3Adeployers
+    uid: e8cfc08a-0c2e-11e8-8448-52540064f8a5
+  roleRef:
+    name: system:deployer
+  subjects:
+  - kind: ServiceAccount
+    name: deployer
+    namespace: fisdemogui
+  userNames:
+  - system:serviceaccount:fisdemogui:deployer
+- apiVersion: v1
+  groupNames: null
+  kind: RoleBinding
+  metadata:
+    creationTimestamp: 2018-02-07T17:47:04Z
+    name: system:image-builders
+    namespace: fisdemogui
+    resourceVersion: "260837847"
+    selfLink: /oapi/v1/namespaces/fisdemogui/rolebindings/system%3Aimage-builders
+    uid: e8ccd95f-0c2e-11e8-8448-52540064f8a5
+  roleRef:
+    name: system:image-builder
+  subjects:
+  - kind: ServiceAccount
+    name: builder
+    namespace: fisdemogui
+  userNames:
+  - system:serviceaccount:fisdemogui:builder
+- apiVersion: v1
+  groupNames:
+  - system:serviceaccounts:fisdemogui
+  kind: RoleBinding
+  metadata:
+    creationTimestamp: 2018-02-07T17:47:04Z
+    name: system:image-pullers
+    namespace: fisdemogui
+    resourceVersion: "260837845"
+    selfLink: /oapi/v1/namespaces/fisdemogui/rolebindings/system%3Aimage-pullers
+    uid: e8cb7c24-0c2e-11e8-8448-52540064f8a5
+  roleRef:
+    name: system:image-puller
+  subjects:
+  - kind: SystemGroup
+    name: system:serviceaccounts:fisdemogui
+  userNames: null
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
