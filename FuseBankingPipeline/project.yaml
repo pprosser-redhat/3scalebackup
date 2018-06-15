@@ -1,0 +1,1961 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: project.yaml
+objects:
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    creationTimestamp: null
+    labels:
+      group: dub
+      project: dublindemo2
+      provider: fabric8
+      version: 0.0.1-SNAPSHOT
+    name: dublindemo2-s2i
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: dublindemo2:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      binary: {}
+      type: Binary
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: fis-java-openshift:2.0
+          namespace: openshift
+      type: Source
+    triggers: []
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    creationTimestamp: null
+    labels:
+      component: hellofrompod
+      group: quickstarts
+      project: hellofrompod
+      provider: s2i
+      template: s2i-spring-boot-camel
+      version: 1.0.0.redhat-000064
+    name: hellofrompod
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: hellofrompod:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      contextDir: /HelloFromPod
+      git:
+        ref: master
+        uri: http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git
+      type: Git
+    strategy:
+      sourceStrategy:
+        env:
+        - name: BUILD_LOGLEVEL
+          value: "5"
+        - name: ARTIFACT_DIR
+        - name: MAVEN_ARGS
+          value: package -DskipTests -Dfabric8.skip -e -B
+        - name: MAVEN_ARGS_APPEND
+        - name: MAVEN_MIRROR_URL
+          value: http://nexus2-sharedservicespersistent.apps.demolab.local/content/groups/public/
+        forcePull: true
+        from:
+          kind: ImageStreamTag
+          name: fis-java-openshift:2.0
+          namespace: openshift
+        incremental: true
+      type: Source
+    triggers:
+    - github:
+        secret: MAKExv3Sf4GA0DGr1MDG6SnKS2j5Y8bhdj5DhwOB
+      type: GitHub
+    - generic:
+        secret: MAKExv3Sf4GA0DGr1MDG6SnKS2j5Y8bhdj5DhwOB
+      type: Generic
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: Build
+  metadata:
+    annotations:
+      openshift.io/build-config.name: dublindemo2-s2i
+      openshift.io/build.number: "1"
+      openshift.io/build.pod-name: dublindemo2-s2i-1-build
+    creationTimestamp: null
+    labels:
+      buildconfig: dublindemo2-s2i
+      group: dub
+      openshift.io/build-config.name: dublindemo2-s2i
+      openshift.io/build.start-policy: Serial
+      project: dublindemo2
+      provider: fabric8
+      version: 0.0.1-SNAPSHOT
+    name: dublindemo2-s2i-1
+    ownerReferences:
+    - apiVersion: build.openshift.io/v1
+      controller: true
+      kind: BuildConfig
+      name: dublindemo2-s2i
+      uid: 3a329d5e-6fe1-11e8-937f-52540064f8a5
+  spec:
+    nodeSelector: null
+    output:
+      pushSecret:
+        name: builder-dockercfg-hhlbc
+      to:
+        kind: ImageStreamTag
+        name: dublindemo2:latest
+    postCommit: {}
+    resources: {}
+    serviceAccount: builder
+    source:
+      binary: {}
+      type: Binary
+    strategy:
+      sourceStrategy:
+        from:
+          kind: DockerImage
+          name: registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d
+      type: Source
+    triggeredBy: []
+  status:
+    config:
+      name: dublindemo2-s2i
+    output:
+      to:
+        imageDigest: sha256:722257585fc84f8aa35d5fc71148a1be3bee4000f7fe47d32d53907df5c56dff
+    outputDockerImageReference: docker-registry.default.svc:5000/fisbuild/dublindemo2:latest
+    phase: New
+    stages:
+    - durationMilliseconds: 2708
+      name: CommitContainer
+      startTime: 2018-06-14T14:43:04Z
+      steps:
+      - durationMilliseconds: 2708
+        name: CommitContainer
+        startTime: 2018-06-14T14:43:04Z
+    - durationMilliseconds: 3783
+      name: Assemble
+      startTime: 2018-06-14T14:43:03Z
+      steps:
+      - durationMilliseconds: 3783
+        name: AssembleBuildScripts
+        startTime: 2018-06-14T14:43:03Z
+    - durationMilliseconds: 2804
+      name: PushImage
+      startTime: 2018-06-14T14:43:07Z
+      steps:
+      - durationMilliseconds: 2804
+        name: PushImage
+        startTime: 2018-06-14T14:43:07Z
+- apiVersion: v1
+  kind: Build
+  metadata:
+    annotations:
+      openshift.io/build-config.name: hellofrompod
+      openshift.io/build.number: "1"
+      openshift.io/build.pod-name: hellofrompod-1-build
+    creationTimestamp: null
+    labels:
+      buildconfig: hellofrompod
+      component: hellofrompod
+      group: quickstarts
+      openshift.io/build-config.name: hellofrompod
+      openshift.io/build.start-policy: Serial
+      project: hellofrompod
+      provider: s2i
+      template: s2i-spring-boot-camel
+      version: 1.0.0.redhat-000064
+    name: hellofrompod-1
+    ownerReferences:
+    - apiVersion: build.openshift.io/v1
+      controller: true
+      kind: BuildConfig
+      name: hellofrompod
+      uid: 6d350962-6fe0-11e8-afe0-5254002f83b4
+  spec:
+    nodeSelector: null
+    output:
+      pushSecret:
+        name: builder-dockercfg-hhlbc
+      to:
+        kind: ImageStreamTag
+        name: hellofrompod:latest
+    postCommit: {}
+    resources: {}
+    revision:
+      git:
+        author:
+          email: pprosser@192.168.1.101
+          name: pprosser
+        commit: 31f1b337264c24ae6da7d075d900e1cf2ecf4cc7
+        committer:
+          email: pprosser@192.168.1.101
+          name: pprosser
+        message: Changed
+      type: Git
+    serviceAccount: builder
+    source:
+      contextDir: /HelloFromPod
+      git:
+        ref: master
+        uri: http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git
+      type: Git
+    strategy:
+      sourceStrategy:
+        env:
+        - name: BUILD_LOGLEVEL
+          value: "5"
+        - name: ARTIFACT_DIR
+        - name: MAVEN_ARGS
+          value: package -DskipTests -Dfabric8.skip -e -B
+        - name: MAVEN_ARGS_APPEND
+        - name: MAVEN_MIRROR_URL
+          value: http://nexus2-sharedservicespersistent.apps.demolab.local/content/groups/public/
+        forcePull: true
+        from:
+          kind: DockerImage
+          name: registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d
+        incremental: true
+      type: Source
+    triggeredBy:
+    - imageChangeBuild:
+        fromRef:
+          kind: ImageStreamTag
+          name: fis-java-openshift:2.0
+          namespace: openshift
+        imageID: registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d
+      message: Image change
+  status:
+    config:
+      name: hellofrompod
+    output:
+      to:
+        imageDigest: sha256:6b92bd3e439b4f86e679a5a17e0b2776d7fa48652cfddf7461f082a8788c7277
+    outputDockerImageReference: docker-registry.default.svc:5000/fisbuild/hellofrompod:latest
+    phase: New
+    stages:
+    - durationMilliseconds: 2308
+      name: FetchInputs
+      startTime: 2018-06-14T14:37:32Z
+      steps:
+      - durationMilliseconds: 2308
+        name: FetchGitSource
+        startTime: 2018-06-14T14:37:32Z
+    - durationMilliseconds: 78
+      name: PullImages
+      startTime: 2018-06-14T14:37:40Z
+      steps:
+      - durationMilliseconds: 78
+        name: PullPreviousImage
+        startTime: 2018-06-14T14:37:40Z
+    - durationMilliseconds: 5043
+      name: CommitContainer
+      startTime: 2018-06-14T14:38:24Z
+      steps:
+      - durationMilliseconds: 5043
+        name: CommitContainer
+        startTime: 2018-06-14T14:38:24Z
+    - durationMilliseconds: 49108
+      name: Assemble
+      startTime: 2018-06-14T14:37:40Z
+      steps:
+      - durationMilliseconds: 49108
+        name: AssembleBuildScripts
+        startTime: 2018-06-14T14:37:40Z
+    - durationMilliseconds: 8374
+      name: PushImage
+      startTime: 2018-06-14T14:38:29Z
+      steps:
+      - durationMilliseconds: 8374
+        name: PushImage
+        startTime: 2018-06-14T14:38:29Z
+- apiVersion: v1
+  kind: Build
+  metadata:
+    annotations:
+      openshift.io/build-config.name: hellofrompod
+      openshift.io/build.number: "2"
+      openshift.io/build.pod-name: hellofrompod-2-build
+    creationTimestamp: null
+    labels:
+      buildconfig: hellofrompod
+      component: hellofrompod
+      group: quickstarts
+      openshift.io/build-config.name: hellofrompod
+      openshift.io/build.start-policy: Serial
+      project: hellofrompod
+      provider: s2i
+      template: s2i-spring-boot-camel
+      version: 1.0.0.redhat-000064
+    name: hellofrompod-2
+    ownerReferences:
+    - apiVersion: build.openshift.io/v1
+      controller: true
+      kind: BuildConfig
+      name: hellofrompod
+      uid: 6d350962-6fe0-11e8-afe0-5254002f83b4
+  spec:
+    nodeSelector: null
+    output:
+      pushSecret:
+        name: builder-dockercfg-hhlbc
+      to:
+        kind: ImageStreamTag
+        name: hellofrompod:latest
+    postCommit: {}
+    resources: {}
+    revision:
+      git:
+        author: {}
+        committer: {}
+      type: Git
+    serviceAccount: builder
+    source:
+      contextDir: /HelloFromPod
+      git:
+        ref: master
+        uri: http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git
+      type: Git
+    strategy:
+      sourceStrategy:
+        env:
+        - name: BUILD_LOGLEVEL
+          value: "5"
+        - name: ARTIFACT_DIR
+        - name: MAVEN_ARGS
+          value: package -DskipTests -Dfabric8.skip -e -B
+        - name: MAVEN_ARGS_APPEND
+        - name: MAVEN_MIRROR_URL
+          value: http://nexus2-sharedservicespersistent.apps.demolab.local/content/groups/public/
+        forcePull: true
+        from:
+          kind: DockerImage
+          name: registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d
+        incremental: true
+      type: Source
+    triggeredBy:
+    - githubWebHook:
+        revision:
+          git:
+            author: {}
+            committer: {}
+          type: Git
+        secret: MAKExv3Sf4GA0DGr1MDG***
+      message: GitHub WebHook
+  status:
+    config:
+      name: hellofrompod
+    output:
+      to:
+        imageDigest: sha256:d44fe062ca2a1629004b6106573564d4109bd394e9a6c26d466b058d238e7b9e
+    outputDockerImageReference: docker-registry.default.svc:5000/fisbuild/hellofrompod:latest
+    phase: New
+    stages:
+    - durationMilliseconds: 3038
+      name: FetchInputs
+      startTime: 2018-06-14T14:50:54Z
+      steps:
+      - durationMilliseconds: 3038
+        name: FetchGitSource
+        startTime: 2018-06-14T14:50:54Z
+    - durationMilliseconds: 65
+      name: PullImages
+      startTime: 2018-06-14T14:51:04Z
+      steps:
+      - durationMilliseconds: 65
+        name: PullPreviousImage
+        startTime: 2018-06-14T14:51:04Z
+    - durationMilliseconds: 21559
+      name: RetrieveArtifacts
+      startTime: 2018-06-14T14:51:04Z
+      steps:
+      - durationMilliseconds: 21559
+        name: RetrievePreviousArtifacts
+        startTime: 2018-06-14T14:51:04Z
+    - durationMilliseconds: 7679
+      name: CommitContainer
+      startTime: 2018-06-14T14:51:35Z
+      steps:
+      - durationMilliseconds: 7679
+        name: CommitContainer
+        startTime: 2018-06-14T14:51:35Z
+    - durationMilliseconds: 16304
+      name: Assemble
+      startTime: 2018-06-14T14:51:26Z
+      steps:
+      - durationMilliseconds: 16304
+        name: AssembleBuildScripts
+        startTime: 2018-06-14T14:51:26Z
+    - durationMilliseconds: 13000
+      name: PushImage
+      startTime: 2018-06-14T14:51:43Z
+      steps:
+      - durationMilliseconds: 13000
+        name: PushImage
+        startTime: 2018-06-14T14:51:43Z
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    labels:
+      group: dub
+      project: dublindemo2
+      provider: fabric8
+      version: 0.0.1-SNAPSHOT
+    name: dublindemo2
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/fisbuild/dublindemo2:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    labels:
+      component: hellofrompod
+      group: quickstarts
+      project: hellofrompod
+      provider: s2i
+      template: s2i-spring-boot-camel
+      version: 1.0.0.redhat-000064
+    name: hellofrompod
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: docker-registry.default.svc:5000/fisbuild/hellofrompod:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      fabric8.io/git-branch: master
+      fabric8.io/git-commit: a7f2c44fcfb861d61b82e6066c3cc97e90041db2
+      fabric8.io/iconUrl: img/icons/camel.svg
+      fabric8.io/metrics-path: dashboard/file/camel-routes.json/?var-project=dublindemo2&var-version=0.0.1-SNAPSHOT
+    creationTimestamp: null
+    generation: 1
+    labels:
+      group: dub
+      project: dublindemo2
+      provider: fabric8
+      version: 0.0.1-SNAPSHOT
+    name: dublindemo2
+  spec:
+    replicas: 1
+    selector:
+      group: dub
+      project: dublindemo2
+      provider: fabric8
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 10800
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          fabric8.io/git-branch: master
+          fabric8.io/git-commit: a7f2c44fcfb861d61b82e6066c3cc97e90041db2
+          fabric8.io/iconUrl: img/icons/camel.svg
+          fabric8.io/metrics-path: dashboard/file/camel-routes.json/?var-project=dublindemo2&var-version=0.0.1-SNAPSHOT
+        creationTimestamp: null
+        labels:
+          group: dub
+          project: dublindemo2
+          provider: fabric8
+          version: 0.0.1-SNAPSHOT
+      spec:
+        containers:
+        - env:
+          - name: KUBERNETES_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: JAVA_APP_DIR
+            value: /deployments
+          image: docker-registry.default.svc:5000/fisbuild/dublindemo2@sha256:722257585fc84f8aa35d5fc71148a1be3bee4000f7fe47d32d53907df5c56dff
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 180
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: spring-boot
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          - containerPort: 9779
+            name: prometheus
+            protocol: TCP
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "1"
+            requests:
+              cpu: 200m
+          securityContext:
+            privileged: false
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - spring-boot
+        from:
+          kind: ImageStreamTag
+          name: dublindemo2:latest
+          namespace: fisbuild
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    labels:
+      component: hellofrompod
+      group: quickstarts
+      project: hellofrompod
+      provider: s2i
+      template: s2i-spring-boot-camel
+      version: 1.0.0.redhat-000064
+    name: hellofrompod
+  spec:
+    replicas: 2
+    selector:
+      component: hellofrompod
+      deploymentconfig: hellofrompod
+      group: quickstarts
+      project: hellofrompod
+      provider: s2i
+      version: 1.0.0.redhat-000064
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          component: hellofrompod
+          deploymentconfig: hellofrompod
+          group: quickstarts
+          project: hellofrompod
+          provider: s2i
+          version: 1.0.0.redhat-000064
+      spec:
+        containers:
+        - env:
+          - name: KUBERNETES_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          image: docker-registry.default.svc:5000/fisbuild/hellofrompod@sha256:d44fe062ca2a1629004b6106573564d4109bd394e9a6c26d466b058d238e7b9e
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 180
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: hellofrompod
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "1"
+            requests:
+              cpu: 200m
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - hellofrompod
+        from:
+          kind: ImageStreamTag
+          name: hellofrompod:latest
+          namespace: fisbuild
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Route
+  metadata:
+    annotations:
+      haproxy.router.openshift.io/balance: roundrobin
+    creationTimestamp: null
+    labels:
+      app: s2i-spring-boot-camel-with-nexus
+      component: hellofrompod
+      group: quickstarts
+      project: hellofrompod
+      provider: s2i
+      template: s2i-spring-boot-camel
+      version: 1.0.0.redhat-000064
+    name: hellofrompod
+  spec:
+    host: hellofrompod.apps.demolab.local
+    to:
+      kind: Service
+      name: hellofrompod
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: 2018-06-14T14:37:13Z
+        status: "True"
+        type: Admitted
+      host: hellofrompod.apps.demolab.local
+      routerName: router
+      wildcardPolicy: None
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      fabric8.io/git-branch: master
+      fabric8.io/git-commit: a7f2c44fcfb861d61b82e6066c3cc97e90041db2
+      fabric8.io/iconUrl: img/icons/camel.svg
+      fabric8.io/metrics-path: dashboard/file/camel-routes.json/?var-project=dublindemo2&var-version=0.0.1-SNAPSHOT
+      kubernetes.io/created-by: |
+        {"kind":"SerializedReference","apiVersion":"v1","reference":{"kind":"ReplicationController","namespace":"fisbuild","name":"dublindemo2-1","uid":"458a0d64-6fe1-11e8-9fd0-525400f31c93","apiVersion":"v1","resourceVersion":"406054945"}}
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: dublindemo2
+      openshift.io/deployment.name: dublindemo2-1
+      openshift.io/scc: restricted
+    creationTimestamp: null
+    generateName: dublindemo2-1-
+    labels:
+      deployment: dublindemo2-1
+      deploymentconfig: dublindemo2
+      group: dub
+      project: dublindemo2
+      provider: fabric8
+      version: 0.0.1-SNAPSHOT
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicationController
+      name: dublindemo2-1
+      uid: 458a0d64-6fe1-11e8-9fd0-525400f31c93
+  spec:
+    containers:
+    - env:
+      - name: KUBERNETES_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      - name: JAVA_APP_DIR
+        value: /deployments
+      image: docker-registry.default.svc:5000/fisbuild/dublindemo2@sha256:722257585fc84f8aa35d5fc71148a1be3bee4000f7fe47d32d53907df5c56dff
+      imagePullPolicy: Always
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: 8081
+          scheme: HTTP
+        initialDelaySeconds: 180
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: spring-boot
+      ports:
+      - containerPort: 8080
+        name: http
+        protocol: TCP
+      - containerPort: 9779
+        name: prometheus
+        protocol: TCP
+      - containerPort: 8778
+        name: jolokia
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: 8081
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: "1"
+        requests:
+          cpu: 200m
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+        privileged: false
+        runAsUser: 1000590000
+        seLinuxOptions:
+          level: s0:c24,c19
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-9zdjl
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    imagePullSecrets:
+    - name: default-dockercfg-hwbjq
+    nodeName: ocp-app-2.demolab.local
+    nodeSelector:
+      purpose: apps
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000590000
+      seLinuxOptions:
+        level: s0:c24,c19
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    volumes:
+    - name: default-token-9zdjl
+      secret:
+        defaultMode: 420
+        secretName: default-token-9zdjl
+  status:
+    phase: Pending
+    qosClass: Burstable
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      openshift.io/build.name: dublindemo2-s2i-1
+      openshift.io/scc: privileged
+      pod.alpha.kubernetes.io/init-containers: '[{"name":"git-clone","image":"openshift3/ose-sti-builder:v3.7.9","command":["openshift-git-clone"],"args":["--loglevel=0"],"env":[{"name":"BUILD","value":"{\"kind\":\"Build\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\"dublindemo2-s2i-1\",\"namespace\":\"fisbuild\",\"selfLink\":\"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/dublindemo2-s2i-1\",\"uid\":\"3ad18b8e-6fe1-11e8-937f-52540064f8a5\",\"resourceVersion\":\"406054838\",\"creationTimestamp\":\"2018-06-14T14:42:57Z\",\"labels\":{\"buildconfig\":\"dublindemo2-s2i\",\"group\":\"dub\",\"openshift.io/build-config.name\":\"dublindemo2-s2i\",\"openshift.io/build.start-policy\":\"Serial\",\"project\":\"dublindemo2\",\"provider\":\"fabric8\",\"version\":\"0.0.1-SNAPSHOT\"},\"annotations\":{\"openshift.io/build-config.name\":\"dublindemo2-s2i\",\"openshift.io/build.number\":\"1\"},\"ownerReferences\":[{\"apiVersion\":\"build.openshift.io/v1\",\"kind\":\"BuildConfig\",\"name\":\"dublindemo2-s2i\",\"uid\":\"3a329d5e-6fe1-11e8-937f-52540064f8a5\",\"controller\":true}]},\"spec\":{\"serviceAccount\":\"builder\",\"source\":{\"type\":\"Binary\",\"binary\":{}},\"strategy\":{\"type\":\"Source\",\"sourceStrategy\":{\"from\":{\"kind\":\"DockerImage\",\"name\":\"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d\"}}},\"output\":{\"to\":{\"kind\":\"DockerImage\",\"name\":\"docker-registry.default.svc:5000/fisbuild/dublindemo2:latest\"},\"pushSecret\":{\"name\":\"builder-dockercfg-hhlbc\"}},\"resources\":{},\"postCommit\":{},\"nodeSelector\":null,\"triggeredBy\":[]},\"status\":{\"phase\":\"New\",\"outputDockerImageReference\":\"docker-registry.default.svc:5000/fisbuild/dublindemo2:latest\",\"config\":{\"kind\":\"BuildConfig\",\"namespace\":\"fisbuild\",\"name\":\"dublindemo2-s2i\"},\"output\":{}}}\n"},{"name":"ORIGIN_VERSION","value":"v3.7.9"},{"name":"ALLOWED_UIDS","value":"1-"},{"name":"DROP_CAPS","value":"KILL,MKNOD,SETGID,SETUID"}],"resources":{},"volumeMounts":[{"name":"buildworkdir","mountPath":"/tmp/build"},{"name":"builder-token-6lbqb","readOnly":true,"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount"}],"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"FallbackToLogsOnError","imagePullPolicy":"IfNotPresent","securityContext":{"privileged":false},"stdin":true,"stdinOnce":true},{"name":"manage-dockerfile","image":"openshift3/ose-sti-builder:v3.7.9","command":["openshift-manage-dockerfile"],"args":["--loglevel=0"],"env":[{"name":"BUILD","value":"{\"kind\":\"Build\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\"dublindemo2-s2i-1\",\"namespace\":\"fisbuild\",\"selfLink\":\"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/dublindemo2-s2i-1\",\"uid\":\"3ad18b8e-6fe1-11e8-937f-52540064f8a5\",\"resourceVersion\":\"406054838\",\"creationTimestamp\":\"2018-06-14T14:42:57Z\",\"labels\":{\"buildconfig\":\"dublindemo2-s2i\",\"group\":\"dub\",\"openshift.io/build-config.name\":\"dublindemo2-s2i\",\"openshift.io/build.start-policy\":\"Serial\",\"project\":\"dublindemo2\",\"provider\":\"fabric8\",\"version\":\"0.0.1-SNAPSHOT\"},\"annotations\":{\"openshift.io/build-config.name\":\"dublindemo2-s2i\",\"openshift.io/build.number\":\"1\"},\"ownerReferences\":[{\"apiVersion\":\"build.openshift.io/v1\",\"kind\":\"BuildConfig\",\"name\":\"dublindemo2-s2i\",\"uid\":\"3a329d5e-6fe1-11e8-937f-52540064f8a5\",\"controller\":true}]},\"spec\":{\"serviceAccount\":\"builder\",\"source\":{\"type\":\"Binary\",\"binary\":{}},\"strategy\":{\"type\":\"Source\",\"sourceStrategy\":{\"from\":{\"kind\":\"DockerImage\",\"name\":\"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d\"}}},\"output\":{\"to\":{\"kind\":\"DockerImage\",\"name\":\"docker-registry.default.svc:5000/fisbuild/dublindemo2:latest\"},\"pushSecret\":{\"name\":\"builder-dockercfg-hhlbc\"}},\"resources\":{},\"postCommit\":{},\"nodeSelector\":null,\"triggeredBy\":[]},\"status\":{\"phase\":\"New\",\"outputDockerImageReference\":\"docker-registry.default.svc:5000/fisbuild/dublindemo2:latest\",\"config\":{\"kind\":\"BuildConfig\",\"namespace\":\"fisbuild\",\"name\":\"dublindemo2-s2i\"},\"output\":{}}}\n"},{"name":"ORIGIN_VERSION","value":"v3.7.9"},{"name":"ALLOWED_UIDS","value":"1-"},{"name":"DROP_CAPS","value":"KILL,MKNOD,SETGID,SETUID"}],"resources":{},"volumeMounts":[{"name":"buildworkdir","mountPath":"/tmp/build"},{"name":"builder-token-6lbqb","readOnly":true,"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount"}],"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"FallbackToLogsOnError","imagePullPolicy":"IfNotPresent","securityContext":{"privileged":false}}]'
+      pod.beta.kubernetes.io/init-containers: '[{"name":"git-clone","image":"openshift3/ose-sti-builder:v3.7.9","command":["openshift-git-clone"],"args":["--loglevel=0"],"env":[{"name":"BUILD","value":"{\"kind\":\"Build\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\"dublindemo2-s2i-1\",\"namespace\":\"fisbuild\",\"selfLink\":\"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/dublindemo2-s2i-1\",\"uid\":\"3ad18b8e-6fe1-11e8-937f-52540064f8a5\",\"resourceVersion\":\"406054838\",\"creationTimestamp\":\"2018-06-14T14:42:57Z\",\"labels\":{\"buildconfig\":\"dublindemo2-s2i\",\"group\":\"dub\",\"openshift.io/build-config.name\":\"dublindemo2-s2i\",\"openshift.io/build.start-policy\":\"Serial\",\"project\":\"dublindemo2\",\"provider\":\"fabric8\",\"version\":\"0.0.1-SNAPSHOT\"},\"annotations\":{\"openshift.io/build-config.name\":\"dublindemo2-s2i\",\"openshift.io/build.number\":\"1\"},\"ownerReferences\":[{\"apiVersion\":\"build.openshift.io/v1\",\"kind\":\"BuildConfig\",\"name\":\"dublindemo2-s2i\",\"uid\":\"3a329d5e-6fe1-11e8-937f-52540064f8a5\",\"controller\":true}]},\"spec\":{\"serviceAccount\":\"builder\",\"source\":{\"type\":\"Binary\",\"binary\":{}},\"strategy\":{\"type\":\"Source\",\"sourceStrategy\":{\"from\":{\"kind\":\"DockerImage\",\"name\":\"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d\"}}},\"output\":{\"to\":{\"kind\":\"DockerImage\",\"name\":\"docker-registry.default.svc:5000/fisbuild/dublindemo2:latest\"},\"pushSecret\":{\"name\":\"builder-dockercfg-hhlbc\"}},\"resources\":{},\"postCommit\":{},\"nodeSelector\":null,\"triggeredBy\":[]},\"status\":{\"phase\":\"New\",\"outputDockerImageReference\":\"docker-registry.default.svc:5000/fisbuild/dublindemo2:latest\",\"config\":{\"kind\":\"BuildConfig\",\"namespace\":\"fisbuild\",\"name\":\"dublindemo2-s2i\"},\"output\":{}}}\n"},{"name":"ORIGIN_VERSION","value":"v3.7.9"},{"name":"ALLOWED_UIDS","value":"1-"},{"name":"DROP_CAPS","value":"KILL,MKNOD,SETGID,SETUID"}],"resources":{},"volumeMounts":[{"name":"buildworkdir","mountPath":"/tmp/build"},{"name":"builder-token-6lbqb","readOnly":true,"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount"}],"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"FallbackToLogsOnError","imagePullPolicy":"IfNotPresent","securityContext":{"privileged":false},"stdin":true,"stdinOnce":true},{"name":"manage-dockerfile","image":"openshift3/ose-sti-builder:v3.7.9","command":["openshift-manage-dockerfile"],"args":["--loglevel=0"],"env":[{"name":"BUILD","value":"{\"kind\":\"Build\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\"dublindemo2-s2i-1\",\"namespace\":\"fisbuild\",\"selfLink\":\"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/dublindemo2-s2i-1\",\"uid\":\"3ad18b8e-6fe1-11e8-937f-52540064f8a5\",\"resourceVersion\":\"406054838\",\"creationTimestamp\":\"2018-06-14T14:42:57Z\",\"labels\":{\"buildconfig\":\"dublindemo2-s2i\",\"group\":\"dub\",\"openshift.io/build-config.name\":\"dublindemo2-s2i\",\"openshift.io/build.start-policy\":\"Serial\",\"project\":\"dublindemo2\",\"provider\":\"fabric8\",\"version\":\"0.0.1-SNAPSHOT\"},\"annotations\":{\"openshift.io/build-config.name\":\"dublindemo2-s2i\",\"openshift.io/build.number\":\"1\"},\"ownerReferences\":[{\"apiVersion\":\"build.openshift.io/v1\",\"kind\":\"BuildConfig\",\"name\":\"dublindemo2-s2i\",\"uid\":\"3a329d5e-6fe1-11e8-937f-52540064f8a5\",\"controller\":true}]},\"spec\":{\"serviceAccount\":\"builder\",\"source\":{\"type\":\"Binary\",\"binary\":{}},\"strategy\":{\"type\":\"Source\",\"sourceStrategy\":{\"from\":{\"kind\":\"DockerImage\",\"name\":\"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d\"}}},\"output\":{\"to\":{\"kind\":\"DockerImage\",\"name\":\"docker-registry.default.svc:5000/fisbuild/dublindemo2:latest\"},\"pushSecret\":{\"name\":\"builder-dockercfg-hhlbc\"}},\"resources\":{},\"postCommit\":{},\"nodeSelector\":null,\"triggeredBy\":[]},\"status\":{\"phase\":\"New\",\"outputDockerImageReference\":\"docker-registry.default.svc:5000/fisbuild/dublindemo2:latest\",\"config\":{\"kind\":\"BuildConfig\",\"namespace\":\"fisbuild\",\"name\":\"dublindemo2-s2i\"},\"output\":{}}}\n"},{"name":"ORIGIN_VERSION","value":"v3.7.9"},{"name":"ALLOWED_UIDS","value":"1-"},{"name":"DROP_CAPS","value":"KILL,MKNOD,SETGID,SETUID"}],"resources":{},"volumeMounts":[{"name":"buildworkdir","mountPath":"/tmp/build"},{"name":"builder-token-6lbqb","readOnly":true,"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount"}],"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"FallbackToLogsOnError","imagePullPolicy":"IfNotPresent","securityContext":{"privileged":false}}]'
+    creationTimestamp: null
+    labels:
+      openshift.io/build.name: dublindemo2-s2i-1
+    name: dublindemo2-s2i-1-build
+    ownerReferences:
+    - apiVersion: build.openshift.io/v1
+      controller: true
+      kind: Build
+      name: dublindemo2-s2i-1
+      uid: 3ad18b8e-6fe1-11e8-937f-52540064f8a5
+  spec:
+    containers:
+    - args:
+      - --loglevel=0
+      command:
+      - openshift-sti-build
+      env:
+      - name: BUILD
+        value: |
+          {"kind":"Build","apiVersion":"v1","metadata":{"name":"dublindemo2-s2i-1","namespace":"fisbuild","selfLink":"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/dublindemo2-s2i-1","uid":"3ad18b8e-6fe1-11e8-937f-52540064f8a5","resourceVersion":"406054838","creationTimestamp":"2018-06-14T14:42:57Z","labels":{"buildconfig":"dublindemo2-s2i","group":"dub","openshift.io/build-config.name":"dublindemo2-s2i","openshift.io/build.start-policy":"Serial","project":"dublindemo2","provider":"fabric8","version":"0.0.1-SNAPSHOT"},"annotations":{"openshift.io/build-config.name":"dublindemo2-s2i","openshift.io/build.number":"1"},"ownerReferences":[{"apiVersion":"build.openshift.io/v1","kind":"BuildConfig","name":"dublindemo2-s2i","uid":"3a329d5e-6fe1-11e8-937f-52540064f8a5","controller":true}]},"spec":{"serviceAccount":"builder","source":{"type":"Binary","binary":{}},"strategy":{"type":"Source","sourceStrategy":{"from":{"kind":"DockerImage","name":"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d"}}},"output":{"to":{"kind":"DockerImage","name":"docker-registry.default.svc:5000/fisbuild/dublindemo2:latest"},"pushSecret":{"name":"builder-dockercfg-hhlbc"}},"resources":{},"postCommit":{},"nodeSelector":null,"triggeredBy":[]},"status":{"phase":"New","outputDockerImageReference":"docker-registry.default.svc:5000/fisbuild/dublindemo2:latest","config":{"kind":"BuildConfig","namespace":"fisbuild","name":"dublindemo2-s2i"},"output":{}}}
+      - name: ORIGIN_VERSION
+        value: v3.7.9
+      - name: ALLOWED_UIDS
+        value: 1-
+      - name: DROP_CAPS
+        value: KILL,MKNOD,SETGID,SETUID
+      - name: PUSH_DOCKERCFG_PATH
+        value: /var/run/secrets/openshift.io/push
+      image: openshift3/ose-sti-builder:v3.7.9
+      imagePullPolicy: IfNotPresent
+      name: sti-build
+      resources: {}
+      securityContext:
+        privileged: true
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: FallbackToLogsOnError
+      volumeMounts:
+      - mountPath: /tmp/build
+        name: buildworkdir
+      - mountPath: /var/run/docker.sock
+        name: docker-socket
+      - mountPath: /var/run/crio.sock
+        name: crio-socket
+      - mountPath: /var/run/secrets/openshift.io/push
+        name: builder-dockercfg-hhlbc-push
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: builder-token-6lbqb
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    imagePullSecrets:
+    - name: builder-dockercfg-hhlbc
+    initContainers:
+    - args:
+      - --loglevel=0
+      command:
+      - openshift-git-clone
+      env:
+      - name: BUILD
+        value: |
+          {"kind":"Build","apiVersion":"v1","metadata":{"name":"dublindemo2-s2i-1","namespace":"fisbuild","selfLink":"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/dublindemo2-s2i-1","uid":"3ad18b8e-6fe1-11e8-937f-52540064f8a5","resourceVersion":"406054838","creationTimestamp":"2018-06-14T14:42:57Z","labels":{"buildconfig":"dublindemo2-s2i","group":"dub","openshift.io/build-config.name":"dublindemo2-s2i","openshift.io/build.start-policy":"Serial","project":"dublindemo2","provider":"fabric8","version":"0.0.1-SNAPSHOT"},"annotations":{"openshift.io/build-config.name":"dublindemo2-s2i","openshift.io/build.number":"1"},"ownerReferences":[{"apiVersion":"build.openshift.io/v1","kind":"BuildConfig","name":"dublindemo2-s2i","uid":"3a329d5e-6fe1-11e8-937f-52540064f8a5","controller":true}]},"spec":{"serviceAccount":"builder","source":{"type":"Binary","binary":{}},"strategy":{"type":"Source","sourceStrategy":{"from":{"kind":"DockerImage","name":"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d"}}},"output":{"to":{"kind":"DockerImage","name":"docker-registry.default.svc:5000/fisbuild/dublindemo2:latest"},"pushSecret":{"name":"builder-dockercfg-hhlbc"}},"resources":{},"postCommit":{},"nodeSelector":null,"triggeredBy":[]},"status":{"phase":"New","outputDockerImageReference":"docker-registry.default.svc:5000/fisbuild/dublindemo2:latest","config":{"kind":"BuildConfig","namespace":"fisbuild","name":"dublindemo2-s2i"},"output":{}}}
+      - name: ORIGIN_VERSION
+        value: v3.7.9
+      - name: ALLOWED_UIDS
+        value: 1-
+      - name: DROP_CAPS
+        value: KILL,MKNOD,SETGID,SETUID
+      image: openshift3/ose-sti-builder:v3.7.9
+      imagePullPolicy: IfNotPresent
+      name: git-clone
+      resources: {}
+      securityContext:
+        privileged: false
+      stdin: true
+      stdinOnce: true
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: FallbackToLogsOnError
+      volumeMounts:
+      - mountPath: /tmp/build
+        name: buildworkdir
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: builder-token-6lbqb
+        readOnly: true
+    - args:
+      - --loglevel=0
+      command:
+      - openshift-manage-dockerfile
+      env:
+      - name: BUILD
+        value: |
+          {"kind":"Build","apiVersion":"v1","metadata":{"name":"dublindemo2-s2i-1","namespace":"fisbuild","selfLink":"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/dublindemo2-s2i-1","uid":"3ad18b8e-6fe1-11e8-937f-52540064f8a5","resourceVersion":"406054838","creationTimestamp":"2018-06-14T14:42:57Z","labels":{"buildconfig":"dublindemo2-s2i","group":"dub","openshift.io/build-config.name":"dublindemo2-s2i","openshift.io/build.start-policy":"Serial","project":"dublindemo2","provider":"fabric8","version":"0.0.1-SNAPSHOT"},"annotations":{"openshift.io/build-config.name":"dublindemo2-s2i","openshift.io/build.number":"1"},"ownerReferences":[{"apiVersion":"build.openshift.io/v1","kind":"BuildConfig","name":"dublindemo2-s2i","uid":"3a329d5e-6fe1-11e8-937f-52540064f8a5","controller":true}]},"spec":{"serviceAccount":"builder","source":{"type":"Binary","binary":{}},"strategy":{"type":"Source","sourceStrategy":{"from":{"kind":"DockerImage","name":"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d"}}},"output":{"to":{"kind":"DockerImage","name":"docker-registry.default.svc:5000/fisbuild/dublindemo2:latest"},"pushSecret":{"name":"builder-dockercfg-hhlbc"}},"resources":{},"postCommit":{},"nodeSelector":null,"triggeredBy":[]},"status":{"phase":"New","outputDockerImageReference":"docker-registry.default.svc:5000/fisbuild/dublindemo2:latest","config":{"kind":"BuildConfig","namespace":"fisbuild","name":"dublindemo2-s2i"},"output":{}}}
+      - name: ORIGIN_VERSION
+        value: v3.7.9
+      - name: ALLOWED_UIDS
+        value: 1-
+      - name: DROP_CAPS
+        value: KILL,MKNOD,SETGID,SETUID
+      image: openshift3/ose-sti-builder:v3.7.9
+      imagePullPolicy: IfNotPresent
+      name: manage-dockerfile
+      resources: {}
+      securityContext:
+        privileged: false
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: FallbackToLogsOnError
+      volumeMounts:
+      - mountPath: /tmp/build
+        name: buildworkdir
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: builder-token-6lbqb
+        readOnly: true
+    nodeName: ocp-app-2.demolab.local
+    nodeSelector:
+      purpose: apps
+    restartPolicy: Never
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: builder
+    serviceAccountName: builder
+    terminationGracePeriodSeconds: 30
+    volumes:
+    - emptyDir: {}
+      name: buildworkdir
+    - hostPath:
+        path: /var/run/docker.sock
+      name: docker-socket
+    - hostPath:
+        path: /var/run/crio.sock
+      name: crio-socket
+    - name: builder-dockercfg-hhlbc-push
+      secret:
+        defaultMode: 384
+        secretName: builder-dockercfg-hhlbc
+    - name: builder-token-6lbqb
+      secret:
+        defaultMode: 420
+        secretName: builder-token-6lbqb
+  status:
+    phase: Pending
+    qosClass: BestEffort
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      openshift.io/build.name: hellofrompod-1
+      openshift.io/scc: privileged
+      pod.alpha.kubernetes.io/init-containers: '[{"name":"git-clone","image":"openshift3/ose-sti-builder:v3.7.9","command":["openshift-git-clone"],"args":["--loglevel=5"],"env":[{"name":"BUILD","value":"{\"kind\":\"Build\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\"hellofrompod-1\",\"namespace\":\"fisbuild\",\"selfLink\":\"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/hellofrompod-1\",\"uid\":\"6d3bd836-6fe0-11e8-9fd0-525400f31c93\",\"resourceVersion\":\"406053811\",\"creationTimestamp\":\"2018-06-14T14:37:13Z\",\"labels\":{\"buildconfig\":\"hellofrompod\",\"component\":\"hellofrompod\",\"group\":\"quickstarts\",\"openshift.io/build-config.name\":\"hellofrompod\",\"openshift.io/build.start-policy\":\"Serial\",\"project\":\"hellofrompod\",\"provider\":\"s2i\",\"template\":\"s2i-spring-boot-camel\",\"version\":\"1.0.0.redhat-000064\"},\"annotations\":{\"openshift.io/build-config.name\":\"hellofrompod\",\"openshift.io/build.number\":\"1\"},\"ownerReferences\":[{\"apiVersion\":\"build.openshift.io/v1\",\"kind\":\"BuildConfig\",\"name\":\"hellofrompod\",\"uid\":\"6d350962-6fe0-11e8-afe0-5254002f83b4\",\"controller\":true}]},\"spec\":{\"serviceAccount\":\"builder\",\"source\":{\"type\":\"Git\",\"git\":{\"uri\":\"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git\",\"ref\":\"master\"},\"contextDir\":\"/HelloFromPod\"},\"strategy\":{\"type\":\"Source\",\"sourceStrategy\":{\"from\":{\"kind\":\"DockerImage\",\"name\":\"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d\"},\"env\":[{\"name\":\"BUILD_LOGLEVEL\",\"value\":\"5\"},{\"name\":\"ARTIFACT_DIR\"},{\"name\":\"MAVEN_ARGS\",\"value\":\"package
+        -DskipTests -Dfabric8.skip -e -B\"},{\"name\":\"MAVEN_ARGS_APPEND\"},{\"name\":\"MAVEN_MIRROR_URL\",\"value\":\"http://nexus2-sharedservicespersistent.apps.demolab.local/content/groups/public/\"}],\"incremental\":true,\"forcePull\":true}},\"output\":{\"to\":{\"kind\":\"DockerImage\",\"name\":\"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest\"},\"pushSecret\":{\"name\":\"builder-dockercfg-hhlbc\"}},\"resources\":{},\"postCommit\":{},\"nodeSelector\":null,\"triggeredBy\":[{\"message\":\"Image
+        change\",\"imageChangeBuild\":{\"imageID\":\"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d\",\"fromRef\":{\"kind\":\"ImageStreamTag\",\"namespace\":\"openshift\",\"name\":\"fis-java-openshift:2.0\"}}}]},\"status\":{\"phase\":\"New\",\"outputDockerImageReference\":\"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest\",\"config\":{\"kind\":\"BuildConfig\",\"namespace\":\"fisbuild\",\"name\":\"hellofrompod\"},\"output\":{}}}\n"},{"name":"SOURCE_REPOSITORY","value":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git"},{"name":"SOURCE_URI","value":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git"},{"name":"SOURCE_CONTEXT_DIR","value":"/HelloFromPod"},{"name":"SOURCE_REF","value":"master"},{"name":"ORIGIN_VERSION","value":"v3.7.9"},{"name":"BUILD_LOGLEVEL","value":"5"},{"name":"ALLOWED_UIDS","value":"1-"},{"name":"DROP_CAPS","value":"KILL,MKNOD,SETGID,SETUID"}],"resources":{},"volumeMounts":[{"name":"buildworkdir","mountPath":"/tmp/build"},{"name":"builder-token-6lbqb","readOnly":true,"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount"}],"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"FallbackToLogsOnError","imagePullPolicy":"IfNotPresent","securityContext":{"privileged":false}},{"name":"manage-dockerfile","image":"openshift3/ose-sti-builder:v3.7.9","command":["openshift-manage-dockerfile"],"args":["--loglevel=5"],"env":[{"name":"BUILD","value":"{\"kind\":\"Build\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\"hellofrompod-1\",\"namespace\":\"fisbuild\",\"selfLink\":\"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/hellofrompod-1\",\"uid\":\"6d3bd836-6fe0-11e8-9fd0-525400f31c93\",\"resourceVersion\":\"406053811\",\"creationTimestamp\":\"2018-06-14T14:37:13Z\",\"labels\":{\"buildconfig\":\"hellofrompod\",\"component\":\"hellofrompod\",\"group\":\"quickstarts\",\"openshift.io/build-config.name\":\"hellofrompod\",\"openshift.io/build.start-policy\":\"Serial\",\"project\":\"hellofrompod\",\"provider\":\"s2i\",\"template\":\"s2i-spring-boot-camel\",\"version\":\"1.0.0.redhat-000064\"},\"annotations\":{\"openshift.io/build-config.name\":\"hellofrompod\",\"openshift.io/build.number\":\"1\"},\"ownerReferences\":[{\"apiVersion\":\"build.openshift.io/v1\",\"kind\":\"BuildConfig\",\"name\":\"hellofrompod\",\"uid\":\"6d350962-6fe0-11e8-afe0-5254002f83b4\",\"controller\":true}]},\"spec\":{\"serviceAccount\":\"builder\",\"source\":{\"type\":\"Git\",\"git\":{\"uri\":\"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git\",\"ref\":\"master\"},\"contextDir\":\"/HelloFromPod\"},\"strategy\":{\"type\":\"Source\",\"sourceStrategy\":{\"from\":{\"kind\":\"DockerImage\",\"name\":\"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d\"},\"env\":[{\"name\":\"BUILD_LOGLEVEL\",\"value\":\"5\"},{\"name\":\"ARTIFACT_DIR\"},{\"name\":\"MAVEN_ARGS\",\"value\":\"package
+        -DskipTests -Dfabric8.skip -e -B\"},{\"name\":\"MAVEN_ARGS_APPEND\"},{\"name\":\"MAVEN_MIRROR_URL\",\"value\":\"http://nexus2-sharedservicespersistent.apps.demolab.local/content/groups/public/\"}],\"incremental\":true,\"forcePull\":true}},\"output\":{\"to\":{\"kind\":\"DockerImage\",\"name\":\"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest\"},\"pushSecret\":{\"name\":\"builder-dockercfg-hhlbc\"}},\"resources\":{},\"postCommit\":{},\"nodeSelector\":null,\"triggeredBy\":[{\"message\":\"Image
+        change\",\"imageChangeBuild\":{\"imageID\":\"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d\",\"fromRef\":{\"kind\":\"ImageStreamTag\",\"namespace\":\"openshift\",\"name\":\"fis-java-openshift:2.0\"}}}]},\"status\":{\"phase\":\"New\",\"outputDockerImageReference\":\"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest\",\"config\":{\"kind\":\"BuildConfig\",\"namespace\":\"fisbuild\",\"name\":\"hellofrompod\"},\"output\":{}}}\n"},{"name":"SOURCE_REPOSITORY","value":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git"},{"name":"SOURCE_URI","value":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git"},{"name":"SOURCE_CONTEXT_DIR","value":"/HelloFromPod"},{"name":"SOURCE_REF","value":"master"},{"name":"ORIGIN_VERSION","value":"v3.7.9"},{"name":"BUILD_LOGLEVEL","value":"5"},{"name":"ALLOWED_UIDS","value":"1-"},{"name":"DROP_CAPS","value":"KILL,MKNOD,SETGID,SETUID"}],"resources":{},"volumeMounts":[{"name":"buildworkdir","mountPath":"/tmp/build"},{"name":"builder-token-6lbqb","readOnly":true,"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount"}],"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"FallbackToLogsOnError","imagePullPolicy":"IfNotPresent","securityContext":{"privileged":false}}]'
+      pod.beta.kubernetes.io/init-containers: '[{"name":"git-clone","image":"openshift3/ose-sti-builder:v3.7.9","command":["openshift-git-clone"],"args":["--loglevel=5"],"env":[{"name":"BUILD","value":"{\"kind\":\"Build\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\"hellofrompod-1\",\"namespace\":\"fisbuild\",\"selfLink\":\"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/hellofrompod-1\",\"uid\":\"6d3bd836-6fe0-11e8-9fd0-525400f31c93\",\"resourceVersion\":\"406053811\",\"creationTimestamp\":\"2018-06-14T14:37:13Z\",\"labels\":{\"buildconfig\":\"hellofrompod\",\"component\":\"hellofrompod\",\"group\":\"quickstarts\",\"openshift.io/build-config.name\":\"hellofrompod\",\"openshift.io/build.start-policy\":\"Serial\",\"project\":\"hellofrompod\",\"provider\":\"s2i\",\"template\":\"s2i-spring-boot-camel\",\"version\":\"1.0.0.redhat-000064\"},\"annotations\":{\"openshift.io/build-config.name\":\"hellofrompod\",\"openshift.io/build.number\":\"1\"},\"ownerReferences\":[{\"apiVersion\":\"build.openshift.io/v1\",\"kind\":\"BuildConfig\",\"name\":\"hellofrompod\",\"uid\":\"6d350962-6fe0-11e8-afe0-5254002f83b4\",\"controller\":true}]},\"spec\":{\"serviceAccount\":\"builder\",\"source\":{\"type\":\"Git\",\"git\":{\"uri\":\"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git\",\"ref\":\"master\"},\"contextDir\":\"/HelloFromPod\"},\"strategy\":{\"type\":\"Source\",\"sourceStrategy\":{\"from\":{\"kind\":\"DockerImage\",\"name\":\"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d\"},\"env\":[{\"name\":\"BUILD_LOGLEVEL\",\"value\":\"5\"},{\"name\":\"ARTIFACT_DIR\"},{\"name\":\"MAVEN_ARGS\",\"value\":\"package
+        -DskipTests -Dfabric8.skip -e -B\"},{\"name\":\"MAVEN_ARGS_APPEND\"},{\"name\":\"MAVEN_MIRROR_URL\",\"value\":\"http://nexus2-sharedservicespersistent.apps.demolab.local/content/groups/public/\"}],\"incremental\":true,\"forcePull\":true}},\"output\":{\"to\":{\"kind\":\"DockerImage\",\"name\":\"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest\"},\"pushSecret\":{\"name\":\"builder-dockercfg-hhlbc\"}},\"resources\":{},\"postCommit\":{},\"nodeSelector\":null,\"triggeredBy\":[{\"message\":\"Image
+        change\",\"imageChangeBuild\":{\"imageID\":\"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d\",\"fromRef\":{\"kind\":\"ImageStreamTag\",\"namespace\":\"openshift\",\"name\":\"fis-java-openshift:2.0\"}}}]},\"status\":{\"phase\":\"New\",\"outputDockerImageReference\":\"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest\",\"config\":{\"kind\":\"BuildConfig\",\"namespace\":\"fisbuild\",\"name\":\"hellofrompod\"},\"output\":{}}}\n"},{"name":"SOURCE_REPOSITORY","value":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git"},{"name":"SOURCE_URI","value":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git"},{"name":"SOURCE_CONTEXT_DIR","value":"/HelloFromPod"},{"name":"SOURCE_REF","value":"master"},{"name":"ORIGIN_VERSION","value":"v3.7.9"},{"name":"BUILD_LOGLEVEL","value":"5"},{"name":"ALLOWED_UIDS","value":"1-"},{"name":"DROP_CAPS","value":"KILL,MKNOD,SETGID,SETUID"}],"resources":{},"volumeMounts":[{"name":"buildworkdir","mountPath":"/tmp/build"},{"name":"builder-token-6lbqb","readOnly":true,"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount"}],"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"FallbackToLogsOnError","imagePullPolicy":"IfNotPresent","securityContext":{"privileged":false}},{"name":"manage-dockerfile","image":"openshift3/ose-sti-builder:v3.7.9","command":["openshift-manage-dockerfile"],"args":["--loglevel=5"],"env":[{"name":"BUILD","value":"{\"kind\":\"Build\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\"hellofrompod-1\",\"namespace\":\"fisbuild\",\"selfLink\":\"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/hellofrompod-1\",\"uid\":\"6d3bd836-6fe0-11e8-9fd0-525400f31c93\",\"resourceVersion\":\"406053811\",\"creationTimestamp\":\"2018-06-14T14:37:13Z\",\"labels\":{\"buildconfig\":\"hellofrompod\",\"component\":\"hellofrompod\",\"group\":\"quickstarts\",\"openshift.io/build-config.name\":\"hellofrompod\",\"openshift.io/build.start-policy\":\"Serial\",\"project\":\"hellofrompod\",\"provider\":\"s2i\",\"template\":\"s2i-spring-boot-camel\",\"version\":\"1.0.0.redhat-000064\"},\"annotations\":{\"openshift.io/build-config.name\":\"hellofrompod\",\"openshift.io/build.number\":\"1\"},\"ownerReferences\":[{\"apiVersion\":\"build.openshift.io/v1\",\"kind\":\"BuildConfig\",\"name\":\"hellofrompod\",\"uid\":\"6d350962-6fe0-11e8-afe0-5254002f83b4\",\"controller\":true}]},\"spec\":{\"serviceAccount\":\"builder\",\"source\":{\"type\":\"Git\",\"git\":{\"uri\":\"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git\",\"ref\":\"master\"},\"contextDir\":\"/HelloFromPod\"},\"strategy\":{\"type\":\"Source\",\"sourceStrategy\":{\"from\":{\"kind\":\"DockerImage\",\"name\":\"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d\"},\"env\":[{\"name\":\"BUILD_LOGLEVEL\",\"value\":\"5\"},{\"name\":\"ARTIFACT_DIR\"},{\"name\":\"MAVEN_ARGS\",\"value\":\"package
+        -DskipTests -Dfabric8.skip -e -B\"},{\"name\":\"MAVEN_ARGS_APPEND\"},{\"name\":\"MAVEN_MIRROR_URL\",\"value\":\"http://nexus2-sharedservicespersistent.apps.demolab.local/content/groups/public/\"}],\"incremental\":true,\"forcePull\":true}},\"output\":{\"to\":{\"kind\":\"DockerImage\",\"name\":\"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest\"},\"pushSecret\":{\"name\":\"builder-dockercfg-hhlbc\"}},\"resources\":{},\"postCommit\":{},\"nodeSelector\":null,\"triggeredBy\":[{\"message\":\"Image
+        change\",\"imageChangeBuild\":{\"imageID\":\"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d\",\"fromRef\":{\"kind\":\"ImageStreamTag\",\"namespace\":\"openshift\",\"name\":\"fis-java-openshift:2.0\"}}}]},\"status\":{\"phase\":\"New\",\"outputDockerImageReference\":\"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest\",\"config\":{\"kind\":\"BuildConfig\",\"namespace\":\"fisbuild\",\"name\":\"hellofrompod\"},\"output\":{}}}\n"},{"name":"SOURCE_REPOSITORY","value":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git"},{"name":"SOURCE_URI","value":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git"},{"name":"SOURCE_CONTEXT_DIR","value":"/HelloFromPod"},{"name":"SOURCE_REF","value":"master"},{"name":"ORIGIN_VERSION","value":"v3.7.9"},{"name":"BUILD_LOGLEVEL","value":"5"},{"name":"ALLOWED_UIDS","value":"1-"},{"name":"DROP_CAPS","value":"KILL,MKNOD,SETGID,SETUID"}],"resources":{},"volumeMounts":[{"name":"buildworkdir","mountPath":"/tmp/build"},{"name":"builder-token-6lbqb","readOnly":true,"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount"}],"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"FallbackToLogsOnError","imagePullPolicy":"IfNotPresent","securityContext":{"privileged":false}}]'
+    creationTimestamp: null
+    labels:
+      openshift.io/build.name: hellofrompod-1
+    name: hellofrompod-1-build
+    ownerReferences:
+    - apiVersion: build.openshift.io/v1
+      controller: true
+      kind: Build
+      name: hellofrompod-1
+      uid: 6d3bd836-6fe0-11e8-9fd0-525400f31c93
+  spec:
+    containers:
+    - args:
+      - --loglevel=5
+      command:
+      - openshift-sti-build
+      env:
+      - name: BUILD
+        value: |
+          {"kind":"Build","apiVersion":"v1","metadata":{"name":"hellofrompod-1","namespace":"fisbuild","selfLink":"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/hellofrompod-1","uid":"6d3bd836-6fe0-11e8-9fd0-525400f31c93","resourceVersion":"406053811","creationTimestamp":"2018-06-14T14:37:13Z","labels":{"buildconfig":"hellofrompod","component":"hellofrompod","group":"quickstarts","openshift.io/build-config.name":"hellofrompod","openshift.io/build.start-policy":"Serial","project":"hellofrompod","provider":"s2i","template":"s2i-spring-boot-camel","version":"1.0.0.redhat-000064"},"annotations":{"openshift.io/build-config.name":"hellofrompod","openshift.io/build.number":"1"},"ownerReferences":[{"apiVersion":"build.openshift.io/v1","kind":"BuildConfig","name":"hellofrompod","uid":"6d350962-6fe0-11e8-afe0-5254002f83b4","controller":true}]},"spec":{"serviceAccount":"builder","source":{"type":"Git","git":{"uri":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git","ref":"master"},"contextDir":"/HelloFromPod"},"strategy":{"type":"Source","sourceStrategy":{"from":{"kind":"DockerImage","name":"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d"},"env":[{"name":"BUILD_LOGLEVEL","value":"5"},{"name":"ARTIFACT_DIR"},{"name":"MAVEN_ARGS","value":"package -DskipTests -Dfabric8.skip -e -B"},{"name":"MAVEN_ARGS_APPEND"},{"name":"MAVEN_MIRROR_URL","value":"http://nexus2-sharedservicespersistent.apps.demolab.local/content/groups/public/"}],"incremental":true,"forcePull":true}},"output":{"to":{"kind":"DockerImage","name":"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest"},"pushSecret":{"name":"builder-dockercfg-hhlbc"}},"resources":{},"postCommit":{},"nodeSelector":null,"triggeredBy":[{"message":"Image change","imageChangeBuild":{"imageID":"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d","fromRef":{"kind":"ImageStreamTag","namespace":"openshift","name":"fis-java-openshift:2.0"}}}]},"status":{"phase":"New","outputDockerImageReference":"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest","config":{"kind":"BuildConfig","namespace":"fisbuild","name":"hellofrompod"},"output":{}}}
+      - name: SOURCE_REPOSITORY
+        value: http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git
+      - name: SOURCE_URI
+        value: http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git
+      - name: SOURCE_CONTEXT_DIR
+        value: /HelloFromPod
+      - name: SOURCE_REF
+        value: master
+      - name: ORIGIN_VERSION
+        value: v3.7.9
+      - name: BUILD_LOGLEVEL
+        value: "5"
+      - name: ALLOWED_UIDS
+        value: 1-
+      - name: DROP_CAPS
+        value: KILL,MKNOD,SETGID,SETUID
+      - name: PUSH_DOCKERCFG_PATH
+        value: /var/run/secrets/openshift.io/push
+      image: openshift3/ose-sti-builder:v3.7.9
+      imagePullPolicy: IfNotPresent
+      name: sti-build
+      resources: {}
+      securityContext:
+        privileged: true
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: FallbackToLogsOnError
+      volumeMounts:
+      - mountPath: /tmp/build
+        name: buildworkdir
+      - mountPath: /var/run/docker.sock
+        name: docker-socket
+      - mountPath: /var/run/crio.sock
+        name: crio-socket
+      - mountPath: /var/run/secrets/openshift.io/push
+        name: builder-dockercfg-hhlbc-push
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: builder-token-6lbqb
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    imagePullSecrets:
+    - name: builder-dockercfg-hhlbc
+    initContainers:
+    - args:
+      - --loglevel=5
+      command:
+      - openshift-git-clone
+      env:
+      - name: BUILD
+        value: |
+          {"kind":"Build","apiVersion":"v1","metadata":{"name":"hellofrompod-1","namespace":"fisbuild","selfLink":"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/hellofrompod-1","uid":"6d3bd836-6fe0-11e8-9fd0-525400f31c93","resourceVersion":"406053811","creationTimestamp":"2018-06-14T14:37:13Z","labels":{"buildconfig":"hellofrompod","component":"hellofrompod","group":"quickstarts","openshift.io/build-config.name":"hellofrompod","openshift.io/build.start-policy":"Serial","project":"hellofrompod","provider":"s2i","template":"s2i-spring-boot-camel","version":"1.0.0.redhat-000064"},"annotations":{"openshift.io/build-config.name":"hellofrompod","openshift.io/build.number":"1"},"ownerReferences":[{"apiVersion":"build.openshift.io/v1","kind":"BuildConfig","name":"hellofrompod","uid":"6d350962-6fe0-11e8-afe0-5254002f83b4","controller":true}]},"spec":{"serviceAccount":"builder","source":{"type":"Git","git":{"uri":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git","ref":"master"},"contextDir":"/HelloFromPod"},"strategy":{"type":"Source","sourceStrategy":{"from":{"kind":"DockerImage","name":"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d"},"env":[{"name":"BUILD_LOGLEVEL","value":"5"},{"name":"ARTIFACT_DIR"},{"name":"MAVEN_ARGS","value":"package -DskipTests -Dfabric8.skip -e -B"},{"name":"MAVEN_ARGS_APPEND"},{"name":"MAVEN_MIRROR_URL","value":"http://nexus2-sharedservicespersistent.apps.demolab.local/content/groups/public/"}],"incremental":true,"forcePull":true}},"output":{"to":{"kind":"DockerImage","name":"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest"},"pushSecret":{"name":"builder-dockercfg-hhlbc"}},"resources":{},"postCommit":{},"nodeSelector":null,"triggeredBy":[{"message":"Image change","imageChangeBuild":{"imageID":"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d","fromRef":{"kind":"ImageStreamTag","namespace":"openshift","name":"fis-java-openshift:2.0"}}}]},"status":{"phase":"New","outputDockerImageReference":"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest","config":{"kind":"BuildConfig","namespace":"fisbuild","name":"hellofrompod"},"output":{}}}
+      - name: SOURCE_REPOSITORY
+        value: http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git
+      - name: SOURCE_URI
+        value: http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git
+      - name: SOURCE_CONTEXT_DIR
+        value: /HelloFromPod
+      - name: SOURCE_REF
+        value: master
+      - name: ORIGIN_VERSION
+        value: v3.7.9
+      - name: BUILD_LOGLEVEL
+        value: "5"
+      - name: ALLOWED_UIDS
+        value: 1-
+      - name: DROP_CAPS
+        value: KILL,MKNOD,SETGID,SETUID
+      image: openshift3/ose-sti-builder:v3.7.9
+      imagePullPolicy: IfNotPresent
+      name: git-clone
+      resources: {}
+      securityContext:
+        privileged: false
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: FallbackToLogsOnError
+      volumeMounts:
+      - mountPath: /tmp/build
+        name: buildworkdir
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: builder-token-6lbqb
+        readOnly: true
+    - args:
+      - --loglevel=5
+      command:
+      - openshift-manage-dockerfile
+      env:
+      - name: BUILD
+        value: |
+          {"kind":"Build","apiVersion":"v1","metadata":{"name":"hellofrompod-1","namespace":"fisbuild","selfLink":"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/hellofrompod-1","uid":"6d3bd836-6fe0-11e8-9fd0-525400f31c93","resourceVersion":"406053811","creationTimestamp":"2018-06-14T14:37:13Z","labels":{"buildconfig":"hellofrompod","component":"hellofrompod","group":"quickstarts","openshift.io/build-config.name":"hellofrompod","openshift.io/build.start-policy":"Serial","project":"hellofrompod","provider":"s2i","template":"s2i-spring-boot-camel","version":"1.0.0.redhat-000064"},"annotations":{"openshift.io/build-config.name":"hellofrompod","openshift.io/build.number":"1"},"ownerReferences":[{"apiVersion":"build.openshift.io/v1","kind":"BuildConfig","name":"hellofrompod","uid":"6d350962-6fe0-11e8-afe0-5254002f83b4","controller":true}]},"spec":{"serviceAccount":"builder","source":{"type":"Git","git":{"uri":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git","ref":"master"},"contextDir":"/HelloFromPod"},"strategy":{"type":"Source","sourceStrategy":{"from":{"kind":"DockerImage","name":"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d"},"env":[{"name":"BUILD_LOGLEVEL","value":"5"},{"name":"ARTIFACT_DIR"},{"name":"MAVEN_ARGS","value":"package -DskipTests -Dfabric8.skip -e -B"},{"name":"MAVEN_ARGS_APPEND"},{"name":"MAVEN_MIRROR_URL","value":"http://nexus2-sharedservicespersistent.apps.demolab.local/content/groups/public/"}],"incremental":true,"forcePull":true}},"output":{"to":{"kind":"DockerImage","name":"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest"},"pushSecret":{"name":"builder-dockercfg-hhlbc"}},"resources":{},"postCommit":{},"nodeSelector":null,"triggeredBy":[{"message":"Image change","imageChangeBuild":{"imageID":"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d","fromRef":{"kind":"ImageStreamTag","namespace":"openshift","name":"fis-java-openshift:2.0"}}}]},"status":{"phase":"New","outputDockerImageReference":"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest","config":{"kind":"BuildConfig","namespace":"fisbuild","name":"hellofrompod"},"output":{}}}
+      - name: SOURCE_REPOSITORY
+        value: http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git
+      - name: SOURCE_URI
+        value: http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git
+      - name: SOURCE_CONTEXT_DIR
+        value: /HelloFromPod
+      - name: SOURCE_REF
+        value: master
+      - name: ORIGIN_VERSION
+        value: v3.7.9
+      - name: BUILD_LOGLEVEL
+        value: "5"
+      - name: ALLOWED_UIDS
+        value: 1-
+      - name: DROP_CAPS
+        value: KILL,MKNOD,SETGID,SETUID
+      image: openshift3/ose-sti-builder:v3.7.9
+      imagePullPolicy: IfNotPresent
+      name: manage-dockerfile
+      resources: {}
+      securityContext:
+        privileged: false
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: FallbackToLogsOnError
+      volumeMounts:
+      - mountPath: /tmp/build
+        name: buildworkdir
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: builder-token-6lbqb
+        readOnly: true
+    nodeName: ocp-app-3.demolab.local
+    nodeSelector:
+      purpose: apps
+    restartPolicy: Never
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: builder
+    serviceAccountName: builder
+    terminationGracePeriodSeconds: 30
+    volumes:
+    - emptyDir: {}
+      name: buildworkdir
+    - hostPath:
+        path: /var/run/docker.sock
+      name: docker-socket
+    - hostPath:
+        path: /var/run/crio.sock
+      name: crio-socket
+    - name: builder-dockercfg-hhlbc-push
+      secret:
+        defaultMode: 384
+        secretName: builder-dockercfg-hhlbc
+    - name: builder-token-6lbqb
+      secret:
+        defaultMode: 420
+        secretName: builder-token-6lbqb
+  status:
+    phase: Pending
+    qosClass: BestEffort
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      openshift.io/build.name: hellofrompod-2
+      openshift.io/scc: privileged
+      pod.alpha.kubernetes.io/init-containers: '[{"name":"git-clone","image":"openshift3/ose-sti-builder:v3.7.9","command":["openshift-git-clone"],"args":["--loglevel=5"],"env":[{"name":"BUILD","value":"{\"kind\":\"Build\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\"hellofrompod-2\",\"namespace\":\"fisbuild\",\"selfLink\":\"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/hellofrompod-2\",\"uid\":\"54e1bfb8-6fe2-11e8-afe0-5254002f83b4\",\"resourceVersion\":\"406056234\",\"creationTimestamp\":\"2018-06-14T14:50:51Z\",\"labels\":{\"buildconfig\":\"hellofrompod\",\"component\":\"hellofrompod\",\"group\":\"quickstarts\",\"openshift.io/build-config.name\":\"hellofrompod\",\"openshift.io/build.start-policy\":\"Serial\",\"project\":\"hellofrompod\",\"provider\":\"s2i\",\"template\":\"s2i-spring-boot-camel\",\"version\":\"1.0.0.redhat-000064\"},\"annotations\":{\"openshift.io/build-config.name\":\"hellofrompod\",\"openshift.io/build.number\":\"2\"},\"ownerReferences\":[{\"apiVersion\":\"build.openshift.io/v1\",\"kind\":\"BuildConfig\",\"name\":\"hellofrompod\",\"uid\":\"6d350962-6fe0-11e8-afe0-5254002f83b4\",\"controller\":true}]},\"spec\":{\"serviceAccount\":\"builder\",\"source\":{\"type\":\"Git\",\"git\":{\"uri\":\"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git\",\"ref\":\"master\"},\"contextDir\":\"/HelloFromPod\"},\"revision\":{\"type\":\"Git\",\"git\":{\"author\":{},\"committer\":{}}},\"strategy\":{\"type\":\"Source\",\"sourceStrategy\":{\"from\":{\"kind\":\"DockerImage\",\"name\":\"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d\"},\"env\":[{\"name\":\"BUILD_LOGLEVEL\",\"value\":\"5\"},{\"name\":\"ARTIFACT_DIR\"},{\"name\":\"MAVEN_ARGS\",\"value\":\"package
+        -DskipTests -Dfabric8.skip -e -B\"},{\"name\":\"MAVEN_ARGS_APPEND\"},{\"name\":\"MAVEN_MIRROR_URL\",\"value\":\"http://nexus2-sharedservicespersistent.apps.demolab.local/content/groups/public/\"}],\"incremental\":true,\"forcePull\":true}},\"output\":{\"to\":{\"kind\":\"DockerImage\",\"name\":\"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest\"},\"pushSecret\":{\"name\":\"builder-dockercfg-hhlbc\"}},\"resources\":{},\"postCommit\":{},\"nodeSelector\":null,\"triggeredBy\":[{\"message\":\"GitHub
+        WebHook\",\"githubWebHook\":{\"revision\":{\"type\":\"Git\",\"git\":{\"author\":{},\"committer\":{}}},\"secret\":\"MAKExv3Sf4GA0DGr1MDG***\"}}]},\"status\":{\"phase\":\"New\",\"outputDockerImageReference\":\"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest\",\"config\":{\"kind\":\"BuildConfig\",\"namespace\":\"fisbuild\",\"name\":\"hellofrompod\"},\"output\":{}}}\n"},{"name":"SOURCE_REPOSITORY","value":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git"},{"name":"SOURCE_URI","value":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git"},{"name":"SOURCE_CONTEXT_DIR","value":"/HelloFromPod"},{"name":"SOURCE_REF","value":"master"},{"name":"ORIGIN_VERSION","value":"v3.7.9"},{"name":"BUILD_LOGLEVEL","value":"5"},{"name":"ALLOWED_UIDS","value":"1-"},{"name":"DROP_CAPS","value":"KILL,MKNOD,SETGID,SETUID"}],"resources":{},"volumeMounts":[{"name":"buildworkdir","mountPath":"/tmp/build"},{"name":"builder-token-6lbqb","readOnly":true,"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount"}],"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"FallbackToLogsOnError","imagePullPolicy":"IfNotPresent","securityContext":{"privileged":false}},{"name":"manage-dockerfile","image":"openshift3/ose-sti-builder:v3.7.9","command":["openshift-manage-dockerfile"],"args":["--loglevel=5"],"env":[{"name":"BUILD","value":"{\"kind\":\"Build\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\"hellofrompod-2\",\"namespace\":\"fisbuild\",\"selfLink\":\"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/hellofrompod-2\",\"uid\":\"54e1bfb8-6fe2-11e8-afe0-5254002f83b4\",\"resourceVersion\":\"406056234\",\"creationTimestamp\":\"2018-06-14T14:50:51Z\",\"labels\":{\"buildconfig\":\"hellofrompod\",\"component\":\"hellofrompod\",\"group\":\"quickstarts\",\"openshift.io/build-config.name\":\"hellofrompod\",\"openshift.io/build.start-policy\":\"Serial\",\"project\":\"hellofrompod\",\"provider\":\"s2i\",\"template\":\"s2i-spring-boot-camel\",\"version\":\"1.0.0.redhat-000064\"},\"annotations\":{\"openshift.io/build-config.name\":\"hellofrompod\",\"openshift.io/build.number\":\"2\"},\"ownerReferences\":[{\"apiVersion\":\"build.openshift.io/v1\",\"kind\":\"BuildConfig\",\"name\":\"hellofrompod\",\"uid\":\"6d350962-6fe0-11e8-afe0-5254002f83b4\",\"controller\":true}]},\"spec\":{\"serviceAccount\":\"builder\",\"source\":{\"type\":\"Git\",\"git\":{\"uri\":\"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git\",\"ref\":\"master\"},\"contextDir\":\"/HelloFromPod\"},\"revision\":{\"type\":\"Git\",\"git\":{\"author\":{},\"committer\":{}}},\"strategy\":{\"type\":\"Source\",\"sourceStrategy\":{\"from\":{\"kind\":\"DockerImage\",\"name\":\"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d\"},\"env\":[{\"name\":\"BUILD_LOGLEVEL\",\"value\":\"5\"},{\"name\":\"ARTIFACT_DIR\"},{\"name\":\"MAVEN_ARGS\",\"value\":\"package
+        -DskipTests -Dfabric8.skip -e -B\"},{\"name\":\"MAVEN_ARGS_APPEND\"},{\"name\":\"MAVEN_MIRROR_URL\",\"value\":\"http://nexus2-sharedservicespersistent.apps.demolab.local/content/groups/public/\"}],\"incremental\":true,\"forcePull\":true}},\"output\":{\"to\":{\"kind\":\"DockerImage\",\"name\":\"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest\"},\"pushSecret\":{\"name\":\"builder-dockercfg-hhlbc\"}},\"resources\":{},\"postCommit\":{},\"nodeSelector\":null,\"triggeredBy\":[{\"message\":\"GitHub
+        WebHook\",\"githubWebHook\":{\"revision\":{\"type\":\"Git\",\"git\":{\"author\":{},\"committer\":{}}},\"secret\":\"MAKExv3Sf4GA0DGr1MDG***\"}}]},\"status\":{\"phase\":\"New\",\"outputDockerImageReference\":\"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest\",\"config\":{\"kind\":\"BuildConfig\",\"namespace\":\"fisbuild\",\"name\":\"hellofrompod\"},\"output\":{}}}\n"},{"name":"SOURCE_REPOSITORY","value":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git"},{"name":"SOURCE_URI","value":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git"},{"name":"SOURCE_CONTEXT_DIR","value":"/HelloFromPod"},{"name":"SOURCE_REF","value":"master"},{"name":"ORIGIN_VERSION","value":"v3.7.9"},{"name":"BUILD_LOGLEVEL","value":"5"},{"name":"ALLOWED_UIDS","value":"1-"},{"name":"DROP_CAPS","value":"KILL,MKNOD,SETGID,SETUID"}],"resources":{},"volumeMounts":[{"name":"buildworkdir","mountPath":"/tmp/build"},{"name":"builder-token-6lbqb","readOnly":true,"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount"}],"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"FallbackToLogsOnError","imagePullPolicy":"IfNotPresent","securityContext":{"privileged":false}}]'
+      pod.beta.kubernetes.io/init-containers: '[{"name":"git-clone","image":"openshift3/ose-sti-builder:v3.7.9","command":["openshift-git-clone"],"args":["--loglevel=5"],"env":[{"name":"BUILD","value":"{\"kind\":\"Build\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\"hellofrompod-2\",\"namespace\":\"fisbuild\",\"selfLink\":\"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/hellofrompod-2\",\"uid\":\"54e1bfb8-6fe2-11e8-afe0-5254002f83b4\",\"resourceVersion\":\"406056234\",\"creationTimestamp\":\"2018-06-14T14:50:51Z\",\"labels\":{\"buildconfig\":\"hellofrompod\",\"component\":\"hellofrompod\",\"group\":\"quickstarts\",\"openshift.io/build-config.name\":\"hellofrompod\",\"openshift.io/build.start-policy\":\"Serial\",\"project\":\"hellofrompod\",\"provider\":\"s2i\",\"template\":\"s2i-spring-boot-camel\",\"version\":\"1.0.0.redhat-000064\"},\"annotations\":{\"openshift.io/build-config.name\":\"hellofrompod\",\"openshift.io/build.number\":\"2\"},\"ownerReferences\":[{\"apiVersion\":\"build.openshift.io/v1\",\"kind\":\"BuildConfig\",\"name\":\"hellofrompod\",\"uid\":\"6d350962-6fe0-11e8-afe0-5254002f83b4\",\"controller\":true}]},\"spec\":{\"serviceAccount\":\"builder\",\"source\":{\"type\":\"Git\",\"git\":{\"uri\":\"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git\",\"ref\":\"master\"},\"contextDir\":\"/HelloFromPod\"},\"revision\":{\"type\":\"Git\",\"git\":{\"author\":{},\"committer\":{}}},\"strategy\":{\"type\":\"Source\",\"sourceStrategy\":{\"from\":{\"kind\":\"DockerImage\",\"name\":\"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d\"},\"env\":[{\"name\":\"BUILD_LOGLEVEL\",\"value\":\"5\"},{\"name\":\"ARTIFACT_DIR\"},{\"name\":\"MAVEN_ARGS\",\"value\":\"package
+        -DskipTests -Dfabric8.skip -e -B\"},{\"name\":\"MAVEN_ARGS_APPEND\"},{\"name\":\"MAVEN_MIRROR_URL\",\"value\":\"http://nexus2-sharedservicespersistent.apps.demolab.local/content/groups/public/\"}],\"incremental\":true,\"forcePull\":true}},\"output\":{\"to\":{\"kind\":\"DockerImage\",\"name\":\"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest\"},\"pushSecret\":{\"name\":\"builder-dockercfg-hhlbc\"}},\"resources\":{},\"postCommit\":{},\"nodeSelector\":null,\"triggeredBy\":[{\"message\":\"GitHub
+        WebHook\",\"githubWebHook\":{\"revision\":{\"type\":\"Git\",\"git\":{\"author\":{},\"committer\":{}}},\"secret\":\"MAKExv3Sf4GA0DGr1MDG***\"}}]},\"status\":{\"phase\":\"New\",\"outputDockerImageReference\":\"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest\",\"config\":{\"kind\":\"BuildConfig\",\"namespace\":\"fisbuild\",\"name\":\"hellofrompod\"},\"output\":{}}}\n"},{"name":"SOURCE_REPOSITORY","value":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git"},{"name":"SOURCE_URI","value":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git"},{"name":"SOURCE_CONTEXT_DIR","value":"/HelloFromPod"},{"name":"SOURCE_REF","value":"master"},{"name":"ORIGIN_VERSION","value":"v3.7.9"},{"name":"BUILD_LOGLEVEL","value":"5"},{"name":"ALLOWED_UIDS","value":"1-"},{"name":"DROP_CAPS","value":"KILL,MKNOD,SETGID,SETUID"}],"resources":{},"volumeMounts":[{"name":"buildworkdir","mountPath":"/tmp/build"},{"name":"builder-token-6lbqb","readOnly":true,"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount"}],"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"FallbackToLogsOnError","imagePullPolicy":"IfNotPresent","securityContext":{"privileged":false}},{"name":"manage-dockerfile","image":"openshift3/ose-sti-builder:v3.7.9","command":["openshift-manage-dockerfile"],"args":["--loglevel=5"],"env":[{"name":"BUILD","value":"{\"kind\":\"Build\",\"apiVersion\":\"v1\",\"metadata\":{\"name\":\"hellofrompod-2\",\"namespace\":\"fisbuild\",\"selfLink\":\"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/hellofrompod-2\",\"uid\":\"54e1bfb8-6fe2-11e8-afe0-5254002f83b4\",\"resourceVersion\":\"406056234\",\"creationTimestamp\":\"2018-06-14T14:50:51Z\",\"labels\":{\"buildconfig\":\"hellofrompod\",\"component\":\"hellofrompod\",\"group\":\"quickstarts\",\"openshift.io/build-config.name\":\"hellofrompod\",\"openshift.io/build.start-policy\":\"Serial\",\"project\":\"hellofrompod\",\"provider\":\"s2i\",\"template\":\"s2i-spring-boot-camel\",\"version\":\"1.0.0.redhat-000064\"},\"annotations\":{\"openshift.io/build-config.name\":\"hellofrompod\",\"openshift.io/build.number\":\"2\"},\"ownerReferences\":[{\"apiVersion\":\"build.openshift.io/v1\",\"kind\":\"BuildConfig\",\"name\":\"hellofrompod\",\"uid\":\"6d350962-6fe0-11e8-afe0-5254002f83b4\",\"controller\":true}]},\"spec\":{\"serviceAccount\":\"builder\",\"source\":{\"type\":\"Git\",\"git\":{\"uri\":\"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git\",\"ref\":\"master\"},\"contextDir\":\"/HelloFromPod\"},\"revision\":{\"type\":\"Git\",\"git\":{\"author\":{},\"committer\":{}}},\"strategy\":{\"type\":\"Source\",\"sourceStrategy\":{\"from\":{\"kind\":\"DockerImage\",\"name\":\"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d\"},\"env\":[{\"name\":\"BUILD_LOGLEVEL\",\"value\":\"5\"},{\"name\":\"ARTIFACT_DIR\"},{\"name\":\"MAVEN_ARGS\",\"value\":\"package
+        -DskipTests -Dfabric8.skip -e -B\"},{\"name\":\"MAVEN_ARGS_APPEND\"},{\"name\":\"MAVEN_MIRROR_URL\",\"value\":\"http://nexus2-sharedservicespersistent.apps.demolab.local/content/groups/public/\"}],\"incremental\":true,\"forcePull\":true}},\"output\":{\"to\":{\"kind\":\"DockerImage\",\"name\":\"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest\"},\"pushSecret\":{\"name\":\"builder-dockercfg-hhlbc\"}},\"resources\":{},\"postCommit\":{},\"nodeSelector\":null,\"triggeredBy\":[{\"message\":\"GitHub
+        WebHook\",\"githubWebHook\":{\"revision\":{\"type\":\"Git\",\"git\":{\"author\":{},\"committer\":{}}},\"secret\":\"MAKExv3Sf4GA0DGr1MDG***\"}}]},\"status\":{\"phase\":\"New\",\"outputDockerImageReference\":\"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest\",\"config\":{\"kind\":\"BuildConfig\",\"namespace\":\"fisbuild\",\"name\":\"hellofrompod\"},\"output\":{}}}\n"},{"name":"SOURCE_REPOSITORY","value":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git"},{"name":"SOURCE_URI","value":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git"},{"name":"SOURCE_CONTEXT_DIR","value":"/HelloFromPod"},{"name":"SOURCE_REF","value":"master"},{"name":"ORIGIN_VERSION","value":"v3.7.9"},{"name":"BUILD_LOGLEVEL","value":"5"},{"name":"ALLOWED_UIDS","value":"1-"},{"name":"DROP_CAPS","value":"KILL,MKNOD,SETGID,SETUID"}],"resources":{},"volumeMounts":[{"name":"buildworkdir","mountPath":"/tmp/build"},{"name":"builder-token-6lbqb","readOnly":true,"mountPath":"/var/run/secrets/kubernetes.io/serviceaccount"}],"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"FallbackToLogsOnError","imagePullPolicy":"IfNotPresent","securityContext":{"privileged":false}}]'
+    creationTimestamp: null
+    labels:
+      openshift.io/build.name: hellofrompod-2
+    name: hellofrompod-2-build
+    ownerReferences:
+    - apiVersion: build.openshift.io/v1
+      controller: true
+      kind: Build
+      name: hellofrompod-2
+      uid: 54e1bfb8-6fe2-11e8-afe0-5254002f83b4
+  spec:
+    containers:
+    - args:
+      - --loglevel=5
+      command:
+      - openshift-sti-build
+      env:
+      - name: BUILD
+        value: |
+          {"kind":"Build","apiVersion":"v1","metadata":{"name":"hellofrompod-2","namespace":"fisbuild","selfLink":"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/hellofrompod-2","uid":"54e1bfb8-6fe2-11e8-afe0-5254002f83b4","resourceVersion":"406056234","creationTimestamp":"2018-06-14T14:50:51Z","labels":{"buildconfig":"hellofrompod","component":"hellofrompod","group":"quickstarts","openshift.io/build-config.name":"hellofrompod","openshift.io/build.start-policy":"Serial","project":"hellofrompod","provider":"s2i","template":"s2i-spring-boot-camel","version":"1.0.0.redhat-000064"},"annotations":{"openshift.io/build-config.name":"hellofrompod","openshift.io/build.number":"2"},"ownerReferences":[{"apiVersion":"build.openshift.io/v1","kind":"BuildConfig","name":"hellofrompod","uid":"6d350962-6fe0-11e8-afe0-5254002f83b4","controller":true}]},"spec":{"serviceAccount":"builder","source":{"type":"Git","git":{"uri":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git","ref":"master"},"contextDir":"/HelloFromPod"},"revision":{"type":"Git","git":{"author":{},"committer":{}}},"strategy":{"type":"Source","sourceStrategy":{"from":{"kind":"DockerImage","name":"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d"},"env":[{"name":"BUILD_LOGLEVEL","value":"5"},{"name":"ARTIFACT_DIR"},{"name":"MAVEN_ARGS","value":"package -DskipTests -Dfabric8.skip -e -B"},{"name":"MAVEN_ARGS_APPEND"},{"name":"MAVEN_MIRROR_URL","value":"http://nexus2-sharedservicespersistent.apps.demolab.local/content/groups/public/"}],"incremental":true,"forcePull":true}},"output":{"to":{"kind":"DockerImage","name":"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest"},"pushSecret":{"name":"builder-dockercfg-hhlbc"}},"resources":{},"postCommit":{},"nodeSelector":null,"triggeredBy":[{"message":"GitHub WebHook","githubWebHook":{"revision":{"type":"Git","git":{"author":{},"committer":{}}},"secret":"MAKExv3Sf4GA0DGr1MDG***"}}]},"status":{"phase":"New","outputDockerImageReference":"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest","config":{"kind":"BuildConfig","namespace":"fisbuild","name":"hellofrompod"},"output":{}}}
+      - name: SOURCE_REPOSITORY
+        value: http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git
+      - name: SOURCE_URI
+        value: http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git
+      - name: SOURCE_CONTEXT_DIR
+        value: /HelloFromPod
+      - name: SOURCE_REF
+        value: master
+      - name: ORIGIN_VERSION
+        value: v3.7.9
+      - name: BUILD_LOGLEVEL
+        value: "5"
+      - name: ALLOWED_UIDS
+        value: 1-
+      - name: DROP_CAPS
+        value: KILL,MKNOD,SETGID,SETUID
+      - name: PUSH_DOCKERCFG_PATH
+        value: /var/run/secrets/openshift.io/push
+      image: openshift3/ose-sti-builder:v3.7.9
+      imagePullPolicy: IfNotPresent
+      name: sti-build
+      resources: {}
+      securityContext:
+        privileged: true
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: FallbackToLogsOnError
+      volumeMounts:
+      - mountPath: /tmp/build
+        name: buildworkdir
+      - mountPath: /var/run/docker.sock
+        name: docker-socket
+      - mountPath: /var/run/crio.sock
+        name: crio-socket
+      - mountPath: /var/run/secrets/openshift.io/push
+        name: builder-dockercfg-hhlbc-push
+        readOnly: true
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: builder-token-6lbqb
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    imagePullSecrets:
+    - name: builder-dockercfg-hhlbc
+    initContainers:
+    - args:
+      - --loglevel=5
+      command:
+      - openshift-git-clone
+      env:
+      - name: BUILD
+        value: |
+          {"kind":"Build","apiVersion":"v1","metadata":{"name":"hellofrompod-2","namespace":"fisbuild","selfLink":"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/hellofrompod-2","uid":"54e1bfb8-6fe2-11e8-afe0-5254002f83b4","resourceVersion":"406056234","creationTimestamp":"2018-06-14T14:50:51Z","labels":{"buildconfig":"hellofrompod","component":"hellofrompod","group":"quickstarts","openshift.io/build-config.name":"hellofrompod","openshift.io/build.start-policy":"Serial","project":"hellofrompod","provider":"s2i","template":"s2i-spring-boot-camel","version":"1.0.0.redhat-000064"},"annotations":{"openshift.io/build-config.name":"hellofrompod","openshift.io/build.number":"2"},"ownerReferences":[{"apiVersion":"build.openshift.io/v1","kind":"BuildConfig","name":"hellofrompod","uid":"6d350962-6fe0-11e8-afe0-5254002f83b4","controller":true}]},"spec":{"serviceAccount":"builder","source":{"type":"Git","git":{"uri":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git","ref":"master"},"contextDir":"/HelloFromPod"},"revision":{"type":"Git","git":{"author":{},"committer":{}}},"strategy":{"type":"Source","sourceStrategy":{"from":{"kind":"DockerImage","name":"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d"},"env":[{"name":"BUILD_LOGLEVEL","value":"5"},{"name":"ARTIFACT_DIR"},{"name":"MAVEN_ARGS","value":"package -DskipTests -Dfabric8.skip -e -B"},{"name":"MAVEN_ARGS_APPEND"},{"name":"MAVEN_MIRROR_URL","value":"http://nexus2-sharedservicespersistent.apps.demolab.local/content/groups/public/"}],"incremental":true,"forcePull":true}},"output":{"to":{"kind":"DockerImage","name":"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest"},"pushSecret":{"name":"builder-dockercfg-hhlbc"}},"resources":{},"postCommit":{},"nodeSelector":null,"triggeredBy":[{"message":"GitHub WebHook","githubWebHook":{"revision":{"type":"Git","git":{"author":{},"committer":{}}},"secret":"MAKExv3Sf4GA0DGr1MDG***"}}]},"status":{"phase":"New","outputDockerImageReference":"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest","config":{"kind":"BuildConfig","namespace":"fisbuild","name":"hellofrompod"},"output":{}}}
+      - name: SOURCE_REPOSITORY
+        value: http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git
+      - name: SOURCE_URI
+        value: http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git
+      - name: SOURCE_CONTEXT_DIR
+        value: /HelloFromPod
+      - name: SOURCE_REF
+        value: master
+      - name: ORIGIN_VERSION
+        value: v3.7.9
+      - name: BUILD_LOGLEVEL
+        value: "5"
+      - name: ALLOWED_UIDS
+        value: 1-
+      - name: DROP_CAPS
+        value: KILL,MKNOD,SETGID,SETUID
+      image: openshift3/ose-sti-builder:v3.7.9
+      imagePullPolicy: IfNotPresent
+      name: git-clone
+      resources: {}
+      securityContext:
+        privileged: false
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: FallbackToLogsOnError
+      volumeMounts:
+      - mountPath: /tmp/build
+        name: buildworkdir
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: builder-token-6lbqb
+        readOnly: true
+    - args:
+      - --loglevel=5
+      command:
+      - openshift-manage-dockerfile
+      env:
+      - name: BUILD
+        value: |
+          {"kind":"Build","apiVersion":"v1","metadata":{"name":"hellofrompod-2","namespace":"fisbuild","selfLink":"/apis/build.openshift.io/v1/namespaces/fisbuild/builds/hellofrompod-2","uid":"54e1bfb8-6fe2-11e8-afe0-5254002f83b4","resourceVersion":"406056234","creationTimestamp":"2018-06-14T14:50:51Z","labels":{"buildconfig":"hellofrompod","component":"hellofrompod","group":"quickstarts","openshift.io/build-config.name":"hellofrompod","openshift.io/build.start-policy":"Serial","project":"hellofrompod","provider":"s2i","template":"s2i-spring-boot-camel","version":"1.0.0.redhat-000064"},"annotations":{"openshift.io/build-config.name":"hellofrompod","openshift.io/build.number":"2"},"ownerReferences":[{"apiVersion":"build.openshift.io/v1","kind":"BuildConfig","name":"hellofrompod","uid":"6d350962-6fe0-11e8-afe0-5254002f83b4","controller":true}]},"spec":{"serviceAccount":"builder","source":{"type":"Git","git":{"uri":"http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git","ref":"master"},"contextDir":"/HelloFromPod"},"revision":{"type":"Git","git":{"author":{},"committer":{}}},"strategy":{"type":"Source","sourceStrategy":{"from":{"kind":"DockerImage","name":"registry.access.redhat.com/jboss-fuse-6/fis-java-openshift@sha256:4d59ad55244798c25b75e608a8b76eee2ea5aba490cfbe3cab68e2fefec93f4d"},"env":[{"name":"BUILD_LOGLEVEL","value":"5"},{"name":"ARTIFACT_DIR"},{"name":"MAVEN_ARGS","value":"package -DskipTests -Dfabric8.skip -e -B"},{"name":"MAVEN_ARGS_APPEND"},{"name":"MAVEN_MIRROR_URL","value":"http://nexus2-sharedservicespersistent.apps.demolab.local/content/groups/public/"}],"incremental":true,"forcePull":true}},"output":{"to":{"kind":"DockerImage","name":"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest"},"pushSecret":{"name":"builder-dockercfg-hhlbc"}},"resources":{},"postCommit":{},"nodeSelector":null,"triggeredBy":[{"message":"GitHub WebHook","githubWebHook":{"revision":{"type":"Git","git":{"author":{},"committer":{}}},"secret":"MAKExv3Sf4GA0DGr1MDG***"}}]},"status":{"phase":"New","outputDockerImageReference":"docker-registry.default.svc:5000/fisbuild/hellofrompod:latest","config":{"kind":"BuildConfig","namespace":"fisbuild","name":"hellofrompod"},"output":{}}}
+      - name: SOURCE_REPOSITORY
+        value: http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git
+      - name: SOURCE_URI
+        value: http://gogs-persistent.apps.demolab.local/Fuse_Integration_Services_Org/fisbuild.git
+      - name: SOURCE_CONTEXT_DIR
+        value: /HelloFromPod
+      - name: SOURCE_REF
+        value: master
+      - name: ORIGIN_VERSION
+        value: v3.7.9
+      - name: BUILD_LOGLEVEL
+        value: "5"
+      - name: ALLOWED_UIDS
+        value: 1-
+      - name: DROP_CAPS
+        value: KILL,MKNOD,SETGID,SETUID
+      image: openshift3/ose-sti-builder:v3.7.9
+      imagePullPolicy: IfNotPresent
+      name: manage-dockerfile
+      resources: {}
+      securityContext:
+        privileged: false
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: FallbackToLogsOnError
+      volumeMounts:
+      - mountPath: /tmp/build
+        name: buildworkdir
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: builder-token-6lbqb
+        readOnly: true
+    nodeName: ocp-app-3.demolab.local
+    nodeSelector:
+      purpose: apps
+    restartPolicy: Never
+    schedulerName: default-scheduler
+    securityContext: {}
+    serviceAccount: builder
+    serviceAccountName: builder
+    terminationGracePeriodSeconds: 30
+    volumes:
+    - emptyDir: {}
+      name: buildworkdir
+    - hostPath:
+        path: /var/run/docker.sock
+      name: docker-socket
+    - hostPath:
+        path: /var/run/crio.sock
+      name: crio-socket
+    - name: builder-dockercfg-hhlbc-push
+      secret:
+        defaultMode: 384
+        secretName: builder-dockercfg-hhlbc
+    - name: builder-token-6lbqb
+      secret:
+        defaultMode: 420
+        secretName: builder-token-6lbqb
+  status:
+    phase: Pending
+    qosClass: BestEffort
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/created-by: |
+        {"kind":"SerializedReference","apiVersion":"v1","reference":{"kind":"ReplicationController","namespace":"fisbuild","name":"hellofrompod-2","uid":"7b74e835-6fe2-11e8-9fd0-525400f31c93","apiVersion":"v1","resourceVersion":"406056491"}}
+      openshift.io/deployment-config.latest-version: "2"
+      openshift.io/deployment-config.name: hellofrompod
+      openshift.io/deployment.name: hellofrompod-2
+      openshift.io/scc: restricted
+    creationTimestamp: null
+    generateName: hellofrompod-2-
+    labels:
+      component: hellofrompod
+      deployment: hellofrompod-2
+      deploymentconfig: hellofrompod
+      group: quickstarts
+      project: hellofrompod
+      provider: s2i
+      version: 1.0.0.redhat-000064
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicationController
+      name: hellofrompod-2
+      uid: 7b74e835-6fe2-11e8-9fd0-525400f31c93
+  spec:
+    containers:
+    - env:
+      - name: KUBERNETES_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      image: docker-registry.default.svc:5000/fisbuild/hellofrompod@sha256:d44fe062ca2a1629004b6106573564d4109bd394e9a6c26d466b058d238e7b9e
+      imagePullPolicy: Always
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: 8081
+          scheme: HTTP
+        initialDelaySeconds: 180
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: hellofrompod
+      ports:
+      - containerPort: 8778
+        name: jolokia
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: 8081
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: "1"
+        requests:
+          cpu: 200m
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+        privileged: false
+        runAsUser: 1000590000
+        seLinuxOptions:
+          level: s0:c24,c19
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-9zdjl
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    imagePullSecrets:
+    - name: default-dockercfg-hwbjq
+    nodeName: ocp-app-3.demolab.local
+    nodeSelector:
+      purpose: apps
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000590000
+      seLinuxOptions:
+        level: s0:c24,c19
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    volumes:
+    - name: default-token-9zdjl
+      secret:
+        defaultMode: 420
+        secretName: default-token-9zdjl
+  status:
+    phase: Pending
+    qosClass: Burstable
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/created-by: |
+        {"kind":"SerializedReference","apiVersion":"v1","reference":{"kind":"ReplicationController","namespace":"fisbuild","name":"hellofrompod-2","uid":"7b74e835-6fe2-11e8-9fd0-525400f31c93","apiVersion":"v1","resourceVersion":"406056724"}}
+      openshift.io/deployment-config.latest-version: "2"
+      openshift.io/deployment-config.name: hellofrompod
+      openshift.io/deployment.name: hellofrompod-2
+      openshift.io/scc: restricted
+    creationTimestamp: null
+    generateName: hellofrompod-2-
+    labels:
+      component: hellofrompod
+      deployment: hellofrompod-2
+      deploymentconfig: hellofrompod
+      group: quickstarts
+      project: hellofrompod
+      provider: s2i
+      version: 1.0.0.redhat-000064
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicationController
+      name: hellofrompod-2
+      uid: 7b74e835-6fe2-11e8-9fd0-525400f31c93
+  spec:
+    containers:
+    - env:
+      - name: KUBERNETES_NAMESPACE
+        valueFrom:
+          fieldRef:
+            apiVersion: v1
+            fieldPath: metadata.namespace
+      image: docker-registry.default.svc:5000/fisbuild/hellofrompod@sha256:d44fe062ca2a1629004b6106573564d4109bd394e9a6c26d466b058d238e7b9e
+      imagePullPolicy: Always
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: 8081
+          scheme: HTTP
+        initialDelaySeconds: 180
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: hellofrompod
+      ports:
+      - containerPort: 8778
+        name: jolokia
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /health
+          port: 8081
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources:
+        limits:
+          cpu: "1"
+        requests:
+          cpu: 200m
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+        privileged: false
+        runAsUser: 1000590000
+        seLinuxOptions:
+          level: s0:c24,c19
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-9zdjl
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    imagePullSecrets:
+    - name: default-dockercfg-hwbjq
+    nodeName: ocp-app-2.demolab.local
+    nodeSelector:
+      purpose: apps
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000590000
+      seLinuxOptions:
+        level: s0:c24,c19
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    volumes:
+    - name: default-token-9zdjl
+      secret:
+        defaultMode: 420
+        secretName: default-token-9zdjl
+  status:
+    phase: Pending
+    qosClass: Burstable
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      openshift.io/deployer-pod.completed-at: 2018-06-14 14:44:17 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2018-06-14 14:43:16 +0000 UTC
+      openshift.io/deployer-pod.name: dublindemo2-1-deploy
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: dublindemo2
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "1"
+      openshift.io/deployment.status-reason: config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"dublindemo2","namespace":"fisbuild","selfLink":"/apis/apps.openshift.io/v1/namespaces/fisbuild/deploymentconfigs/dublindemo2","uid":"44e82264-6fe1-11e8-937f-52540064f8a5","resourceVersion":"406054927","generation":2,"creationTimestamp":"2018-06-14T14:43:14Z","labels":{"group":"dub","project":"dublindemo2","provider":"fabric8","version":"0.0.1-SNAPSHOT"},"annotations":{"fabric8.io/git-branch":"master","fabric8.io/git-commit":"a7f2c44fcfb861d61b82e6066c3cc97e90041db2","fabric8.io/iconUrl":"img/icons/camel.svg","fabric8.io/metrics-path":"dashboard/file/camel-routes.json/?var-project=dublindemo2\u0026var-version=0.0.1-SNAPSHOT"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":10800,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"},{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["spring-boot"],"from":{"kind":"ImageStreamTag","namespace":"fisbuild","name":"dublindemo2:latest"},"lastTriggeredImage":"docker-registry.default.svc:5000/fisbuild/dublindemo2@sha256:722257585fc84f8aa35d5fc71148a1be3bee4000f7fe47d32d53907df5c56dff"}}],"replicas":1,"test":false,"selector":{"group":"dub","project":"dublindemo2","provider":"fabric8"},"template":{"metadata":{"creationTimestamp":null,"labels":{"group":"dub","project":"dublindemo2","provider":"fabric8","version":"0.0.1-SNAPSHOT"},"annotations":{"fabric8.io/git-branch":"master","fabric8.io/git-commit":"a7f2c44fcfb861d61b82e6066c3cc97e90041db2","fabric8.io/iconUrl":"img/icons/camel.svg","fabric8.io/metrics-path":"dashboard/file/camel-routes.json/?var-project=dublindemo2\u0026var-version=0.0.1-SNAPSHOT"}},"spec":{"containers":[{"name":"spring-boot","image":"docker-registry.default.svc:5000/fisbuild/dublindemo2@sha256:722257585fc84f8aa35d5fc71148a1be3bee4000f7fe47d32d53907df5c56dff","ports":[{"name":"http","containerPort":8080,"protocol":"TCP"},{"name":"prometheus","containerPort":9779,"protocol":"TCP"},{"name":"jolokia","containerPort":8778,"protocol":"TCP"}],"env":[{"name":"KUBERNETES_NAMESPACE","valueFrom":{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.namespace"}}},{"name":"JAVA_APP_DIR","value":"/deployments"}],"resources":{"limits":{"cpu":"1"},"requests":{"cpu":"200m"}},"livenessProbe":{"httpGet":{"path":"/health","port":8081,"scheme":"HTTP"},"initialDelaySeconds":180,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"readinessProbe":{"httpGet":{"path":"/health","port":8081,"scheme":"HTTP"},"initialDelaySeconds":10,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"Always","securityContext":{"privileged":false}}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":1,"observedGeneration":2,"replicas":0,"updatedReplicas":0,"availableReplicas":0,"unavailableReplicas":0,"details":{"message":"config change","causes":[{"type":"ConfigChange"}]},"conditions":[{"type":"Available","status":"False","lastUpdateTime":"2018-06-14T14:43:14Z","lastTransitionTime":"2018-06-14T14:43:14Z","message":"Deployment config does not have minimum availability."}]}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      group: dub
+      openshift.io/deployment-config.name: dublindemo2
+      project: dublindemo2
+      provider: fabric8
+      version: 0.0.1-SNAPSHOT
+    name: dublindemo2-1
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: dublindemo2
+      uid: 44e82264-6fe1-11e8-937f-52540064f8a5
+  spec:
+    replicas: 1
+    selector:
+      deployment: dublindemo2-1
+      deploymentconfig: dublindemo2
+      group: dub
+      project: dublindemo2
+      provider: fabric8
+    template:
+      metadata:
+        annotations:
+          fabric8.io/git-branch: master
+          fabric8.io/git-commit: a7f2c44fcfb861d61b82e6066c3cc97e90041db2
+          fabric8.io/iconUrl: img/icons/camel.svg
+          fabric8.io/metrics-path: dashboard/file/camel-routes.json/?var-project=dublindemo2&var-version=0.0.1-SNAPSHOT
+          openshift.io/deployment-config.latest-version: "1"
+          openshift.io/deployment-config.name: dublindemo2
+          openshift.io/deployment.name: dublindemo2-1
+        creationTimestamp: null
+        labels:
+          deployment: dublindemo2-1
+          deploymentconfig: dublindemo2
+          group: dub
+          project: dublindemo2
+          provider: fabric8
+          version: 0.0.1-SNAPSHOT
+      spec:
+        containers:
+        - env:
+          - name: KUBERNETES_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: JAVA_APP_DIR
+            value: /deployments
+          image: docker-registry.default.svc:5000/fisbuild/dublindemo2@sha256:722257585fc84f8aa35d5fc71148a1be3bee4000f7fe47d32d53907df5c56dff
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 180
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: spring-boot
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          - containerPort: 9779
+            name: prometheus
+            protocol: TCP
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "1"
+            requests:
+              cpu: 200m
+          securityContext:
+            privileged: false
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/original-replicas: "2"
+      openshift.io/deployer-pod.completed-at: 2018-06-14 14:39:22 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2018-06-14 14:38:38 +0000 UTC
+      openshift.io/deployer-pod.name: hellofrompod-1-deploy
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: hellofrompod
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "2"
+      openshift.io/deployment.status-reason: config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"hellofrompod","namespace":"fisbuild","selfLink":"/apis/apps.openshift.io/v1/namespaces/fisbuild/deploymentconfigs/hellofrompod","uid":"6d348608-6fe0-11e8-afe0-5254002f83b4","resourceVersion":"406054069","generation":2,"creationTimestamp":"2018-06-14T14:37:13Z","labels":{"component":"hellofrompod","group":"quickstarts","project":"hellofrompod","provider":"s2i","template":"s2i-spring-boot-camel","version":"1.0.0.redhat-000064"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"},{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["hellofrompod"],"from":{"kind":"ImageStreamTag","namespace":"fisbuild","name":"hellofrompod:latest"},"lastTriggeredImage":"docker-registry.default.svc:5000/fisbuild/hellofrompod@sha256:6b92bd3e439b4f86e679a5a17e0b2776d7fa48652cfddf7461f082a8788c7277"}}],"replicas":2,"test":false,"selector":{"component":"hellofrompod","deploymentconfig":"hellofrompod","group":"quickstarts","project":"hellofrompod","provider":"s2i","version":"1.0.0.redhat-000064"},"template":{"metadata":{"creationTimestamp":null,"labels":{"component":"hellofrompod","deploymentconfig":"hellofrompod","group":"quickstarts","project":"hellofrompod","provider":"s2i","version":"1.0.0.redhat-000064"}},"spec":{"containers":[{"name":"hellofrompod","image":"docker-registry.default.svc:5000/fisbuild/hellofrompod@sha256:6b92bd3e439b4f86e679a5a17e0b2776d7fa48652cfddf7461f082a8788c7277","ports":[{"name":"jolokia","containerPort":8778,"protocol":"TCP"}],"env":[{"name":"KUBERNETES_NAMESPACE","valueFrom":{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.namespace"}}}],"resources":{"limits":{"cpu":"1"},"requests":{"cpu":"200m"}},"livenessProbe":{"httpGet":{"path":"/health","port":8081,"scheme":"HTTP"},"initialDelaySeconds":180,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"readinessProbe":{"httpGet":{"path":"/health","port":8081,"scheme":"HTTP"},"initialDelaySeconds":10,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":1,"observedGeneration":2,"replicas":0,"updatedReplicas":0,"availableReplicas":0,"unavailableReplicas":0,"details":{"message":"config change","causes":[{"type":"ConfigChange"}]},"conditions":[{"type":"Available","status":"False","lastUpdateTime":"2018-06-14T14:37:13Z","lastTransitionTime":"2018-06-14T14:37:13Z","message":"Deployment config does not have minimum availability."}]}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      component: hellofrompod
+      group: quickstarts
+      openshift.io/deployment-config.name: hellofrompod
+      project: hellofrompod
+      provider: s2i
+      template: s2i-spring-boot-camel
+      version: 1.0.0.redhat-000064
+    name: hellofrompod-1
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: hellofrompod
+      uid: 6d348608-6fe0-11e8-afe0-5254002f83b4
+  spec:
+    replicas: 0
+    selector:
+      component: hellofrompod
+      deployment: hellofrompod-1
+      deploymentconfig: hellofrompod
+      group: quickstarts
+      project: hellofrompod
+      provider: s2i
+      version: 1.0.0.redhat-000064
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "1"
+          openshift.io/deployment-config.name: hellofrompod
+          openshift.io/deployment.name: hellofrompod-1
+        creationTimestamp: null
+        labels:
+          component: hellofrompod
+          deployment: hellofrompod-1
+          deploymentconfig: hellofrompod
+          group: quickstarts
+          project: hellofrompod
+          provider: s2i
+          version: 1.0.0.redhat-000064
+      spec:
+        containers:
+        - env:
+          - name: KUBERNETES_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          image: docker-registry.default.svc:5000/fisbuild/hellofrompod@sha256:6b92bd3e439b4f86e679a5a17e0b2776d7fa48652cfddf7461f082a8788c7277
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 180
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: hellofrompod
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "1"
+            requests:
+              cpu: 200m
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      openshift.io/deployer-pod.completed-at: 2018-06-14 14:54:50 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2018-06-14 14:51:55 +0000 UTC
+      openshift.io/deployer-pod.name: hellofrompod-2-deploy
+      openshift.io/deployment-config.latest-version: "2"
+      openshift.io/deployment-config.name: hellofrompod
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: ""
+      openshift.io/deployment.status-reason: image change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"hellofrompod","namespace":"fisbuild","selfLink":"/apis/apps.openshift.io/v1/namespaces/fisbuild/deploymentconfigs/hellofrompod","uid":"6d348608-6fe0-11e8-afe0-5254002f83b4","resourceVersion":"406056442","generation":3,"creationTimestamp":"2018-06-14T14:37:13Z","labels":{"component":"hellofrompod","group":"quickstarts","project":"hellofrompod","provider":"s2i","template":"s2i-spring-boot-camel","version":"1.0.0.redhat-000064"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"},{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["hellofrompod"],"from":{"kind":"ImageStreamTag","namespace":"fisbuild","name":"hellofrompod:latest"},"lastTriggeredImage":"docker-registry.default.svc:5000/fisbuild/hellofrompod@sha256:d44fe062ca2a1629004b6106573564d4109bd394e9a6c26d466b058d238e7b9e"}}],"replicas":2,"test":false,"selector":{"component":"hellofrompod","deploymentconfig":"hellofrompod","group":"quickstarts","project":"hellofrompod","provider":"s2i","version":"1.0.0.redhat-000064"},"template":{"metadata":{"creationTimestamp":null,"labels":{"component":"hellofrompod","deploymentconfig":"hellofrompod","group":"quickstarts","project":"hellofrompod","provider":"s2i","version":"1.0.0.redhat-000064"}},"spec":{"containers":[{"name":"hellofrompod","image":"docker-registry.default.svc:5000/fisbuild/hellofrompod@sha256:d44fe062ca2a1629004b6106573564d4109bd394e9a6c26d466b058d238e7b9e","ports":[{"name":"jolokia","containerPort":8778,"protocol":"TCP"}],"env":[{"name":"KUBERNETES_NAMESPACE","valueFrom":{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.namespace"}}}],"resources":{"limits":{"cpu":"1"},"requests":{"cpu":"200m"}},"livenessProbe":{"httpGet":{"path":"/health","port":8081,"scheme":"HTTP"},"initialDelaySeconds":180,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"readinessProbe":{"httpGet":{"path":"/health","port":8081,"scheme":"HTTP"},"initialDelaySeconds":10,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":2,"observedGeneration":3,"replicas":2,"updatedReplicas":0,"availableReplicas":2,"unavailableReplicas":0,"details":{"message":"image change","causes":[{"type":"ImageChange","imageTrigger":{"from":{"kind":"DockerImage","name":"docker-registry.default.svc:5000/fisbuild/hellofrompod@sha256:d44fe062ca2a1629004b6106573564d4109bd394e9a6c26d466b058d238e7b9e"}}}]},"conditions":[{"type":"Progressing","status":"True","lastUpdateTime":"2018-06-14T14:39:24Z","lastTransitionTime":"2018-06-14T14:38:40Z","reason":"NewReplicationControllerAvailable","message":"replication controller \"hellofrompod-1\" successfully rolled out"},{"type":"Available","status":"True","lastUpdateTime":"2018-06-14T14:47:55Z","lastTransitionTime":"2018-06-14T14:47:55Z","message":"Deployment config has minimum availability."}],"readyReplicas":2}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      component: hellofrompod
+      group: quickstarts
+      openshift.io/deployment-config.name: hellofrompod
+      project: hellofrompod
+      provider: s2i
+      template: s2i-spring-boot-camel
+      version: 1.0.0.redhat-000064
+    name: hellofrompod-2
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: hellofrompod
+      uid: 6d348608-6fe0-11e8-afe0-5254002f83b4
+  spec:
+    replicas: 2
+    selector:
+      component: hellofrompod
+      deployment: hellofrompod-2
+      deploymentconfig: hellofrompod
+      group: quickstarts
+      project: hellofrompod
+      provider: s2i
+      version: 1.0.0.redhat-000064
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "2"
+          openshift.io/deployment-config.name: hellofrompod
+          openshift.io/deployment.name: hellofrompod-2
+        creationTimestamp: null
+        labels:
+          component: hellofrompod
+          deployment: hellofrompod-2
+          deploymentconfig: hellofrompod
+          group: quickstarts
+          project: hellofrompod
+          provider: s2i
+          version: 1.0.0.redhat-000064
+      spec:
+        containers:
+        - env:
+          - name: KUBERNETES_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          image: docker-registry.default.svc:5000/fisbuild/hellofrompod@sha256:d44fe062ca2a1629004b6106573564d4109bd394e9a6c26d466b058d238e7b9e
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 180
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: hellofrompod
+          ports:
+          - containerPort: 8778
+            name: jolokia
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /health
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "1"
+            requests:
+              cpu: 200m
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      fabric8.io/git-branch: master
+      fabric8.io/git-commit: a7f2c44fcfb861d61b82e6066c3cc97e90041db2
+      fabric8.io/iconUrl: img/icons/camel.svg
+    creationTimestamp: null
+    labels:
+      expose: "true"
+      group: dub
+      project: dublindemo2
+      provider: fabric8
+      version: 0.0.1-SNAPSHOT
+    name: dublindemo2
+  spec:
+    ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      group: dub
+      project: dublindemo2
+      provider: fabric8
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      component: hellofrompod
+      group: quickstarts
+      project: hellofrompod
+      provider: s2i
+      template: s2i-spring-boot-camel
+      version: 1.0.0.redhat-000064
+    name: hellofrompod
+  spec:
+    clusterIP: None
+    ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      component: hellofrompod
+      group: quickstarts
+      project: hellofrompod
+      provider: s2i
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
