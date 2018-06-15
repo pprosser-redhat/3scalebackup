@@ -1,0 +1,28 @@
+to use the openshift_raw module, you need to install the Openshift rest client
+
+https://github.com/openshift/openshift-restclient-python
+
+I had problems with installing the client on Mac, had to install python with brew in the end.
+
+
+Bug in Ansible on Mac OSX
+
+objc[4134]: +[__NSPlaceholderDate initialize] may have been in progress in another thread when fork() was called.
+
+to fix, before executing ansible playbook, type in
+
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+
+debug playbook add -vvv
+
+tried using the command below rather than inlining the Yaml but I just can't get it to work
+definition: "{{ lookup('url', 'https://raw.githubusercontent.com/pprosser-redhat/3scalebackup/master/backup_amp/ansible_definitions/system-storage.yml') | from_yaml}}"
+
+
+
+AMP
+pvc done
+configmaps done
+rolebindings done
+secrets done
+serviceaccount

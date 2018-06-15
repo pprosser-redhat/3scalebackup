@@ -1,0 +1,11 @@
+oc export all --as-template=project.yaml > project.yaml
+oc get rolebindings -o yaml --export=true > rolebindings.yaml
+oc get serviceaccount -o yaml --export=true > serviceaccount.yaml
+oc get secret -o yaml --export=true > secret.yaml
+
+
+
+oc new-project fisdemoprod --description="Prod environment for Agile Integration Banking Demo - Power by Red Hat Fuse" --display-name="Fuse Banking Demo - PROD"
+oc create -f secret.yaml
+oc create -f rolebindings.yaml
+oc new-app --file project.yaml -p DOMAIN_NAME_SUFFIX=192.168.99.100.nip.io -p MAVEN_MIRROR_URL=http://nexus-sharedservices.192.168.99.100.nip.io/repository/maven-all-public/

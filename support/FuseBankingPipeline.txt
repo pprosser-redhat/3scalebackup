@@ -1,0 +1,17 @@
+oc export all --as-template=project.yaml > project.yaml
+oc get rolebindings -o yaml --export=true > rolebindings.yaml
+oc get serviceaccount -o yaml --export=true > serviceaccount.yaml
+oc get secret -o yaml --export=true > secret.yaml
+
+
+
+oc new-project fisdemocicd --description="Fuse Banking Pipeline" --display-name="Fuse Banking Pipeline"
+oc create -f secret.yaml
+oc create -f rolebindings.yaml
+oc new-app --file project.yaml -p DOMAIN_NAME_SUFFIX=192.168.99.100.nip.io
+
+Security settings to allow jenkins to control dev and prod projects
+
+oc adm policy add-role-to-user edit system:serviceaccount:fisdemocicd:jenkins -n fisdemo
+oc adm policy add-role-to-user system:image-puller system:serviceaccount:fisdemoprod:jenkins -n fisdemo
+oc adm policy add-role-to-user edit system:serviceaccount:fisdemocicd:jenkins -n fisdemoprod
