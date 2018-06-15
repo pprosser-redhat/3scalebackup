@@ -556,7 +556,34 @@
     - name: Create fisdemoprod app
       shell: oc new-app --file {{clone_destination}}/3Scale/FuseBankingProd/project.yaml -n fisdemoprod -p MAVEN_MIRROR_URL=http://nexus-sharedservices.{{domain_name_suffix}}//repository/maven-all-public -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
 
+###################################################
+# Create the fis demo pieline project and application
+#####################################################
 
+    - name: Create fisdemocicd
+      openshift_raw:
+        host:         "{{ocp_url}}"
+        username:     "{{ocp_username}}"
+        password:     "{{ocp_password}}"
+        api_version:  v1
+        verify_ssl:   no
+        kind:         Project
+        name:         fisdemocicd
+        description:  Fuse Banking Pipeline
+        display_name: "Fuse Banking Pipeline"
+        state:        present
+
+    - name: Create Pipelines and Jenkins
+      shell: oc new-app --file {{clone_destination}}/3Scale/FuseBankingPipeline/project.yaml -n fisdemocicd -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
+
+    - name: Create Pipelines and Jenkins
+      shell: oc adm policy add-role-to-user edit system:serviceaccount:fisdemocicd:jenkins -n fisdemo
+
+    - name: Create Pipelines and Jenkins
+      shell: oc adm policy add-role-to-user system:image-puller system:serviceaccount:fisdemoprod:jenkins -n fisdemo
+
+    - name: Create Pipelines and Jenkins
+      shell: oc adm policy add-role-to-user edit system:serviceaccount:fisdemocicd:jenkins -n fisdemoprod
 
 # Logout of Openshift
     - name:           logout of Openshift
