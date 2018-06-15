@@ -1,0 +1,1798 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: project.yaml
+objects:
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: 3scale-gateway
+    name: apicast
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: apicast
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: 3scale-gateway
+          deploymentconfig: apicast
+      spec:
+        containers:
+        - env:
+          - name: THREESCALE_PORTAL_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: apicast-configuration-url-secret
+          - name: THREESCALE_CONFIG_FILE
+          - name: THREESCALE_DEPLOYMENT_ENV
+            value: production
+          - name: RESOLVER
+          - name: APICAST_SERVICES
+            value: "2555417755119"
+          - name: APICAST_CONFIGURATION_LOADER
+            value: boot
+          - name: APICAST_LOG_LEVEL
+          - name: APICAST_PATH_ROUTING_ENABLED
+            value: "false"
+          - name: APICAST_RESPONSE_CODES
+            value: "true"
+          - name: APICAST_CONFIGURATION_CACHE
+          - name: REDIS_URL
+          - name: APICAST_MANAGEMENT_API
+            value: status
+          - name: OPENSSL_VERIFY
+            value: "false"
+          image: 3scale-amp20/apicast-gateway:1.0
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/live
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: apicast
+          ports:
+          - containerPort: 8080
+            name: proxy
+            protocol: TCP
+          - containerPort: 8090
+            name: management
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/ready
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: 3scale-gateway
+    name: apicast-stage
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: apicast-stage
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          deploymentconfig: apicast-stage
+      spec:
+        containers:
+        - env:
+          - name: THREESCALE_PORTAL_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: apicast-configuration-url-secret
+          - name: THREESCALE_CONFIG_FILE
+          - name: THREESCALE_DEPLOYMENT_ENV
+            value: sandbox
+          - name: RESOLVER
+          - name: APICAST_SERVICES
+            value: "2555417755119"
+          - name: APICAST_CONFIGURATION_LOADER
+            value: lazy
+          - name: APICAST_LOG_LEVEL
+            value: debug
+          - name: APICAST_PATH_ROUTING_ENABLED
+            value: "false"
+          - name: APICAST_RESPONSE_CODES
+            value: "true"
+          - name: APICAST_CONFIGURATION_CACHE
+          - name: REDIS_URL
+          - name: APICAST_MANAGEMENT_API
+            value: status
+          - name: OPENSSL_VERIFY
+            value: "false"
+          image: 3scale-amp20/apicast-gateway:1.0-3
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/live
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: apicast-stage
+          ports:
+          - containerPort: 8080
+            name: proxy
+            protocol: TCP
+          - containerPort: 8090
+            name: management
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/ready
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: 3scale-gateway
+    name: apicast-members-production
+  spec:
+    host: apicast-members-production-apicast.apps.demolab.local
+    port:
+      targetPort: proxy
+    tls:
+      termination: edge
+    to:
+      kind: Service
+      name: apicast
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: 2018-01-25T18:00:50Z
+        status: "True"
+        type: Admitted
+      host: apicast-members-production-apicast.apps.demolab.local
+      routerName: router
+      wildcardPolicy: None
+- apiVersion: v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: 3scale-gateway
+    name: apicast-stage
+  spec:
+    host: apicast-stage-apicast.apps.demolab.local
+    port:
+      targetPort: proxy
+    tls:
+      termination: edge
+    to:
+      kind: Service
+      name: apicast-stage
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: 2018-01-29T16:21:50Z
+        status: "True"
+        type: Admitted
+      host: apicast-stage-apicast.apps.demolab.local
+      routerName: router
+      wildcardPolicy: None
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/created-by: |
+        {"kind":"SerializedReference","apiVersion":"v1","reference":{"kind":"ReplicationController","namespace":"apicast","name":"apicast-9","uid":"21fdea25-1738-11e8-a813-5254002f83b4","apiVersion":"v1","resourceVersion":"381245993"}}
+      openshift.io/deployment-config.latest-version: "9"
+      openshift.io/deployment-config.name: apicast
+      openshift.io/deployment.name: apicast-9
+      openshift.io/generated-by: OpenShiftNewApp
+      openshift.io/scc: restricted
+    creationTimestamp: null
+    generateName: apicast-9-
+    labels:
+      app: 3scale-gateway
+      deployment: apicast-9
+      deploymentconfig: apicast
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicationController
+      name: apicast-9
+      uid: 21fdea25-1738-11e8-a813-5254002f83b4
+  spec:
+    containers:
+    - env:
+      - name: THREESCALE_PORTAL_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            key: password
+            name: apicast-configuration-url-secret
+      - name: THREESCALE_CONFIG_FILE
+      - name: THREESCALE_DEPLOYMENT_ENV
+        value: production
+      - name: RESOLVER
+      - name: APICAST_SERVICES
+        value: "2555417755119"
+      - name: APICAST_CONFIGURATION_LOADER
+        value: boot
+      - name: APICAST_LOG_LEVEL
+      - name: APICAST_PATH_ROUTING_ENABLED
+        value: "false"
+      - name: APICAST_RESPONSE_CODES
+        value: "true"
+      - name: APICAST_CONFIGURATION_CACHE
+      - name: REDIS_URL
+      - name: APICAST_MANAGEMENT_API
+        value: status
+      - name: OPENSSL_VERIFY
+        value: "false"
+      image: 3scale-amp20/apicast-gateway:1.0
+      imagePullPolicy: Always
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /status/live
+          port: management
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: apicast
+      ports:
+      - containerPort: 8080
+        name: proxy
+        protocol: TCP
+      - containerPort: 8090
+        name: management
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /status/ready
+          port: management
+          scheme: HTTP
+        initialDelaySeconds: 15
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources: {}
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+        privileged: false
+        runAsUser: 1000200000
+        seLinuxOptions:
+          level: s0:c14,c9
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-pn6ht
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    imagePullSecrets:
+    - name: default-dockercfg-5ngwz
+    nodeName: ocp-app-2.demolab.local
+    nodeSelector:
+      purpose: apps
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000200000
+      seLinuxOptions:
+        level: s0:c14,c9
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    volumes:
+    - name: default-token-pn6ht
+      secret:
+        defaultMode: 420
+        secretName: default-token-pn6ht
+  status:
+    phase: Pending
+    qosClass: BestEffort
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/created-by: |
+        {"kind":"SerializedReference","apiVersion":"v1","reference":{"kind":"ReplicationController","namespace":"apicast","name":"apicast-stage-4","uid":"24a14c38-1738-11e8-a813-5254002f83b4","apiVersion":"v1","resourceVersion":"381476681"}}
+      openshift.io/deployment-config.latest-version: "4"
+      openshift.io/deployment-config.name: apicast-stage
+      openshift.io/deployment.name: apicast-stage-4
+      openshift.io/scc: restricted
+    creationTimestamp: null
+    generateName: apicast-stage-4-
+    labels:
+      deployment: apicast-stage-4
+      deploymentconfig: apicast-stage
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicationController
+      name: apicast-stage-4
+      uid: 24a14c38-1738-11e8-a813-5254002f83b4
+  spec:
+    containers:
+    - env:
+      - name: THREESCALE_PORTAL_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            key: password
+            name: apicast-configuration-url-secret
+      - name: THREESCALE_CONFIG_FILE
+      - name: THREESCALE_DEPLOYMENT_ENV
+        value: sandbox
+      - name: RESOLVER
+      - name: APICAST_SERVICES
+        value: "2555417755119"
+      - name: APICAST_CONFIGURATION_LOADER
+        value: lazy
+      - name: APICAST_LOG_LEVEL
+        value: debug
+      - name: APICAST_PATH_ROUTING_ENABLED
+        value: "false"
+      - name: APICAST_RESPONSE_CODES
+        value: "true"
+      - name: APICAST_CONFIGURATION_CACHE
+      - name: REDIS_URL
+      - name: APICAST_MANAGEMENT_API
+        value: status
+      - name: OPENSSL_VERIFY
+        value: "false"
+      image: 3scale-amp20/apicast-gateway:1.0-3
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /status/live
+          port: management
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: apicast-stage
+      ports:
+      - containerPort: 8080
+        name: proxy
+        protocol: TCP
+      - containerPort: 8090
+        name: management
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /status/ready
+          port: management
+          scheme: HTTP
+        initialDelaySeconds: 15
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources: {}
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+        privileged: false
+        runAsUser: 1000200000
+        seLinuxOptions:
+          level: s0:c14,c9
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-pn6ht
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    imagePullSecrets:
+    - name: default-dockercfg-5ngwz
+    nodeName: ocp-app-3.demolab.local
+    nodeSelector:
+      purpose: apps
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000200000
+      seLinuxOptions:
+        level: s0:c14,c9
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    volumes:
+    - name: default-token-pn6ht
+      secret:
+        defaultMode: 420
+        secretName: default-token-pn6ht
+  status:
+    phase: Pending
+    qosClass: BestEffort
+- apiVersion: v1
+  kind: Pod
+  metadata:
+    annotations:
+      kubernetes.io/created-by: |
+        {"kind":"SerializedReference","apiVersion":"v1","reference":{"kind":"ReplicationController","namespace":"apicast","name":"apicast-stage-4","uid":"24a14c38-1738-11e8-a813-5254002f83b4","apiVersion":"v1","resourceVersion":"381469021"}}
+      openshift.io/deployment-config.latest-version: "4"
+      openshift.io/deployment-config.name: apicast-stage
+      openshift.io/deployment.name: apicast-stage-4
+      openshift.io/scc: restricted
+    creationTimestamp: null
+    generateName: apicast-stage-4-
+    labels:
+      deployment: apicast-stage-4
+      deploymentconfig: apicast-stage
+    ownerReferences:
+    - apiVersion: v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: ReplicationController
+      name: apicast-stage-4
+      uid: 24a14c38-1738-11e8-a813-5254002f83b4
+  spec:
+    containers:
+    - env:
+      - name: THREESCALE_PORTAL_ENDPOINT
+        valueFrom:
+          secretKeyRef:
+            key: password
+            name: apicast-configuration-url-secret
+      - name: THREESCALE_CONFIG_FILE
+      - name: THREESCALE_DEPLOYMENT_ENV
+        value: sandbox
+      - name: RESOLVER
+      - name: APICAST_SERVICES
+        value: "2555417755119"
+      - name: APICAST_CONFIGURATION_LOADER
+        value: lazy
+      - name: APICAST_LOG_LEVEL
+        value: debug
+      - name: APICAST_PATH_ROUTING_ENABLED
+        value: "false"
+      - name: APICAST_RESPONSE_CODES
+        value: "true"
+      - name: APICAST_CONFIGURATION_CACHE
+      - name: REDIS_URL
+      - name: APICAST_MANAGEMENT_API
+        value: status
+      - name: OPENSSL_VERIFY
+        value: "false"
+      image: 3scale-amp20/apicast-gateway:1.0-3
+      imagePullPolicy: IfNotPresent
+      livenessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /status/live
+          port: management
+          scheme: HTTP
+        initialDelaySeconds: 10
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      name: apicast-stage
+      ports:
+      - containerPort: 8080
+        name: proxy
+        protocol: TCP
+      - containerPort: 8090
+        name: management
+        protocol: TCP
+      readinessProbe:
+        failureThreshold: 3
+        httpGet:
+          path: /status/ready
+          port: management
+          scheme: HTTP
+        initialDelaySeconds: 15
+        periodSeconds: 10
+        successThreshold: 1
+        timeoutSeconds: 1
+      resources: {}
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+        privileged: false
+        runAsUser: 1000200000
+        seLinuxOptions:
+          level: s0:c14,c9
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: default-token-pn6ht
+        readOnly: true
+    dnsPolicy: ClusterFirst
+    imagePullSecrets:
+    - name: default-dockercfg-5ngwz
+    nodeName: ocp-app-2.demolab.local
+    nodeSelector:
+      purpose: apps
+    restartPolicy: Always
+    schedulerName: default-scheduler
+    securityContext:
+      fsGroup: 1000200000
+      seLinuxOptions:
+        level: s0:c14,c9
+    serviceAccount: default
+    serviceAccountName: default
+    terminationGracePeriodSeconds: 30
+    volumes:
+    - name: default-token-pn6ht
+      secret:
+        defaultMode: 420
+        secretName: default-token-pn6ht
+  status:
+    phase: Pending
+    qosClass: BestEffort
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/original-replicas: "1"
+      openshift.io/deployer-pod.completed-at: 2018-01-29 16:32:50 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2018-01-29 16:31:59 +0000 UTC
+      openshift.io/deployer-pod.name: apicast-4-deploy
+      openshift.io/deployment-config.latest-version: "4"
+      openshift.io/deployment-config.name: apicast
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: ""
+      openshift.io/deployment.status-reason: config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"apicast","namespace":"apicast","selfLink":"/apis/apps.openshift.io/v1/namespaces/apicast/deploymentconfigs/apicast","uid":"4312c747-01f9-11e8-8624-52540064f8a5","resourceVersion":"227084833","generation":9,"creationTimestamp":"2018-01-25T17:57:51Z","labels":{"app":"3scale-gateway"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentconfig":"apicast"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"3scale-gateway","deploymentconfig":"apicast"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"containers":[{"name":"apicast","image":"3scale-amp20/apicast-gateway:1.0","ports":[{"name":"proxy","containerPort":8080,"protocol":"TCP"},{"name":"management","containerPort":8090,"protocol":"TCP"}],"env":[{"name":"THREESCALE_PORTAL_ENDPOINT","valueFrom":{"secretKeyRef":{"name":"apicast-configuration-url-secret","key":"password"}}},{"name":"THREESCALE_CONFIG_FILE"},{"name":"THREESCALE_DEPLOYMENT_ENV","value":"production"},{"name":"RESOLVER"},{"name":"APICAST_SERVICES","value":"2555417755119"},{"name":"APICAST_CONFIGURATION_LOADER","value":"boot"},{"name":"APICAST_LOG_LEVEL"},{"name":"APICAST_PATH_ROUTING_ENABLED","value":"false"},{"name":"APICAST_RESPONSE_CODES","value":"true"},{"name":"APICAST_CONFIGURATION_CACHE"},{"name":"REDIS_URL"},{"name":"APICAST_MANAGEMENT_API","value":"status"},{"name":"OPENSSL_VERIFY","value":"false"}],"resources":{},"livenessProbe":{"httpGet":{"path":"/status/live","port":"management","scheme":"HTTP"},"initialDelaySeconds":10,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"readinessProbe":{"httpGet":{"path":"/status/ready","port":"management","scheme":"HTTP"},"initialDelaySeconds":15,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":4,"observedGeneration":9,"replicas":1,"updatedReplicas":0,"availableReplicas":1,"unavailableReplicas":0,"details":{"message":"config change","causes":[{"type":"ConfigChange"}]},"conditions":[{"type":"Progressing","status":"True","lastUpdateTime":"2018-01-26T13:27:15Z","lastTransitionTime":"2018-01-26T13:27:12Z","reason":"NewReplicationControllerAvailable","message":"replication controller \"apicast-3\" successfully rolled out"},{"type":"Available","status":"True","lastUpdateTime":"2018-01-29T14:22:46Z","lastTransitionTime":"2018-01-29T14:22:46Z","message":"Deployment config has minimum availability."}],"readyReplicas":1}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: 3scale-gateway
+      openshift.io/deployment-config.name: apicast
+    name: apicast-4
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: apicast
+      uid: 4312c747-01f9-11e8-8624-52540064f8a5
+  spec:
+    replicas: 0
+    selector:
+      deployment: apicast-4
+      deploymentconfig: apicast
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "4"
+          openshift.io/deployment-config.name: apicast
+          openshift.io/deployment.name: apicast-4
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: 3scale-gateway
+          deployment: apicast-4
+          deploymentconfig: apicast
+      spec:
+        containers:
+        - env:
+          - name: THREESCALE_PORTAL_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: apicast-configuration-url-secret
+          - name: THREESCALE_CONFIG_FILE
+          - name: THREESCALE_DEPLOYMENT_ENV
+            value: production
+          - name: RESOLVER
+          - name: APICAST_SERVICES
+            value: "2555417755119"
+          - name: APICAST_CONFIGURATION_LOADER
+            value: boot
+          - name: APICAST_LOG_LEVEL
+          - name: APICAST_PATH_ROUTING_ENABLED
+            value: "false"
+          - name: APICAST_RESPONSE_CODES
+            value: "true"
+          - name: APICAST_CONFIGURATION_CACHE
+          - name: REDIS_URL
+          - name: APICAST_MANAGEMENT_API
+            value: status
+          - name: OPENSSL_VERIFY
+            value: "false"
+          image: 3scale-amp20/apicast-gateway:1.0
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/live
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: apicast
+          ports:
+          - containerPort: 8080
+            name: proxy
+            protocol: TCP
+          - containerPort: 8090
+            name: management
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/ready
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/original-replicas: "1"
+      openshift.io/deployer-pod.completed-at: 2018-02-08 09:33:25 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2018-02-08 09:32:21 +0000 UTC
+      openshift.io/deployer-pod.name: apicast-5-deploy
+      openshift.io/deployment-config.latest-version: "5"
+      openshift.io/deployment-config.name: apicast
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: ""
+      openshift.io/deployment.status-reason: config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"apicast","namespace":"apicast","selfLink":"/apis/apps.openshift.io/v1/namespaces/apicast/deploymentconfigs/apicast","uid":"4312c747-01f9-11e8-8624-52540064f8a5","resourceVersion":"264260780","generation":12,"creationTimestamp":"2018-01-25T17:57:51Z","labels":{"app":"3scale-gateway"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentconfig":"apicast"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"3scale-gateway","deploymentconfig":"apicast"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"containers":[{"name":"apicast","image":"3scale-amp20/apicast-gateway:1.0","ports":[{"name":"proxy","containerPort":8080,"protocol":"TCP"},{"name":"management","containerPort":8090,"protocol":"TCP"}],"env":[{"name":"THREESCALE_PORTAL_ENDPOINT","valueFrom":{"secretKeyRef":{"name":"apicast-configuration-url-secret","key":"password"}}},{"name":"THREESCALE_CONFIG_FILE"},{"name":"THREESCALE_DEPLOYMENT_ENV","value":"production"},{"name":"RESOLVER"},{"name":"APICAST_SERVICES","value":"2555417755119, 2555417755396"},{"name":"APICAST_CONFIGURATION_LOADER","value":"boot"},{"name":"APICAST_LOG_LEVEL"},{"name":"APICAST_PATH_ROUTING_ENABLED","value":"false"},{"name":"APICAST_RESPONSE_CODES","value":"true"},{"name":"APICAST_CONFIGURATION_CACHE"},{"name":"REDIS_URL"},{"name":"APICAST_MANAGEMENT_API","value":"status"},{"name":"OPENSSL_VERIFY","value":"false"}],"resources":{},"livenessProbe":{"httpGet":{"path":"/status/live","port":"management","scheme":"HTTP"},"initialDelaySeconds":10,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"readinessProbe":{"httpGet":{"path":"/status/ready","port":"management","scheme":"HTTP"},"initialDelaySeconds":15,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":5,"observedGeneration":12,"replicas":1,"updatedReplicas":0,"availableReplicas":1,"unavailableReplicas":0,"details":{"message":"config change","causes":[{"type":"ConfigChange"}]},"conditions":[{"type":"Progressing","status":"True","lastUpdateTime":"2018-01-29T16:33:01Z","lastTransitionTime":"2018-01-29T16:32:49Z","reason":"NewReplicationControllerAvailable","message":"replication controller \"apicast-4\" successfully rolled out"},{"type":"Available","status":"True","lastUpdateTime":"2018-02-08T08:19:12Z","lastTransitionTime":"2018-02-08T08:19:12Z","message":"Deployment config has minimum availability."}],"readyReplicas":1}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: 3scale-gateway
+      openshift.io/deployment-config.name: apicast
+    name: apicast-5
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: apicast
+      uid: 4312c747-01f9-11e8-8624-52540064f8a5
+  spec:
+    replicas: 0
+    selector:
+      deployment: apicast-5
+      deploymentconfig: apicast
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "5"
+          openshift.io/deployment-config.name: apicast
+          openshift.io/deployment.name: apicast-5
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: 3scale-gateway
+          deployment: apicast-5
+          deploymentconfig: apicast
+      spec:
+        containers:
+        - env:
+          - name: THREESCALE_PORTAL_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: apicast-configuration-url-secret
+          - name: THREESCALE_CONFIG_FILE
+          - name: THREESCALE_DEPLOYMENT_ENV
+            value: production
+          - name: RESOLVER
+          - name: APICAST_SERVICES
+            value: 2555417755119, 2555417755396
+          - name: APICAST_CONFIGURATION_LOADER
+            value: boot
+          - name: APICAST_LOG_LEVEL
+          - name: APICAST_PATH_ROUTING_ENABLED
+            value: "false"
+          - name: APICAST_RESPONSE_CODES
+            value: "true"
+          - name: APICAST_CONFIGURATION_CACHE
+          - name: REDIS_URL
+          - name: APICAST_MANAGEMENT_API
+            value: status
+          - name: OPENSSL_VERIFY
+            value: "false"
+          image: 3scale-amp20/apicast-gateway:1.0
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/live
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: apicast
+          ports:
+          - containerPort: 8080
+            name: proxy
+            protocol: TCP
+          - containerPort: 8090
+            name: management
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/ready
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/original-replicas: "1"
+      openshift.io/deployer-pod.completed-at: 2018-02-08 09:36:02 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2018-02-08 09:35:35 +0000 UTC
+      openshift.io/deployer-pod.name: apicast-6-deploy
+      openshift.io/deployment-config.latest-version: "6"
+      openshift.io/deployment-config.name: apicast
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: ""
+      openshift.io/deployment.status-reason: config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"apicast","namespace":"apicast","selfLink":"/apis/apps.openshift.io/v1/namespaces/apicast/deploymentconfigs/apicast","uid":"4312c747-01f9-11e8-8624-52540064f8a5","resourceVersion":"264272416","generation":13,"creationTimestamp":"2018-01-25T17:57:51Z","labels":{"app":"3scale-gateway"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentconfig":"apicast"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"3scale-gateway","deploymentconfig":"apicast"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"containers":[{"name":"apicast","image":"3scale-amp20/apicast-gateway:1.0","ports":[{"name":"proxy","containerPort":8080,"protocol":"TCP"},{"name":"management","containerPort":8090,"protocol":"TCP"}],"env":[{"name":"THREESCALE_PORTAL_ENDPOINT","valueFrom":{"secretKeyRef":{"name":"apicast-configuration-url-secret","key":"password"}}},{"name":"THREESCALE_CONFIG_FILE"},{"name":"THREESCALE_DEPLOYMENT_ENV","value":"production"},{"name":"RESOLVER"},{"name":"APICAST_SERVICES","value":"2555417755119 2555417755396"},{"name":"APICAST_CONFIGURATION_LOADER","value":"boot"},{"name":"APICAST_LOG_LEVEL"},{"name":"APICAST_PATH_ROUTING_ENABLED","value":"false"},{"name":"APICAST_RESPONSE_CODES","value":"true"},{"name":"APICAST_CONFIGURATION_CACHE"},{"name":"REDIS_URL"},{"name":"APICAST_MANAGEMENT_API","value":"status"},{"name":"OPENSSL_VERIFY","value":"false"}],"resources":{},"livenessProbe":{"httpGet":{"path":"/status/live","port":"management","scheme":"HTTP"},"initialDelaySeconds":10,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"readinessProbe":{"httpGet":{"path":"/status/ready","port":"management","scheme":"HTTP"},"initialDelaySeconds":15,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":6,"observedGeneration":13,"replicas":1,"updatedReplicas":0,"availableReplicas":1,"unavailableReplicas":0,"details":{"message":"config change","causes":[{"type":"ConfigChange"}]},"conditions":[{"type":"Available","status":"True","lastUpdateTime":"2018-02-08T08:19:12Z","lastTransitionTime":"2018-02-08T08:19:12Z","message":"Deployment config has minimum availability."},{"type":"Progressing","status":"True","lastUpdateTime":"2018-02-08T09:33:26Z","lastTransitionTime":"2018-02-08T09:33:24Z","reason":"NewReplicationControllerAvailable","message":"replication controller \"apicast-5\" successfully rolled out"}],"readyReplicas":1}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: 3scale-gateway
+      openshift.io/deployment-config.name: apicast
+    name: apicast-6
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: apicast
+      uid: 4312c747-01f9-11e8-8624-52540064f8a5
+  spec:
+    replicas: 0
+    selector:
+      deployment: apicast-6
+      deploymentconfig: apicast
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "6"
+          openshift.io/deployment-config.name: apicast
+          openshift.io/deployment.name: apicast-6
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: 3scale-gateway
+          deployment: apicast-6
+          deploymentconfig: apicast
+      spec:
+        containers:
+        - env:
+          - name: THREESCALE_PORTAL_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: apicast-configuration-url-secret
+          - name: THREESCALE_CONFIG_FILE
+          - name: THREESCALE_DEPLOYMENT_ENV
+            value: production
+          - name: RESOLVER
+          - name: APICAST_SERVICES
+            value: 2555417755119 2555417755396
+          - name: APICAST_CONFIGURATION_LOADER
+            value: boot
+          - name: APICAST_LOG_LEVEL
+          - name: APICAST_PATH_ROUTING_ENABLED
+            value: "false"
+          - name: APICAST_RESPONSE_CODES
+            value: "true"
+          - name: APICAST_CONFIGURATION_CACHE
+          - name: REDIS_URL
+          - name: APICAST_MANAGEMENT_API
+            value: status
+          - name: OPENSSL_VERIFY
+            value: "false"
+          image: 3scale-amp20/apicast-gateway:1.0
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/live
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: apicast
+          ports:
+          - containerPort: 8080
+            name: proxy
+            protocol: TCP
+          - containerPort: 8090
+            name: management
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/ready
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/original-replicas: "1"
+      openshift.io/deployer-pod.completed-at: 2018-02-08 09:42:48 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2018-02-08 09:42:08 +0000 UTC
+      openshift.io/deployer-pod.name: apicast-7-deploy
+      openshift.io/deployment-config.latest-version: "7"
+      openshift.io/deployment-config.name: apicast
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: ""
+      openshift.io/deployment.status-reason: config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"apicast","namespace":"apicast","selfLink":"/apis/apps.openshift.io/v1/namespaces/apicast/deploymentconfigs/apicast","uid":"4312c747-01f9-11e8-8624-52540064f8a5","resourceVersion":"264296416","generation":14,"creationTimestamp":"2018-01-25T17:57:51Z","labels":{"app":"3scale-gateway"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentconfig":"apicast"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"3scale-gateway","deploymentconfig":"apicast"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"containers":[{"name":"apicast","image":"3scale-amp20/apicast-gateway:1.0","ports":[{"name":"proxy","containerPort":8080,"protocol":"TCP"},{"name":"management","containerPort":8090,"protocol":"TCP"}],"env":[{"name":"THREESCALE_PORTAL_ENDPOINT","valueFrom":{"secretKeyRef":{"name":"apicast-configuration-url-secret","key":"password"}}},{"name":"THREESCALE_CONFIG_FILE"},{"name":"THREESCALE_DEPLOYMENT_ENV","value":"production"},{"name":"RESOLVER"},{"name":"APICAST_SERVICES"},{"name":"APICAST_CONFIGURATION_LOADER","value":"boot"},{"name":"APICAST_LOG_LEVEL"},{"name":"APICAST_PATH_ROUTING_ENABLED","value":"false"},{"name":"APICAST_RESPONSE_CODES","value":"true"},{"name":"APICAST_CONFIGURATION_CACHE"},{"name":"REDIS_URL"},{"name":"APICAST_MANAGEMENT_API","value":"status"},{"name":"OPENSSL_VERIFY","value":"false"}],"resources":{},"livenessProbe":{"httpGet":{"path":"/status/live","port":"management","scheme":"HTTP"},"initialDelaySeconds":10,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"readinessProbe":{"httpGet":{"path":"/status/ready","port":"management","scheme":"HTTP"},"initialDelaySeconds":15,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":7,"observedGeneration":14,"replicas":1,"updatedReplicas":0,"availableReplicas":1,"unavailableReplicas":0,"details":{"message":"config change","causes":[{"type":"ConfigChange"}]},"conditions":[{"type":"Available","status":"True","lastUpdateTime":"2018-02-08T08:19:12Z","lastTransitionTime":"2018-02-08T08:19:12Z","message":"Deployment config has minimum availability."},{"type":"Progressing","status":"True","lastUpdateTime":"2018-02-08T09:36:05Z","lastTransitionTime":"2018-02-08T09:36:01Z","reason":"NewReplicationControllerAvailable","message":"replication controller \"apicast-6\" successfully rolled out"}],"readyReplicas":1}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: 3scale-gateway
+      openshift.io/deployment-config.name: apicast
+    name: apicast-7
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: apicast
+      uid: 4312c747-01f9-11e8-8624-52540064f8a5
+  spec:
+    replicas: 0
+    selector:
+      deployment: apicast-7
+      deploymentconfig: apicast
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "7"
+          openshift.io/deployment-config.name: apicast
+          openshift.io/deployment.name: apicast-7
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: 3scale-gateway
+          deployment: apicast-7
+          deploymentconfig: apicast
+      spec:
+        containers:
+        - env:
+          - name: THREESCALE_PORTAL_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: apicast-configuration-url-secret
+          - name: THREESCALE_CONFIG_FILE
+          - name: THREESCALE_DEPLOYMENT_ENV
+            value: production
+          - name: RESOLVER
+          - name: APICAST_SERVICES
+          - name: APICAST_CONFIGURATION_LOADER
+            value: boot
+          - name: APICAST_LOG_LEVEL
+          - name: APICAST_PATH_ROUTING_ENABLED
+            value: "false"
+          - name: APICAST_RESPONSE_CODES
+            value: "true"
+          - name: APICAST_CONFIGURATION_CACHE
+          - name: REDIS_URL
+          - name: APICAST_MANAGEMENT_API
+            value: status
+          - name: OPENSSL_VERIFY
+            value: "false"
+          image: 3scale-amp20/apicast-gateway:1.0
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/live
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: apicast
+          ports:
+          - containerPort: 8080
+            name: proxy
+            protocol: TCP
+          - containerPort: 8090
+            name: management
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/ready
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/original-replicas: "1"
+      openshift.io/deployer-pod.completed-at: 2018-02-09 14:34:45 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2018-02-09 14:33:20 +0000 UTC
+      openshift.io/deployer-pod.name: apicast-8-deploy
+      openshift.io/deployment-config.latest-version: "8"
+      openshift.io/deployment-config.name: apicast
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: ""
+      openshift.io/deployment.status-reason: config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"apicast","namespace":"apicast","selfLink":"/apis/apps.openshift.io/v1/namespaces/apicast/deploymentconfigs/apicast","uid":"4312c747-01f9-11e8-8624-52540064f8a5","resourceVersion":"270240871","generation":15,"creationTimestamp":"2018-01-25T17:57:51Z","labels":{"app":"3scale-gateway"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentconfig":"apicast"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"3scale-gateway","deploymentconfig":"apicast"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"containers":[{"name":"apicast","image":"3scale-amp20/apicast-gateway:1.0","ports":[{"name":"proxy","containerPort":8080,"protocol":"TCP"},{"name":"management","containerPort":8090,"protocol":"TCP"}],"env":[{"name":"THREESCALE_PORTAL_ENDPOINT","valueFrom":{"secretKeyRef":{"name":"apicast-configuration-url-secret","key":"password"}}},{"name":"THREESCALE_CONFIG_FILE"},{"name":"THREESCALE_DEPLOYMENT_ENV","value":"production"},{"name":"RESOLVER"},{"name":"APICAST_SERVICES","value":"2555417755119"},{"name":"APICAST_CONFIGURATION_LOADER","value":"boot"},{"name":"APICAST_LOG_LEVEL"},{"name":"APICAST_PATH_ROUTING_ENABLED","value":"false"},{"name":"APICAST_RESPONSE_CODES","value":"true"},{"name":"APICAST_CONFIGURATION_CACHE"},{"name":"REDIS_URL"},{"name":"APICAST_MANAGEMENT_API","value":"status"},{"name":"OPENSSL_VERIFY","value":"false"}],"resources":{},"livenessProbe":{"httpGet":{"path":"/status/live","port":"management","scheme":"HTTP"},"initialDelaySeconds":10,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"readinessProbe":{"httpGet":{"path":"/status/ready","port":"management","scheme":"HTTP"},"initialDelaySeconds":15,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":8,"observedGeneration":15,"replicas":1,"updatedReplicas":0,"availableReplicas":1,"unavailableReplicas":0,"details":{"message":"config change","causes":[{"type":"ConfigChange"}]},"conditions":[{"type":"Progressing","status":"True","lastUpdateTime":"2018-02-08T09:42:49Z","lastTransitionTime":"2018-02-08T09:42:46Z","reason":"NewReplicationControllerAvailable","message":"replication controller \"apicast-7\" successfully rolled out"},{"type":"Available","status":"True","lastUpdateTime":"2018-02-08T19:34:32Z","lastTransitionTime":"2018-02-08T19:34:32Z","message":"Deployment config has minimum availability."}],"readyReplicas":1}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: 3scale-gateway
+      openshift.io/deployment-config.name: apicast
+    name: apicast-8
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: apicast
+      uid: 4312c747-01f9-11e8-8624-52540064f8a5
+  spec:
+    replicas: 0
+    selector:
+      deployment: apicast-8
+      deploymentconfig: apicast
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "8"
+          openshift.io/deployment-config.name: apicast
+          openshift.io/deployment.name: apicast-8
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: 3scale-gateway
+          deployment: apicast-8
+          deploymentconfig: apicast
+      spec:
+        containers:
+        - env:
+          - name: THREESCALE_PORTAL_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: apicast-configuration-url-secret
+          - name: THREESCALE_CONFIG_FILE
+          - name: THREESCALE_DEPLOYMENT_ENV
+            value: production
+          - name: RESOLVER
+          - name: APICAST_SERVICES
+            value: "2555417755119"
+          - name: APICAST_CONFIGURATION_LOADER
+            value: boot
+          - name: APICAST_LOG_LEVEL
+          - name: APICAST_PATH_ROUTING_ENABLED
+            value: "false"
+          - name: APICAST_RESPONSE_CODES
+            value: "true"
+          - name: APICAST_CONFIGURATION_CACHE
+          - name: REDIS_URL
+          - name: APICAST_MANAGEMENT_API
+            value: status
+          - name: OPENSSL_VERIFY
+            value: "false"
+          image: 3scale-amp20/apicast-gateway:1.0
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/live
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: apicast
+          ports:
+          - containerPort: 8080
+            name: proxy
+            protocol: TCP
+          - containerPort: 8090
+            name: management
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/ready
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      openshift.io/deployer-pod.completed-at: 2018-02-21 18:53:18 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2018-02-21 18:50:49 +0000 UTC
+      openshift.io/deployer-pod.name: apicast-9-deploy
+      openshift.io/deployment-config.latest-version: "9"
+      openshift.io/deployment-config.name: apicast
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: ""
+      openshift.io/deployment.status-reason: manual change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"apicast","namespace":"apicast","selfLink":"/apis/apps.openshift.io/v1/namespaces/apicast/deploymentconfigs/apicast","uid":"4312c747-01f9-11e8-8624-52540064f8a5","resourceVersion":"336456648","generation":22,"creationTimestamp":"2018-01-25T17:57:51Z","labels":{"app":"3scale-gateway"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentconfig":"apicast"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"3scale-gateway","deploymentconfig":"apicast"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"containers":[{"name":"apicast","image":"3scale-amp20/apicast-gateway:1.0","ports":[{"name":"proxy","containerPort":8080,"protocol":"TCP"},{"name":"management","containerPort":8090,"protocol":"TCP"}],"env":[{"name":"THREESCALE_PORTAL_ENDPOINT","valueFrom":{"secretKeyRef":{"name":"apicast-configuration-url-secret","key":"password"}}},{"name":"THREESCALE_CONFIG_FILE"},{"name":"THREESCALE_DEPLOYMENT_ENV","value":"production"},{"name":"RESOLVER"},{"name":"APICAST_SERVICES","value":"2555417755119"},{"name":"APICAST_CONFIGURATION_LOADER","value":"boot"},{"name":"APICAST_LOG_LEVEL"},{"name":"APICAST_PATH_ROUTING_ENABLED","value":"false"},{"name":"APICAST_RESPONSE_CODES","value":"true"},{"name":"APICAST_CONFIGURATION_CACHE"},{"name":"REDIS_URL"},{"name":"APICAST_MANAGEMENT_API","value":"status"},{"name":"OPENSSL_VERIFY","value":"false"}],"resources":{},"livenessProbe":{"httpGet":{"path":"/status/live","port":"management","scheme":"HTTP"},"initialDelaySeconds":10,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"readinessProbe":{"httpGet":{"path":"/status/ready","port":"management","scheme":"HTTP"},"initialDelaySeconds":15,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":9,"observedGeneration":21,"replicas":1,"updatedReplicas":1,"availableReplicas":0,"unavailableReplicas":1,"details":{"message":"manual change","causes":[{"type":"Manual"}]},"conditions":[{"type":"Progressing","status":"True","lastUpdateTime":"2018-02-09T14:35:07Z","lastTransitionTime":"2018-02-09T14:34:44Z","reason":"NewReplicationControllerAvailable","message":"replication controller \"apicast-8\" successfully rolled out"},{"type":"Available","status":"False","lastUpdateTime":"2018-02-21T18:46:10Z","lastTransitionTime":"2018-02-21T18:46:10Z","message":"Deployment config does not have minimum availability."}]}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: 3scale-gateway
+      openshift.io/deployment-config.name: apicast
+    name: apicast-9
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: apicast
+      uid: 4312c747-01f9-11e8-8624-52540064f8a5
+  spec:
+    replicas: 1
+    selector:
+      deployment: apicast-9
+      deploymentconfig: apicast
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "9"
+          openshift.io/deployment-config.name: apicast
+          openshift.io/deployment.name: apicast-9
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: 3scale-gateway
+          deployment: apicast-9
+          deploymentconfig: apicast
+      spec:
+        containers:
+        - env:
+          - name: THREESCALE_PORTAL_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: apicast-configuration-url-secret
+          - name: THREESCALE_CONFIG_FILE
+          - name: THREESCALE_DEPLOYMENT_ENV
+            value: production
+          - name: RESOLVER
+          - name: APICAST_SERVICES
+            value: "2555417755119"
+          - name: APICAST_CONFIGURATION_LOADER
+            value: boot
+          - name: APICAST_LOG_LEVEL
+          - name: APICAST_PATH_ROUTING_ENABLED
+            value: "false"
+          - name: APICAST_RESPONSE_CODES
+            value: "true"
+          - name: APICAST_CONFIGURATION_CACHE
+          - name: REDIS_URL
+          - name: APICAST_MANAGEMENT_API
+            value: status
+          - name: OPENSSL_VERIFY
+            value: "false"
+          image: 3scale-amp20/apicast-gateway:1.0
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/live
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: apicast
+          ports:
+          - containerPort: 8080
+            name: proxy
+            protocol: TCP
+          - containerPort: 8090
+            name: management
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/ready
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/original-replicas: "1"
+      openshift.io/deployer-pod.completed-at: 2018-01-29 16:20:35 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2018-01-29 16:19:23 +0000 UTC
+      openshift.io/deployer-pod.name: apicast-stage-1-deploy
+      openshift.io/deployment-config.latest-version: "1"
+      openshift.io/deployment-config.name: apicast-stage
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: "2"
+      openshift.io/deployment.status-reason: config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"apicast-stage","namespace":"apicast","selfLink":"/apis/apps.openshift.io/v1/namespaces/apicast/deploymentconfigs/apicast-stage","uid":"2ae8286a-0510-11e8-9e1b-5254002f83b4","resourceVersion":"227038156","generation":1,"creationTimestamp":"2018-01-29T16:19:23Z","labels":{"app":"3scale-gateway"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"}],"replicas":2,"test":false,"selector":{"deploymentconfig":"apicast-stage"},"template":{"metadata":{"creationTimestamp":null,"labels":{"deploymentconfig":"apicast-stage"}},"spec":{"containers":[{"name":"apicast-stage","image":"3scale-amp20/apicast-gateway:1.0-3","ports":[{"name":"proxy","containerPort":8080,"protocol":"TCP"},{"name":"management","containerPort":8090,"protocol":"TCP"}],"env":[{"name":"THREESCALE_PORTAL_ENDPOINT","valueFrom":{"secretKeyRef":{"name":"apicast-configuration-url-secret","key":"password"}}},{"name":"THREESCALE_CONFIG_FILE"},{"name":"THREESCALE_DEPLOYMENT_ENV","value":"sandbox"},{"name":"RESOLVER"},{"name":"APICAST_SERVICES"},{"name":"APICAST_CONFIGURATION_LOADER","value":"lazy"},{"name":"APICAST_LOG_LEVEL","value":"debug"},{"name":"APICAST_PATH_ROUTING_ENABLED","value":"false"},{"name":"APICAST_RESPONSE_CODES","value":"true"},{"name":"APICAST_CONFIGURATION_CACHE"},{"name":"REDIS_URL"},{"name":"APICAST_MANAGEMENT_API","value":"status"},{"name":"OPENSSL_VERIFY","value":"false"}],"resources":{},"livenessProbe":{"httpGet":{"path":"/status/live","port":"management","scheme":"HTTP"},"initialDelaySeconds":10,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"readinessProbe":{"httpGet":{"path":"/status/ready","port":"management","scheme":"HTTP"},"initialDelaySeconds":15,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"IfNotPresent"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":1,"observedGeneration":1,"replicas":0,"updatedReplicas":0,"availableReplicas":0,"unavailableReplicas":0,"details":{"message":"config change","causes":[{"type":"ConfigChange"}]},"conditions":[{"type":"Available","status":"False","lastUpdateTime":"2018-01-29T16:19:23Z","lastTransitionTime":"2018-01-29T16:19:23Z","message":"Deployment config does not have minimum availability."}]}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: 3scale-gateway
+      openshift.io/deployment-config.name: apicast-stage
+    name: apicast-stage-1
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: apicast-stage
+      uid: 2ae8286a-0510-11e8-9e1b-5254002f83b4
+  spec:
+    replicas: 0
+    selector:
+      deployment: apicast-stage-1
+      deploymentconfig: apicast-stage
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "1"
+          openshift.io/deployment-config.name: apicast-stage
+          openshift.io/deployment.name: apicast-stage-1
+        creationTimestamp: null
+        labels:
+          deployment: apicast-stage-1
+          deploymentconfig: apicast-stage
+      spec:
+        containers:
+        - env:
+          - name: THREESCALE_PORTAL_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: apicast-configuration-url-secret
+          - name: THREESCALE_CONFIG_FILE
+          - name: THREESCALE_DEPLOYMENT_ENV
+            value: sandbox
+          - name: RESOLVER
+          - name: APICAST_SERVICES
+          - name: APICAST_CONFIGURATION_LOADER
+            value: lazy
+          - name: APICAST_LOG_LEVEL
+            value: debug
+          - name: APICAST_PATH_ROUTING_ENABLED
+            value: "false"
+          - name: APICAST_RESPONSE_CODES
+            value: "true"
+          - name: APICAST_CONFIGURATION_CACHE
+          - name: REDIS_URL
+          - name: APICAST_MANAGEMENT_API
+            value: status
+          - name: OPENSSL_VERIFY
+            value: "false"
+          image: 3scale-amp20/apicast-gateway:1.0-3
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/live
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: apicast-stage
+          ports:
+          - containerPort: 8080
+            name: proxy
+            protocol: TCP
+          - containerPort: 8090
+            name: management
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/ready
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/desired-replicas: "1"
+      kubectl.kubernetes.io/update-source-id: apicast-stage-1:2aec14b2-0510-11e8-8580-525400f31c93
+      openshift.io/deployer-pod.created-at: 2018-02-09 14:33:37 +0000 UTC
+      openshift.io/deployer-pod.name: apicast-stage-2-deploy
+      openshift.io/deployment-config.latest-version: "2"
+      openshift.io/deployment-config.name: apicast-stage
+      openshift.io/deployment.phase: Failed
+      openshift.io/deployment.replicas: "0"
+      openshift.io/deployment.status-reason: config change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"apicast-stage","namespace":"apicast","selfLink":"/apis/apps.openshift.io/v1/namespaces/apicast/deploymentconfigs/apicast-stage","uid":"2ae8286a-0510-11e8-9e1b-5254002f83b4","resourceVersion":"270241802","generation":3,"creationTimestamp":"2018-01-29T16:19:23Z","labels":{"app":"3scale-gateway"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentconfig":"apicast-stage"},"template":{"metadata":{"creationTimestamp":null,"labels":{"deploymentconfig":"apicast-stage"}},"spec":{"containers":[{"name":"apicast-stage","image":"3scale-amp20/apicast-gateway:1.0-3","ports":[{"name":"proxy","containerPort":8080,"protocol":"TCP"},{"name":"management","containerPort":8090,"protocol":"TCP"}],"env":[{"name":"THREESCALE_PORTAL_ENDPOINT","valueFrom":{"secretKeyRef":{"name":"apicast-configuration-url-secret","key":"password"}}},{"name":"THREESCALE_CONFIG_FILE"},{"name":"THREESCALE_DEPLOYMENT_ENV","value":"sandbox"},{"name":"RESOLVER"},{"name":"APICAST_SERVICES","value":"2555417755119"},{"name":"APICAST_CONFIGURATION_LOADER","value":"lazy"},{"name":"APICAST_LOG_LEVEL","value":"debug"},{"name":"APICAST_PATH_ROUTING_ENABLED","value":"false"},{"name":"APICAST_RESPONSE_CODES","value":"true"},{"name":"APICAST_CONFIGURATION_CACHE"},{"name":"REDIS_URL"},{"name":"APICAST_MANAGEMENT_API","value":"status"},{"name":"OPENSSL_VERIFY","value":"false"}],"resources":{},"livenessProbe":{"httpGet":{"path":"/status/live","port":"management","scheme":"HTTP"},"initialDelaySeconds":10,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"readinessProbe":{"httpGet":{"path":"/status/ready","port":"management","scheme":"HTTP"},"initialDelaySeconds":15,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"IfNotPresent"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":2,"observedGeneration":3,"replicas":1,"updatedReplicas":0,"availableReplicas":1,"unavailableReplicas":0,"details":{"message":"config change","causes":[{"type":"ConfigChange"}]},"conditions":[{"type":"Progressing","status":"True","lastUpdateTime":"2018-01-29T16:20:37Z","lastTransitionTime":"2018-01-29T16:20:37Z","reason":"NewReplicationControllerAvailable","message":"replication controller \"apicast-stage-1\" successfully rolled out"},{"type":"Available","status":"True","lastUpdateTime":"2018-02-08T19:29:34Z","lastTransitionTime":"2018-02-08T19:29:34Z","message":"Deployment config has minimum availability."}],"readyReplicas":1}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: 3scale-gateway
+      openshift.io/deployment-config.name: apicast-stage
+    name: apicast-stage-2
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: apicast-stage
+      uid: 2ae8286a-0510-11e8-9e1b-5254002f83b4
+  spec:
+    replicas: 0
+    selector:
+      deployment: apicast-stage-2
+      deploymentconfig: apicast-stage
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "2"
+          openshift.io/deployment-config.name: apicast-stage
+          openshift.io/deployment.name: apicast-stage-2
+        creationTimestamp: null
+        labels:
+          deployment: apicast-stage-2
+          deploymentconfig: apicast-stage
+      spec:
+        containers:
+        - env:
+          - name: THREESCALE_PORTAL_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: apicast-configuration-url-secret
+          - name: THREESCALE_CONFIG_FILE
+          - name: THREESCALE_DEPLOYMENT_ENV
+            value: sandbox
+          - name: RESOLVER
+          - name: APICAST_SERVICES
+            value: "2555417755119"
+          - name: APICAST_CONFIGURATION_LOADER
+            value: lazy
+          - name: APICAST_LOG_LEVEL
+            value: debug
+          - name: APICAST_PATH_ROUTING_ENABLED
+            value: "false"
+          - name: APICAST_RESPONSE_CODES
+            value: "true"
+          - name: APICAST_CONFIGURATION_CACHE
+          - name: REDIS_URL
+          - name: APICAST_MANAGEMENT_API
+            value: status
+          - name: OPENSSL_VERIFY
+            value: "false"
+          image: 3scale-amp20/apicast-gateway:1.0-3
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/live
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: apicast-stage
+          ports:
+          - containerPort: 8080
+            name: proxy
+            protocol: TCP
+          - containerPort: 8090
+            name: management
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/ready
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/original-replicas: "1"
+      openshift.io/deployer-pod.completed-at: 2018-02-19 15:25:33 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2018-02-19 15:23:45 +0000 UTC
+      openshift.io/deployer-pod.name: apicast-stage-3-deploy
+      openshift.io/deployment-config.latest-version: "3"
+      openshift.io/deployment-config.name: apicast-stage
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: ""
+      openshift.io/deployment.status-reason: manual change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"apicast-stage","namespace":"apicast","selfLink":"/apis/apps.openshift.io/v1/namespaces/apicast/deploymentconfigs/apicast-stage","uid":"2ae8286a-0510-11e8-9e1b-5254002f83b4","resourceVersion":"324717814","generation":4,"creationTimestamp":"2018-01-29T16:19:23Z","labels":{"app":"3scale-gateway"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentconfig":"apicast-stage"},"template":{"metadata":{"creationTimestamp":null,"labels":{"deploymentconfig":"apicast-stage"}},"spec":{"containers":[{"name":"apicast-stage","image":"3scale-amp20/apicast-gateway:1.0-3","ports":[{"name":"proxy","containerPort":8080,"protocol":"TCP"},{"name":"management","containerPort":8090,"protocol":"TCP"}],"env":[{"name":"THREESCALE_PORTAL_ENDPOINT","valueFrom":{"secretKeyRef":{"name":"apicast-configuration-url-secret","key":"password"}}},{"name":"THREESCALE_CONFIG_FILE"},{"name":"THREESCALE_DEPLOYMENT_ENV","value":"sandbox"},{"name":"RESOLVER"},{"name":"APICAST_SERVICES","value":"2555417755119"},{"name":"APICAST_CONFIGURATION_LOADER","value":"lazy"},{"name":"APICAST_LOG_LEVEL","value":"debug"},{"name":"APICAST_PATH_ROUTING_ENABLED","value":"false"},{"name":"APICAST_RESPONSE_CODES","value":"true"},{"name":"APICAST_CONFIGURATION_CACHE"},{"name":"REDIS_URL"},{"name":"APICAST_MANAGEMENT_API","value":"status"},{"name":"OPENSSL_VERIFY","value":"false"}],"resources":{},"livenessProbe":{"httpGet":{"path":"/status/live","port":"management","scheme":"HTTP"},"initialDelaySeconds":10,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"readinessProbe":{"httpGet":{"path":"/status/ready","port":"management","scheme":"HTTP"},"initialDelaySeconds":15,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"IfNotPresent"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":3,"observedGeneration":3,"replicas":1,"updatedReplicas":0,"availableReplicas":1,"unavailableReplicas":0,"details":{"message":"manual change","causes":[{"type":"Manual"}]},"conditions":[{"type":"Progressing","status":"False","lastUpdateTime":"2018-02-09T14:35:32Z","lastTransitionTime":"2018-02-09T14:35:32Z","reason":"ProgressDeadlineExceeded","message":"replication controller \"apicast-stage-2\" has failed progressing"},{"type":"Available","status":"True","lastUpdateTime":"2018-02-18T08:13:12Z","lastTransitionTime":"2018-02-18T08:13:12Z","message":"Deployment config has minimum availability."}],"readyReplicas":1}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: 3scale-gateway
+      openshift.io/deployment-config.name: apicast-stage
+    name: apicast-stage-3
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: apicast-stage
+      uid: 2ae8286a-0510-11e8-9e1b-5254002f83b4
+  spec:
+    replicas: 0
+    selector:
+      deployment: apicast-stage-3
+      deploymentconfig: apicast-stage
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "3"
+          openshift.io/deployment-config.name: apicast-stage
+          openshift.io/deployment.name: apicast-stage-3
+        creationTimestamp: null
+        labels:
+          deployment: apicast-stage-3
+          deploymentconfig: apicast-stage
+      spec:
+        containers:
+        - env:
+          - name: THREESCALE_PORTAL_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: apicast-configuration-url-secret
+          - name: THREESCALE_CONFIG_FILE
+          - name: THREESCALE_DEPLOYMENT_ENV
+            value: sandbox
+          - name: RESOLVER
+          - name: APICAST_SERVICES
+            value: "2555417755119"
+          - name: APICAST_CONFIGURATION_LOADER
+            value: lazy
+          - name: APICAST_LOG_LEVEL
+            value: debug
+          - name: APICAST_PATH_ROUTING_ENABLED
+            value: "false"
+          - name: APICAST_RESPONSE_CODES
+            value: "true"
+          - name: APICAST_CONFIGURATION_CACHE
+          - name: REDIS_URL
+          - name: APICAST_MANAGEMENT_API
+            value: status
+          - name: OPENSSL_VERIFY
+            value: "false"
+          image: 3scale-amp20/apicast-gateway:1.0-3
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/live
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: apicast-stage
+          ports:
+          - containerPort: 8080
+            name: proxy
+            protocol: TCP
+          - containerPort: 8090
+            name: management
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/ready
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    annotations:
+      openshift.io/deployer-pod.completed-at: 2018-02-21 18:52:45 +0000 UTC
+      openshift.io/deployer-pod.created-at: 2018-02-21 18:50:53 +0000 UTC
+      openshift.io/deployer-pod.name: apicast-stage-4-deploy
+      openshift.io/deployment-config.latest-version: "4"
+      openshift.io/deployment-config.name: apicast-stage
+      openshift.io/deployment.phase: Complete
+      openshift.io/deployment.replicas: ""
+      openshift.io/deployment.status-reason: manual change
+      openshift.io/encoded-deployment-config: |
+        {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"apicast-stage","namespace":"apicast","selfLink":"/apis/apps.openshift.io/v1/namespaces/apicast/deploymentconfigs/apicast-stage","uid":"2ae8286a-0510-11e8-9e1b-5254002f83b4","resourceVersion":"336456936","generation":5,"creationTimestamp":"2018-01-29T16:19:23Z","labels":{"app":"3scale-gateway"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"}],"replicas":1,"test":false,"selector":{"deploymentconfig":"apicast-stage"},"template":{"metadata":{"creationTimestamp":null,"labels":{"deploymentconfig":"apicast-stage"}},"spec":{"containers":[{"name":"apicast-stage","image":"3scale-amp20/apicast-gateway:1.0-3","ports":[{"name":"proxy","containerPort":8080,"protocol":"TCP"},{"name":"management","containerPort":8090,"protocol":"TCP"}],"env":[{"name":"THREESCALE_PORTAL_ENDPOINT","valueFrom":{"secretKeyRef":{"name":"apicast-configuration-url-secret","key":"password"}}},{"name":"THREESCALE_CONFIG_FILE"},{"name":"THREESCALE_DEPLOYMENT_ENV","value":"sandbox"},{"name":"RESOLVER"},{"name":"APICAST_SERVICES","value":"2555417755119"},{"name":"APICAST_CONFIGURATION_LOADER","value":"lazy"},{"name":"APICAST_LOG_LEVEL","value":"debug"},{"name":"APICAST_PATH_ROUTING_ENABLED","value":"false"},{"name":"APICAST_RESPONSE_CODES","value":"true"},{"name":"APICAST_CONFIGURATION_CACHE"},{"name":"REDIS_URL"},{"name":"APICAST_MANAGEMENT_API","value":"status"},{"name":"OPENSSL_VERIFY","value":"false"}],"resources":{},"livenessProbe":{"httpGet":{"path":"/status/live","port":"management","scheme":"HTTP"},"initialDelaySeconds":10,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"readinessProbe":{"httpGet":{"path":"/status/ready","port":"management","scheme":"HTTP"},"initialDelaySeconds":15,"timeoutSeconds":1,"periodSeconds":10,"successThreshold":1,"failureThreshold":3},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"IfNotPresent"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":4,"observedGeneration":4,"replicas":1,"updatedReplicas":1,"availableReplicas":0,"unavailableReplicas":1,"details":{"message":"manual change","causes":[{"type":"Manual"}]},"conditions":[{"type":"Progressing","status":"True","lastUpdateTime":"2018-02-19T15:25:35Z","lastTransitionTime":"2018-02-19T15:25:31Z","reason":"NewReplicationControllerAvailable","message":"replication controller \"apicast-stage-3\" successfully rolled out"},{"type":"Available","status":"False","lastUpdateTime":"2018-02-21T18:06:00Z","lastTransitionTime":"2018-02-21T18:06:00Z","message":"Deployment config does not have minimum availability."}]}}
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: 3scale-gateway
+      openshift.io/deployment-config.name: apicast-stage
+    name: apicast-stage-4
+    ownerReferences:
+    - apiVersion: apps.openshift.io/v1
+      blockOwnerDeletion: true
+      controller: true
+      kind: DeploymentConfig
+      name: apicast-stage
+      uid: 2ae8286a-0510-11e8-9e1b-5254002f83b4
+  spec:
+    replicas: 1
+    selector:
+      deployment: apicast-stage-4
+      deploymentconfig: apicast-stage
+    template:
+      metadata:
+        annotations:
+          openshift.io/deployment-config.latest-version: "4"
+          openshift.io/deployment-config.name: apicast-stage
+          openshift.io/deployment.name: apicast-stage-4
+        creationTimestamp: null
+        labels:
+          deployment: apicast-stage-4
+          deploymentconfig: apicast-stage
+      spec:
+        containers:
+        - env:
+          - name: THREESCALE_PORTAL_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                key: password
+                name: apicast-configuration-url-secret
+          - name: THREESCALE_CONFIG_FILE
+          - name: THREESCALE_DEPLOYMENT_ENV
+            value: sandbox
+          - name: RESOLVER
+          - name: APICAST_SERVICES
+            value: "2555417755119"
+          - name: APICAST_CONFIGURATION_LOADER
+            value: lazy
+          - name: APICAST_LOG_LEVEL
+            value: debug
+          - name: APICAST_PATH_ROUTING_ENABLED
+            value: "false"
+          - name: APICAST_RESPONSE_CODES
+            value: "true"
+          - name: APICAST_CONFIGURATION_CACHE
+          - name: REDIS_URL
+          - name: APICAST_MANAGEMENT_API
+            value: status
+          - name: OPENSSL_VERIFY
+            value: "false"
+          image: 3scale-amp20/apicast-gateway:1.0-3
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/live
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: apicast-stage
+          ports:
+          - containerPort: 8080
+            name: proxy
+            protocol: TCP
+          - containerPort: 8090
+            name: management
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status/ready
+              port: management
+              scheme: HTTP
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+  status:
+    replicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: 3scale-gateway
+    name: apicast
+  spec:
+    ports:
+    - name: proxy
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: management
+      port: 8090
+      protocol: TCP
+      targetPort: 8090
+    selector:
+      deploymentconfig: apicast
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: 3scale-gateway
+    name: apicast-stage
+  spec:
+    ports:
+    - name: proxy
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: management
+      port: 8090
+      protocol: TCP
+      targetPort: 8090
+    selector:
+      deploymentconfig: apicast-stage
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
