@@ -5,7 +5,13 @@ oc get secret -o yaml --export=true > secret.yaml
 
 
 
-oc new-project apicast --description="3Scale APIcast Gateway" --display-name="3Scale APIcast Gateway"
+oc new-project fisdemogui --description="Fuse Banking Demo - GUI" --display-name="Fuse Banking Demo - GUI"
 oc create -f secret.yaml
 oc create -f rolebindings.yaml
 oc new-app --file project.yaml -p DOMAIN_NAME_SUFFIX=192.168.99.100.nip.io -p MAVEN_MIRROR_URL=http://nexus-sharedservices.192.168.99.100.nip.io/repository/maven-all-public/
+
+
+oc new-build --image-stream=nodejs --binary=true --name=fisdemogui -n fisdemogui
+oc start-build fisdemogui --from-dir=/tmp/3scaletmp/fuse-financial-cicd/fisdemogui --follow -n fisdemogui
+oc new-app fisdemogui -n fisdemogui
+oc expose svc fisdemogui -n fisdemogui

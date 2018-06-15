@@ -45,6 +45,10 @@
       prompt:         "Please Enter the 3SCale token that is required for 3Scale API calls. Defaults to a valid one in the DB"
       default:        c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838
       private:        no
+    - name:           gogs_user
+      prompt:         Gogs user name that you will create at registration
+      default:        pprosser
+      private:        no
 
 #  vars:
 #    DOMAIN_NAME_SUFFIX: apps.demolab.local
@@ -385,6 +389,52 @@
     - name: Promote members (oauth) to production gateway
       shell: curl -v  -X POST "https://3scale-admin.{{domain_name_suffix}}/admin/api/services/6/proxy/configs/sandbox/{{sandbox_membersoauth_version}}/promote.json" -d 'access_token={{amp_token}}&to=production' -k
 
+# fis agile int demolab
+
+    - name: update fis agile int demo with new endpoints
+      shell: curl -v  -X PATCH "https://3scale-admin.{{domain_name_suffix}}/admin/api/services/7/proxy.xml" -d 'access_token={{amp_token}}&endpoint=https%3A%2F%2Ffisdemo-3scale-apicast-production.{{domain_name_suffix}}%3A443&api_backend=http%3A%2F%2Ffisgateway-service-fisdemoprod.{{domain_name_suffix}}%3A80&sandbox_endpoint=https%3A%2F%2Ffisdemo-3scale-apicast-staging.{{domain_name_suffix}}%3A443&oidc_issuer_endpoint=http%3A%2F%2F3scale-admin%3A4515e009-ee60-4039-8d5a-1578ecec4349%40sso-sso.{{domain_name_suffix}}%2Fauth%2Frealms%2F3scale' -k
+
+    - name: Get latest fis (api-key) sandbox version to promote
+      uri:
+        validate_certs: no
+        method: GET
+        body_format: raw
+        headers:
+          Content-Type: "application/xml"
+        url: "https://3scale-admin.{{domain_name_suffix}}/admin/api/services/7/proxy/configs/sandbox/latest.json?access_token={{amp_token}}"
+      register: sandbox_fis_result
+
+    - name: Save the latest sandbox fis (api-key) version
+      set_fact:
+        sandbox_fis_version: "{{sandbox_fis_result|json_query('json.proxy_config.version')}}"
+
+# fis agile int demolab (Oauth)
+
+    - name: update fis agile int demo (OAuth) with new endpoints
+      shell: curl -v  -X PATCH "https://3scale-admin.{{domain_name_suffix}}/admin/api/services/8/proxy.xml" -d 'access_token={{amp_token}}&endpoint=https%3A%2F%2Foauth-fisdemo-3scale-apicast-production.{{domain_name_suffix}}%3A443&api_backend=http%3A%2F%2Ffisgateway-service-fisdemoprod.{{domain_name_suffix}}%3A80&sandbox_endpoint=https%3A%2F%2Foauth-fisdemo-3scale-apicast-staging.{{domain_name_suffix}}%3A443&oidc_issuer_endpoint=http%3A%2F%2F3scale-admin%3A4515e009-ee60-4039-8d5a-1578ecec4349%40sso-sso.{{domain_name_suffix}}%2Fauth%2Frealms%2F3scale' -k
+
+    - name: Get latest fis (OAuth) sandbox version to promote
+      uri:
+        validate_certs: no
+        method: GET
+        body_format: raw
+        headers:
+          Content-Type: "application/xml"
+        url: "https://3scale-admin.{{domain_name_suffix}}/admin/api/services/8/proxy/configs/sandbox/latest.json?access_token={{amp_token}}"
+      register: sandbox_fis_oauth_result
+
+    - name: Save the latest sandbox fis (oauth) version
+      set_fact:
+        sandbox_fis_oauth_version: "{{sandbox_fis_oauth_result|json_query('json.proxy_config.version')}}"
+
+# Promote the update gateways to production
+
+    - name: Promote fisdemo (api-key) to production gateway
+      shell: curl -v  -X POST "https://3scale-admin.{{domain_name_suffix}}/admin/api/services/7/proxy/configs/sandbox/{{sandbox_fis_version}}/promote.json" -d 'access_token={{amp_token}}&to=production' -k
+
+    - name: Promote fisdemo (oauth) to production gateway
+      shell: curl -v  -X POST "https://3scale-admin.{{domain_name_suffix}}/admin/api/services/8/proxy/configs/sandbox/{{sandbox_fis_oauth_version}}/promote.json" -d 'access_token={{amp_token}}&to=production' -k
+
 # Setup up demo Services
 
 ###################################################
@@ -418,7 +468,6 @@
     # Go and create a user in gogs before continuing and clone repo = not found away quick way of automating yet
     - pause:
       prompt: "Manually provision a user in Gogs, and clone repo from https://github.com/pprosser-redhat/fuse-financial-cicd.git and call the new repo fuse-financial-cicd"
-
 
 ##################################################
 # Create the members service api to use as part of the
@@ -584,6 +633,112 @@
 
     - name: Create Pipelines and Jenkins
       shell: oc adm policy add-role-to-user edit system:serviceaccount:fisdemocicd:jenkins -n fisdemoprod
+
+###################################################
+# Create APi gateways to talk to SaaS
+#####################################################
+
+    - name: Create fisdemoprod
+      openshift_raw:
+        host:         "{{ocp_url}}"
+        username:     "{{ocp_username}}"
+        password:     "{{ocp_password}}"
+        api_version:  v1
+        verify_ssl:   no
+        kind:         Project
+        name:         fisdemoprod
+        description:  Prod environment for Agile Integration Banking Demo - Power by Red Hat Fuse
+        display_name: "Fuse Banking Demo - PROD"
+        state:        present
+
+    - name: Create fisdemoprod apicast secrets
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        namespace:      "fisdemoprod"
+        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/FuseBankingProd/ansible_definitions/secret-apicast.yaml') | from_yaml }}"
+        state: present
+
+    - name: Create fisdemoprod mysql secrets
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        namespace:      "fisdemoprod"
+        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/FuseBankingProd/ansible_definitions/secret-mysql.yaml') | from_yaml }}"
+        state: present
+
+    - name: Create fisdemoprod app
+      shell: oc new-app --file {{clone_destination}}/3Scale/FuseBankingProd/project.yaml -n fisdemoprod -p MAVEN_MIRROR_URL=http://nexus-sharedservices.{{domain_name_suffix}}//repository/maven-all-public -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
+
+###################################################
+# Create the SaaS API Gateways
+#####################################################
+
+    - name: Create apicast
+      openshift_raw:
+        host:         "{{ocp_url}}"
+        username:     "{{ocp_username}}"
+        password:     "{{ocp_password}}"
+        api_version:  v1
+        verify_ssl:   no
+        kind:         Project
+        name:         apicast
+        description:  3Scale APIcast Gateway
+        display_name: "3Scale APIcast Gateway"
+        state:        present
+
+    - name: Create apicast secrets
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        namespace:      "apicast"
+        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/3ScaleGateway/ansible_definitions/secret-apicast.yaml') | from_yaml }}"
+        state: present
+
+    - name: Create fisdemoprod app
+      shell: oc new-app --file {{clone_destination}}/3Scale/3ScaleGateway/project.yaml -n apicast  -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
+
+
+
+###################################################
+# Create the fis demo GUI project and application
+#####################################################
+
+    - name: Clone fisdemo  git repo from "http://gogs-persistent.{{domain_name_suffix}}"
+      git:
+        repo: "http://gogs-persistent.{{domain_name_suffix}}/{{gogs_user}}/fuse-financial-cicd.git"
+        dest: "{{clone_destination}}/fisdemo"
+        update: yes
+        clone: yes
+
+    - name: Create fisdemogui
+      openshift_raw:
+        host:         "{{ocp_url}}"
+        username:     "{{ocp_username}}"
+        password:     "{{ocp_password}}"
+        api_version:  v1
+        verify_ssl:   no
+        kind:         Project
+        name:         fisdemogui
+        description:  Fuse Banking Demo - GUI
+        display_name: "Fuse Banking Demo - GUI"
+        state:        present
+
+    - name: Create fisdemogui build
+      shell: oc new-build --image-stream=nodejs --binary=true --name=fisdemogui -n fisdemogui
+
+    - name: Create GUI node.js app
+      shell: oc start-build fisdemogui --from-dir={{clone_destination}}/fisdemo/fisdemogui -n fisdemogui
+
+    - name: Create new gui apps
+      shell: oc new-app fisdemogui -n fisdemogui --allow-missing-imagestream-tags
+
+    - name: Expose gui app as routes
+      shell: oc expose svc fisdemogui -n fisdemogui
+
 
 # Logout of Openshift
     - name:           logout of Openshift
