@@ -695,12 +695,11 @@
         username:       "{{ocp_username}}"
         password:       "{{ocp_password}}"
         namespace:      "apicast"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/3ScaleGateway/ansible_definitions/secret-apicast.yaml') | from_yaml }}"
+        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/3ScaleGateway/ansible_definitions/secret-apicast.yml') | from_yaml }}"
         state: present
 
     - name: Create fisdemoprod app
       shell: oc new-app --file {{clone_destination}}/3Scale/3ScaleGateway/project.yaml -n apicast  -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
-
 
 
 ###################################################
