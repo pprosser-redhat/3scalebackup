@@ -4,71 +4,103 @@ items:
   groupNames: null
   kind: RoleBinding
   metadata:
-    creationTimestamp: 2018-02-28T17:03:26Z
+    creationTimestamp: 2018-02-07T17:44:09Z
     name: admin
-    namespace: fisbuild
-    resourceVersion: "374487845"
-    selfLink: /oapi/v1/namespaces/fisbuild/rolebindings/admin
-    uid: 4ac31e34-1ca9-11e8-a813-5254002f83b4
+    namespace: fisdemocicd
+    resourceVersion: "340122202"
+    selfLink: /oapi/v1/namespaces/fisdemocicd/rolebindings/admin
+    uid: 8060d88c-0c2e-11e8-8448-52540064f8a5
   roleRef:
     name: admin
   subjects:
   - kind: User
     name: pprosser
+  - kind: User
+    name: jenkins
   userNames:
   - pprosser
+  - jenkins
 - apiVersion: v1
   groupNames: null
   kind: RoleBinding
   metadata:
-    creationTimestamp: 2018-02-28T17:03:26Z
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: 2018-02-07T17:44:10Z
+    labels:
+      app: jenkins-ephemeral
+      template: jenkins-ephemeral-template
+    name: jenkins_edit
+    namespace: fisdemocicd
+    resourceVersion: "340122575"
+    selfLink: /oapi/v1/namespaces/fisdemocicd/rolebindings/jenkins_edit
+    uid: 80bda0f4-0c2e-11e8-8448-52540064f8a5
+  roleRef:
+    name: edit
+  subjects:
+  - kind: ServiceAccount
+    name: jenkins
+  - kind: ServiceAccount
+    name: default
+    namespace: fisdemocicd
+  - kind: User
+    name: mmusaji
+  userNames:
+  - system:serviceaccount:fisdemocicd:jenkins
+  - system:serviceaccount:fisdemocicd:default
+  - mmusaji
+- apiVersion: v1
+  groupNames: null
+  kind: RoleBinding
+  metadata:
+    creationTimestamp: 2018-02-07T17:44:09Z
     name: system:deployers
-    namespace: fisbuild
-    resourceVersion: "374487844"
-    selfLink: /oapi/v1/namespaces/fisbuild/rolebindings/system%3Adeployers
-    uid: 4ac27d75-1ca9-11e8-a813-5254002f83b4
+    namespace: fisdemocicd
+    resourceVersion: "260826940"
+    selfLink: /oapi/v1/namespaces/fisdemocicd/rolebindings/system%3Adeployers
+    uid: 805f2b1d-0c2e-11e8-8448-52540064f8a5
   roleRef:
     name: system:deployer
   subjects:
   - kind: ServiceAccount
     name: deployer
-    namespace: fisbuild
+    namespace: fisdemocicd
   userNames:
-  - system:serviceaccount:fisbuild:deployer
+  - system:serviceaccount:fisdemocicd:deployer
 - apiVersion: v1
   groupNames: null
   kind: RoleBinding
   metadata:
-    creationTimestamp: 2018-02-28T17:03:26Z
+    creationTimestamp: 2018-02-07T17:44:09Z
     name: system:image-builders
-    namespace: fisbuild
-    resourceVersion: "374487843"
-    selfLink: /oapi/v1/namespaces/fisbuild/rolebindings/system%3Aimage-builders
-    uid: 4ac17d5c-1ca9-11e8-a813-5254002f83b4
+    namespace: fisdemocicd
+    resourceVersion: "260826935"
+    selfLink: /oapi/v1/namespaces/fisdemocicd/rolebindings/system%3Aimage-builders
+    uid: 805e96ff-0c2e-11e8-8448-52540064f8a5
   roleRef:
     name: system:image-builder
   subjects:
   - kind: ServiceAccount
     name: builder
-    namespace: fisbuild
+    namespace: fisdemocicd
   userNames:
-  - system:serviceaccount:fisbuild:builder
+  - system:serviceaccount:fisdemocicd:builder
 - apiVersion: v1
   groupNames:
-  - system:serviceaccounts:fisbuild
+  - system:serviceaccounts:fisdemocicd
   kind: RoleBinding
   metadata:
-    creationTimestamp: 2018-02-28T17:03:26Z
+    creationTimestamp: 2018-02-07T17:44:09Z
     name: system:image-pullers
-    namespace: fisbuild
-    resourceVersion: "374487841"
-    selfLink: /oapi/v1/namespaces/fisbuild/rolebindings/system%3Aimage-pullers
-    uid: 4ac08489-1ca9-11e8-a813-5254002f83b4
+    namespace: fisdemocicd
+    resourceVersion: "260826933"
+    selfLink: /oapi/v1/namespaces/fisdemocicd/rolebindings/system%3Aimage-pullers
+    uid: 805df44d-0c2e-11e8-8448-52540064f8a5
   roleRef:
     name: system:image-puller
   subjects:
   - kind: SystemGroup
-    name: system:serviceaccounts:fisbuild
+    name: system:serviceaccounts:fisdemocicd
   userNames: null
 kind: List
 metadata:
