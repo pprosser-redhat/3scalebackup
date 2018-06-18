@@ -14,6 +14,81 @@ objects:
       application: sso
       template: sso71-mysql-persistent
       xpaas: 1.4.7
+    name: sso-mysql
+  spec:
+    replicas: 1
+    selector:
+      deploymentConfig: sso-mysql
+    strategy:
+      activeDeadlineSeconds: 21600
+      recreateParams:
+        timeoutSeconds: 600
+      resources: {}
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          application: sso
+          deploymentConfig: sso-mysql
+        name: sso-mysql
+      spec:
+        containers:
+        - env:
+          - name: MYSQL_USER
+            value: usert0B
+          - name: MYSQL_PASSWORD
+            value: viiR0aFJ
+          - name: MYSQL_DATABASE
+            value: root
+          - name: MYSQL_LOWER_CASE_TABLE_NAMES
+          - name: MYSQL_MAX_CONNECTIONS
+          - name: MYSQL_FT_MIN_WORD_LEN
+          - name: MYSQL_FT_MAX_WORD_LEN
+          - name: MYSQL_AIO
+          image: registry.access.redhat.com/rhscl/mysql-57-rhel7
+#          image: registry.access.redhat.com/rhscl/mysql-57-rhel7@sha256:3abe773161b613b57f653c10ea1019ef7d9a05b2313390a8627be74df98dae77
+          imagePullPolicy: Always
+          name: sso-mysql
+          ports:
+          - containerPort: 3306
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /var/lib/mysql/data
+            name: sso-mysql-pvol
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 60
+        volumes:
+        - name: sso-mysql-pvol
+          persistentVolumeClaim:
+            claimName: sso-mysql-claim
+    test: false
+    triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - sso-mysql
+        from:
+          kind: ImageStreamTag
+          name: mysql:5.7
+          namespace: openshift
+      type: ImageChange
+    - type: ConfigChange
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: sso71-mysql-persistent
+      application: sso
+      template: sso71-mysql-persistent
+      xpaas: 1.4.7
     name: sso
   spec:
     replicas: 1
@@ -90,7 +165,7 @@ objects:
             value: /etc/sso-secret-volume
           - name: SSO_TRUSTSTORE_PASSWORD
             value: ${KEYSTORE_PASSWORD}
-          image: registry.access.redhat.com/redhat-sso-7/sso72-openshift
+          image: registry.access.redhat.com/redhat-sso-7/sso71-openshift
 #          image: registry.access.redhat.com/redhat-sso-7/sso71-openshift@sha256:8c8aa52c1dc52cb3fe19ab9df5d129e3dc8bae754fb3a84d5194b445071b0ca8
           imagePullPolicy: Always
           lifecycle:
@@ -170,81 +245,6 @@ objects:
             secretName: sso-ssl-secret
     test: false
     triggers:
-    - type: ConfigChange
-- apiVersion: v1
-  kind: DeploymentConfig
-  metadata:
-    creationTimestamp: null
-    generation: 1
-    labels:
-      app: sso71-mysql-persistent
-      application: sso
-      template: sso71-mysql-persistent
-      xpaas: 1.4.7
-    name: sso-mysql
-  spec:
-    replicas: 1
-    selector:
-      deploymentConfig: sso-mysql
-    strategy:
-      activeDeadlineSeconds: 21600
-      recreateParams:
-        timeoutSeconds: 600
-      resources: {}
-      type: Recreate
-    template:
-      metadata:
-        labels:
-          application: sso
-          deploymentConfig: sso-mysql
-        name: sso-mysql
-      spec:
-        containers:
-        - env:
-          - name: MYSQL_USER
-            value: usert0B
-          - name: MYSQL_PASSWORD
-            value: viiR0aFJ
-          - name: MYSQL_DATABASE
-            value: root
-          - name: MYSQL_LOWER_CASE_TABLE_NAMES
-          - name: MYSQL_MAX_CONNECTIONS
-          - name: MYSQL_FT_MIN_WORD_LEN
-          - name: MYSQL_FT_MAX_WORD_LEN
-          - name: MYSQL_AIO
-          image: registry.access.redhat.com/rhscl/mysql-57-rhel7
-#          image: registry.access.redhat.com/rhscl/mysql-57-rhel7@sha256:3abe773161b613b57f653c10ea1019ef7d9a05b2313390a8627be74df98dae77
-          imagePullPolicy: Always
-          name: sso-mysql
-          ports:
-          - containerPort: 3306
-            protocol: TCP
-          resources: {}
-          terminationMessagePath: /dev/termination-log
-          terminationMessagePolicy: File
-          volumeMounts:
-          - mountPath: /var/lib/mysql/data
-            name: sso-mysql-pvol
-        dnsPolicy: ClusterFirst
-        restartPolicy: Always
-        schedulerName: default-scheduler
-        securityContext: {}
-        terminationGracePeriodSeconds: 60
-        volumes:
-        - name: sso-mysql-pvol
-          persistentVolumeClaim:
-            claimName: sso-mysql-claim
-    test: false
-    triggers:
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - sso-mysql
-        from:
-          kind: ImageStreamTag
-          name: mysql:5.7
-          namespace: openshift
-      type: ImageChange
     - type: ConfigChange
 - apiVersion: v1
   kind: Route
