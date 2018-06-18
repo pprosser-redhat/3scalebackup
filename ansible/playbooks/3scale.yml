@@ -635,44 +635,6 @@
       shell: oc adm policy add-role-to-user edit system:serviceaccount:fisdemocicd:jenkins -n fisdemoprod
 
 ###################################################
-# Create APi gateways to talk to SaaS
-#####################################################
-
-    - name: Create fisdemoprod
-      openshift_raw:
-        host:         "{{ocp_url}}"
-        username:     "{{ocp_username}}"
-        password:     "{{ocp_password}}"
-        api_version:  v1
-        verify_ssl:   no
-        kind:         Project
-        name:         fisdemoprod
-        description:  Prod environment for Agile Integration Banking Demo - Power by Red Hat Fuse
-        display_name: "Fuse Banking Demo - PROD"
-        state:        present
-
-    - name: Create fisdemoprod apicast secrets
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        namespace:      "fisdemoprod"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/FuseBankingProd/ansible_definitions/secret-apicast.yaml') | from_yaml }}"
-        state: present
-
-    - name: Create fisdemoprod mysql secrets
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        namespace:      "fisdemoprod"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/FuseBankingProd/ansible_definitions/secret-mysql.yaml') | from_yaml }}"
-        state: present
-
-    - name: Create fisdemoprod app
-      shell: oc new-app --file {{clone_destination}}/3Scale/FuseBankingProd/project.yaml -n fisdemoprod -p MAVEN_MIRROR_URL=http://nexus-sharedservices.{{domain_name_suffix}}//repository/maven-all-public -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
-
-###################################################
 # Create the SaaS API Gateways
 #####################################################
 
