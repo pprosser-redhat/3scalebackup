@@ -191,7 +191,7 @@ objects:
       recreateParams:
         timeoutSeconds: 600
       resources: {}
-      type: Recreate
+      type: Create
     template:
       metadata:
         creationTimestamp: null
