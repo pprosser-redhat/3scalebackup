@@ -90,7 +90,7 @@ objects:
             value: /etc/sso-secret-volume
           - name: SSO_TRUSTSTORE_PASSWORD
             value: ${KEYSTORE_PASSWORD}
-          image: registry.access.redhat.com/redhat-sso-7/sso71-openshift
+          image: registry.access.redhat.com/redhat-sso-7/sso72-openshift
 #          image: registry.access.redhat.com/redhat-sso-7/sso71-openshift@sha256:8c8aa52c1dc52cb3fe19ab9df5d129e3dc8bae754fb3a84d5194b445071b0ca8
           imagePullPolicy: Always
           lifecycle:
