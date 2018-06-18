@@ -1,0 +1,88 @@
+---
+# Documentation:
+# This playbook is used to deploy 3Scale, and a restful service
+#
+- name:               Create 3Scale AMP and deploy members api
+  hosts:              localhost
+  connection:         local
+  gather_facts: no
+
+  vars_prompt:
+    - name:           ocp_username
+      prompt:         "Please provide Openshift Login username"
+      default:        developer
+      private:        no
+    - name:           ocp_password
+      prompt:         "Please provide your Openshift Login password"
+      default:        developer
+      private:        yes
+    - name:           ocp_url
+      prompt:         "Please provide your Openshift URL"
+      default:        https://192.168.99.100:8443
+      private:        no
+    - name:           domain_name_suffix
+      prompt:         "Please Enter the domain wildcard name suffix for all OCP routes"
+      default:        apps.demolab.local
+      private:        no
+    - name:           keystore_password
+      prompt:         "Please enter the default password for keystores"
+      default:        redhat123
+    - name:           git_repo
+      prompt:         "Please Enter the Git repo to clone to get hold of artefacts"
+      default:        https://github.com/pprosser-redhat/3scalebackup.git
+      private:        no
+    - name:           clone_destination
+      prompt:         "Please Enter the local destination to store the repo"
+      default:        /tmp/3scaletmp
+      private:        no
+    - name:           amp_token
+      prompt:         "Please Enter the 3SCale token that is required for 3Scale API calls. Defaults to a valid one in the DB"
+      default:        c373d6c0262d307aaae51dc7a102f53ec32d8f642f88a97687c8dfabac15d838
+      private:        no
+    - name:           gogs_user
+      prompt:         Gogs user name that you will create at registration
+      default:        pprosser
+      private:        no
+#  vars:
+#    DOMAIN_NAME_SUFFIX: apps.demolab.local
+#    KEYSTORE_PASSWORD: test
+
+  tasks:
+    - name: Clone base git repo from "{{git_repo}}"
+      git:
+        repo: "{{git_repo}}"
+        dest: "{{clone_destination}}/3Scale"
+        update: yes
+        clone: yes
+# Login to Openshift using oc client - I can't get the openshift_raw module to authenticate
+    - name:           login to Openshift at the specified URL
+      shell:          oc login {{ocp_url}} --username={{ocp_username}} --password={{ocp_password}}
+
+    - name: Create apicast
+      openshift_raw:
+        host:         "{{ocp_url}}"
+        username:     "{{ocp_username}}"
+        password:     "{{ocp_password}}"
+        api_version:  v1
+        verify_ssl:   no
+        kind:         Project
+        name:         apicast
+        description:  3Scale APIcast Gateway
+        display_name: "3Scale APIcast Gateway"
+        state:        present
+
+    - name: Create apicast secrets
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        namespace:      "apicast"
+        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/3ScaleGateway/ansible_definitions/secret-apicast.yml') | from_yaml }}"
+        state: present
+
+    - name: Create fisdemoprod app
+      shell: oc new-app --file {{clone_destination}}/3Scale/3ScaleGateway/project.yaml -n apicast  -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
+
+# Logout of Openshift
+    - name:           logout of Openshift
+      shell:          oc logout
