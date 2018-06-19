@@ -10,9 +10,9 @@ objects:
     creationTimestamp: null
     generation: 1
     labels:
-      app: sso71-mysql-persistent
+      app: sso72-mysql-persistent
       application: sso
-      template: sso71-mysql-persistent
+      template: sso72-mysql-persistent
       xpaas: 1.4.7
     name: sso-mysql
   spec:
@@ -85,9 +85,9 @@ objects:
     creationTimestamp: null
     generation: 1
     labels:
-      app: sso71-mysql-persistent
+      app: sso72-mysql-persistent
       application: sso
-      template: sso71-mysql-persistent
+      template: sso72-mysql-persistent
       xpaas: 1.4.7
     name: sso
   spec:
@@ -165,8 +165,8 @@ objects:
             value: /etc/sso-secret-volume
           - name: SSO_TRUSTSTORE_PASSWORD
             value: ${KEYSTORE_PASSWORD}
-          image: registry.access.redhat.com/redhat-sso-7/sso71-openshift
-#          image: registry.access.redhat.com/redhat-sso-7/sso71-openshift@sha256:8c8aa52c1dc52cb3fe19ab9df5d129e3dc8bae754fb3a84d5194b445071b0ca8
+          image: registry.access.redhat.com/redhat-sso-7/sso72-openshift
+#          image: registry.access.redhat.com/redhat-sso-7/sso72-openshift@sha256:8c8aa52c1dc52cb3fe19ab9df5d129e3dc8bae754fb3a84d5194b445071b0ca8
           imagePullPolicy: Always
           lifecycle:
             preStop:
@@ -253,9 +253,9 @@ objects:
       description: Route for application's https service.
       openshift.io/host.generated: "true"
     labels:
-      app: sso71-mysql-persistent
+      app: sso72-mysql-persistent
       application: sso
-      template: sso71-mysql-persistent
+      template: sso72-mysql-persistent
       xpaas: 1.4.7
     name: secure-sso
   spec:
@@ -284,9 +284,9 @@ objects:
       openshift.io/host.generated: "true"
     creationTimestamp: null
     labels:
-      app: sso71-mysql-persistent
+      app: sso72-mysql-persistent
       application: sso
-      template: sso71-mysql-persistent
+      template: sso72-mysql-persistent
       xpaas: 1.4.7
     name: sso
   spec:
@@ -329,9 +329,9 @@ objects:
       service.alpha.openshift.io/dependencies: '[{"name": "sso-mysql", "kind": "Service"}]'
     creationTimestamp: null
     labels:
-      app: sso71-mysql-persistent
+      app: sso72-mysql-persistent
       application: sso
-      template: sso71-mysql-persistent
+      template: sso72-mysql-persistent
       xpaas: 1.4.7
     name: secure-sso
   spec:
@@ -353,9 +353,9 @@ objects:
       service.alpha.openshift.io/dependencies: '[{"name": "sso-mysql", "kind": "Service"}]'
     creationTimestamp: null
     labels:
-      app: sso71-mysql-persistent
+      app: sso72-mysql-persistent
       application: sso
-      template: sso71-mysql-persistent
+      template: sso72-mysql-persistent
       xpaas: 1.4.7
     name: sso
   spec:
@@ -376,9 +376,9 @@ objects:
       description: The database server's port.
     creationTimestamp: null
     labels:
-      app: sso71-mysql-persistent
+      app: sso72-mysql-persistent
       application: sso
-      template: sso71-mysql-persistent
+      template: sso72-mysql-persistent
       xpaas: 1.4.7
     name: sso-mysql
   spec:
