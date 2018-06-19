@@ -60,7 +60,7 @@
       git:
         repo: "{{git_repo}}"
         dest: "{{clone_destination}}/3Scale"
-        version: change_sso72
+        version: master
         update: yes
         clone: yes
 
