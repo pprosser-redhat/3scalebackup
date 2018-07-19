@@ -452,19 +452,19 @@
         api_version:  v1
         verify_ssl:   no
         kind:         Project
-        name:         sharedservices
+        name:         philsharedservices
         description:  Shared Services Project
         display_name: "Shared Services Project"
         state:        present
 
     - name: Create members application from cloned repo
-      shell: oc new-app  -f http://bit.ly/openshift-gogs-persistent-template -n sharedservices --param=HOSTNAME=gogs-persistent.{{domain_name_suffix}}
+      shell: oc new-app  -f http://bit.ly/openshift-gogs-persistent-template -n philsharedservices --param=HOSTNAME=gogs-persistent.{{domain_name_suffix}}
 
 # Create Persistent Nexus Repository
     - name: Download nexus template
-      shell: oc create -f https://raw.githubusercontent.com/OpenShiftDemos/nexus/master/nexus3-persistent-template.yaml -n sharedservices
+      shell: oc create -f https://raw.githubusercontent.com/OpenShiftDemos/nexus/master/nexus3-persistent-template.yaml -n philsharedservices
     - name: Create Nexus Repository
-      shell: oc new-app nexus3-persistent -n sharedservices
+      shell: oc new-app nexus3-persistent -n philsharedservices
 
     # Go and create a user in gogs before continuing and clone repo = not found away quick way of automating yet
     - pause:
@@ -529,7 +529,7 @@
 #        state: present
 
     - name: Create members application from cloned repo
-      shell: oc new-app  --file "{{clone_destination}}/3Scale/members_backup/project.yaml" -n membersapp -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" -p MAVEN_MIRROR_URL="http://nexus-sharedservices.{{domain_name_suffix}}/repository/maven-all-public"
+      shell: oc new-app  --file "{{clone_destination}}/3Scale/members_backup/project.yaml" -n membersapp -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" -p MAVEN_MIRROR_URL="http://nexus-philsharedservices.{{domain_name_suffix}}/repository/maven-all-public"
 
 ###################################################
 # Create the fis demo project and application
@@ -566,7 +566,7 @@
         state: present
 
     - name: Create fisdemo app
-      shell: oc new-app --file {{clone_destination}}/3Scale/FuseBankingDevAndUat/project.yaml -n fisdemo -p MAVEN_MIRROR_URL=http://nexus-sharedservices.{{domain_name_suffix}}/repository/maven-all-public -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
+      shell: oc new-app --file {{clone_destination}}/3Scale/FuseBankingDevAndUat/project.yaml -n fisdemo -p MAVEN_MIRROR_URL=http://nexus-philsharedservices.{{domain_name_suffix}}/repository/maven-all-public -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
 
 ###################################################
 # Create the fis demo prod project and application
@@ -604,7 +604,7 @@
         state: present
 
     - name: Create fisdemoprod app
-      shell: oc new-app --file {{clone_destination}}/3Scale/FuseBankingProd/project.yaml -n fisdemoprod -p MAVEN_MIRROR_URL=http://nexus-sharedservices.{{domain_name_suffix}}//repository/maven-all-public -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
+      shell: oc new-app --file {{clone_destination}}/3Scale/FuseBankingProd/project.yaml -n fisdemoprod -p MAVEN_MIRROR_URL=http://nexus-philsharedservices.{{domain_name_suffix}}//repository/maven-all-public -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
 
 ###################################################
 # Create the fis demo pieline project and application
