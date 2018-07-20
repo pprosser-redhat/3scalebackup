@@ -58,7 +58,10 @@
     - name:           login to Openshift at the specified URL
       shell:          oc login {{ocp_url}} --username={{ocp_username}} --password={{ocp_password}}
 
-    - name: Create apicast
+###################################################
+# Create the fis demo project and application
+#####################################################
+    - name: Create fisdemo
       openshift_raw:
         host:         "{{ocp_url}}"
         username:     "{{ocp_username}}"
@@ -66,22 +69,31 @@
         api_version:  v1
         verify_ssl:   no
         kind:         Project
-        name:         apicast
-        description:  3Scale APIcast Gateway
-        display_name: "3Scale APIcast Gateway"
+        name:         fisdemo
+        description:  Development and UAT environment for Agile Integration Banking Demo - Power by Red Hat Fuse
+        display_name: "Fuse Banking Demo - Dev and UAT"
         state:        present
 
-    - name: Create apicast secrets
+    - name: Create fisdemo apicast secrets
       openshift_raw:
         host:           "{{ocp_url}}"
         username:       "{{ocp_username}}"
         password:       "{{ocp_password}}"
-        namespace:      "apicast"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/3ScaleGateway/ansible_definitions/secret-apicast.yml') | from_yaml }}"
+        namespace:      "fisdemo"
+        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/FuseBankingDevAndUat/ansible_definitions/secret-apicast.yaml') | from_yaml }}"
         state: present
 
-    - name: Create fisdemoprod app
-      shell: oc new-app --file {{clone_destination}}/3Scale/3ScaleGateway/project.yaml -n apicast  -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
+    - name: Create fisdemo mysql secrets
+      openshift_raw:
+        host:           "{{ocp_url}}"
+        username:       "{{ocp_username}}"
+        password:       "{{ocp_password}}"
+        namespace:      "fisdemo"
+        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/FuseBankingDevAndUat/ansible_definitions/secret-mysql.yaml') | from_yaml }}"
+        state: present
+
+    - name: Create fisdemo app
+      shell: oc new-app --file {{clone_destination}}/3Scale/FuseBankingDevAndUat/project.yaml -n fisdemo -p MAVEN_MIRROR_URL=http://nexus-sharedservices.{{domain_name_suffix}}/repository/maven-all-public -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
 
 # Logout of Openshift
     - name:           logout of Openshift
