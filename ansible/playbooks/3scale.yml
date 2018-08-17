@@ -444,31 +444,31 @@
 
 # Create gogs repo
 
-#    - name:           Create Shared Services Project
-#      openshift_raw:
-#        host:         "{{ocp_url}}"
-#        username:     "{{ocp_username}}"
-#        password:     "{{ocp_password}}"
-#        api_version:  v1
-#        verify_ssl:   no
-#        kind:         Project
-#        name:         sharedservices
-#        description:  Shared Services Project
-#        display_name: "Shared Services Project"
-#        state:        present
+    - name:           Create Shared Services Project
+      openshift_raw:
+        host:         "{{ocp_url}}"
+        username:     "{{ocp_username}}"
+        password:     "{{ocp_password}}"
+        api_version:  v1
+        verify_ssl:   no
+        kind:         Project
+        name:         sharedservices
+        description:  Shared Services Project
+        display_name: "Shared Services Project"
+        state:        present
 #
-#    - name: Create members application from cloned repo
-#      shell: oc new-app  -f http://bit.ly/openshift-gogs-persistent-template -n sharedservices --param=HOSTNAME=gogs-persistent.{{domain_name_suffix}}
+    - name: Create members application from cloned repo
+      shell: oc new-app  -f http://bit.ly/openshift-gogs-persistent-template -n sharedservices --param=HOSTNAME=gogs-persistent.{{domain_name_suffix}}
 
 # Create Persistent Nexus Repository
-#    - name: Download nexus template
-#      shell: oc create -f https://raw.githubusercontent.com/OpenShiftDemos/nexus/master/nexus3-persistent-template.yaml -n sharedservices
-#    - name: Create Nexus Repository
-#      shell: oc new-app nexus3-persistent -n sharedservices
+    - name: Download nexus template
+      shell: oc create -f https://raw.githubusercontent.com/OpenShiftDemos/nexus/master/nexus3-persistent-template.yaml -n sharedservices
+    - name: Create Nexus Repository
+      shell: oc new-app nexus3-persistent -n sharedservices
 
     # Go and create a user in gogs before continuing and clone repo = not found away quick way of automating yet
-#    - pause:
-#      prompt: "Manually provision a user in Gogs, and clone repo from https://github.com/pprosser-redhat/fuse-financial-cicd.git and call the new repo fuse-financial-cicd"
+    - pause:
+      prompt: "Manually provision a user in Gogs, and clone repo from https://github.com/pprosser-redhat/fuse-financial-cicd.git and call the new repo fuse-financial-cicd"
 
 ##################################################
 # Create the members service api to use as part of the
