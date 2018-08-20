@@ -63,6 +63,8 @@
         version: master
         update: yes
         clone: yes
+        force: yes
+        version: 3scale22
 
 
 # Login to Openshift using oc client - I can't get the openshift_raw module to authenticate
@@ -170,12 +172,20 @@
         display_name: "3Scale API Management Platform"
         state:        present
 
+# Replace 192.168.99.100.nip.io with choosen wildcard domain_name_suffix
+
+    - name: Replace Wildcard name in SQL database before Loading
+      replace:
+        path: '{{clone_destination}}/3Scale/3Scale_backup/db_archive_dir/all.sql'
+        regexp: 192.168.99.100.nip.io
+        replace: '{{domain_name_suffix}}'
+
 #####################################################
 # Create all AMP from template
 #####################################################
 
     - name: Create new 3Scale AMP from template
-      shell: oc new-app -n amp --file /{{clone_destination}}/3Scale/33scalebackup/amptemplates/amp.yml --param WILDCARD_DOMAIN={{domain_name_suffix}}
+      shell: oc new-app -n amp --file /{{clone_destination}}/3Scale/amptemplates/amp.yml --param WILDCARD_DOMAIN={{domain_name_suffix}}
 
 # Wait for 3Scale to start before continuing
     - name: Is 3Scale started?
@@ -252,6 +262,10 @@
 
     - name: "restart backend_redis_container {{system_redis_container}}"
       shell: oc delete pod {{system_redis_container}} -n amp
+
+# The db update will have updated the randomly generated password, need to put it back to that store in the copied db
+    - name: "Reset 3Scale Portal Endpoint"
+      shell: oc set env dc/apicast-production THREESCALE_PORTAL_ENDPOINT=http://redhat12@system-master:3000/master/api/proxy/configs -n amp
 
     # Pause to make sure that 3Scale has fully revoverd from redis caches backups being installed
 

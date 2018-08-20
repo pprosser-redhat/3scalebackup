@@ -31,6 +31,15 @@ oc create -f pvc.yaml
 oc create -f rolebindings.yaml
 oc new-app  --file project.yaml -p DOMAIN_NAME_SUFFIX=192.168.99.100.nip.io KEYSTORE_PASSWORD=blah
 
+
+
+*
+*
+* If production gateway keeps falling over, make sure the Threescale_portal_endpoint uses token redhat12
+* This is the old token for reference : 1rb4m5mb
+*
+*
+
 Restore Mysql
 
 Copy all.sql to mysql container :-
