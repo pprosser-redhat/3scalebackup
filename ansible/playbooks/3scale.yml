@@ -171,92 +171,11 @@
         state:        present
 
 #####################################################
-# Create all AMP artefacts
+# Create all AMP from template
 #####################################################
-    - name:          Create config maps for amp - redis configmap
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        verify_ssl:     no
-        state:          present
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/backup_amp/ansible_definitions/redis-config.yml') | from_yaml }}"
 
-    - name:          Create config maps for amp - smtp configmap part 1
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        verify_ssl:     no
-        state:          present
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/backup_amp/ansible_definitions/smtp-config.yml') | from_yaml }}"
-
-# Not sure why, but having to run this config map creation twice to get the data populated.
-    - name:          Create config maps for amp - smtp configmap part 2
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        verify_ssl:     no
-        state:          present
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/backup_amp/ansible_definitions/smtp-config.yml') | from_yaml }}"
-
-    - name:          Create config maps for amp - system configmap
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        verify_ssl:     no
-        state:          present
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/backup_amp/ansible_definitions/system-config.yml') | from_yaml }}"
-
-    - name: Create persistent volumes for amp - System Storage
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/backup_amp/ansible_definitions/system-storage.yml') | from_yaml }}"
-        verify_ssl:     no
-        state:          present
-
-    - name: Create persistent volumes for amp - mysql-storage
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/backup_amp/ansible_definitions/mysql-storage.yml') | from_yaml }}"
-        verify_ssl:     no
-        state:          present
-
-    - name: Create persistent volumes for amp - system-redis-storage
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/backup_amp/ansible_definitions/system-redis-storage.yml') | from_yaml }}"
-        verify_ssl:     no
-        state:          present
-
-    - name: Create persistent volumes for amp - backend-redis-storage
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/backup_amp/ansible_definitions/backend-redis-storage.yml') | from_yaml }}"
-        verify_ssl:     no
-        state:          present
-
-    - name: Create secrets - zync
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/backup_amp/ansible_definitions/zync-secrets.yml') | from_yaml }}"
-        state: present
-
-# I found this easier to do with oc cli
-    - name: Create AMP application from cloned repo
-      shell: oc new-app  --file "{{clone_destination}}/3Scale/backup_amp/project.yaml" -n amp -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" KEYSTORE_PASSWORD={{keystore_password}}
+    - name: Create new 3Scale AMP from template
+      shell: oc new-app --file /{{clone_destination}}/3Scale/33scalebackup/amptemplates/amp.yml --param WILDCARD_DOMAIN={{domain_name_suffix}}
 
 # Wait for 3Scale to start before continuing
     - name: Is 3Scale started?
