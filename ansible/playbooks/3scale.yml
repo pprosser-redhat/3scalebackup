@@ -175,7 +175,7 @@
 #####################################################
 
     - name: Create new 3Scale AMP from template
-      shell: oc new-app --file /{{clone_destination}}/3Scale/33scalebackup/amptemplates/amp.yml --param WILDCARD_DOMAIN={{domain_name_suffix}}
+      shell: oc new-app -n amp --file /{{clone_destination}}/3Scale/33scalebackup/amptemplates/amp.yml --param WILDCARD_DOMAIN={{domain_name_suffix}}
 
 # Wait for 3Scale to start before continuing
     - name: Is 3Scale started?
