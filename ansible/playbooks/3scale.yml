@@ -194,7 +194,7 @@
         url: https://3scale-admin.{{domain_name_suffix}}/p/login
       register: test
       until: test.status == 200
-      retries: 200
+      retries: 400
       delay: 5
 
 # Capture pods names that need files injecting to recover 3SCale Correctly
