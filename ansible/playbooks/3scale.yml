@@ -174,7 +174,7 @@
 
 # Replace 192.168.99.100.nip.io with choosen wildcard domain_name_suffix
 
-    - name: Replace Wildcard name in SQL database before Loading
+    - name: Replace Wildcard name in AMP SQL database before Loading
       replace:
         path: '{{clone_destination}}/3Scale/3Scale_backup/db_archive_dir/all.sql'
         regexp: 192.168.99.100.nip.io
@@ -266,6 +266,11 @@
 # The db update will have updated the randomly generated password, need to put it back to that store in the copied db
     - name: "Reset 3Scale Portal Endpoint"
       shell: oc set env dc/apicast-production THREESCALE_PORTAL_ENDPOINT=http://redhat12@system-master:3000/master/api/proxy/configs -n amp
+
+# Add my extra gateway api routes as I'm not using Wildcards
+    - name: Create AMP application routes from cloned repo
+      shell: oc new-app  --file "{{clone_destination}}/3Scale/backup_amp/project.yaml" -n amp -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" KEYSTORE_PASSWORD={{keystore_password}}
+
 
     # Pause to make sure that 3Scale has fully revoverd from redis caches backups being installed
 
