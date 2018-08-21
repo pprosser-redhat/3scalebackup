@@ -48,7 +48,7 @@ objects:
           - name: THREESCALE_DEPLOYMENT_ENV
             value: production
           - name: RESOLVER
-          - name: APICAST_SERVICES
+          - name: APICAST_SERVICES_LIST
             value: "2555417755119"
           - name: APICAST_CONFIGURATION_LOADER
             value: boot
@@ -150,7 +150,7 @@ objects:
           - name: THREESCALE_DEPLOYMENT_ENV
             value: sandbox
           - name: RESOLVER
-          - name: APICAST_SERVICES
+          - name: APICAST_SERVICES_LIST
             value: "2555417755119"
           - name: APICAST_CONFIGURATION_LOADER
             value: lazy
