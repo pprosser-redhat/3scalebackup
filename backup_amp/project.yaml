@@ -113,8 +113,6 @@ objects:
     host: fisdemo-3scale-apicast-production.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: gateway
-    tls:
-      termination: edge
     to:
       kind: Service
       name: apicast-production
@@ -138,8 +136,6 @@ objects:
     host: oauth-fisdemo-3scale-apicast-production.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: gateway
-    tls:
-      termination: edge
     to:
       kind: Service
       name: apicast-production
@@ -163,8 +159,6 @@ objects:
     host: fisdemo-3scale-apicast-staging.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: gateway
-    tls:
-      termination: edge
     to:
       kind: Service
       name: apicast-staging
@@ -188,8 +182,6 @@ objects:
     host: oauth-fisdemo-3scale-apicast-staging.${DOMAIN_NAME_SUFFIX}
     port:
       targetPort: gateway
-    tls:
-      termination: edge
     to:
       kind: Service
       name: apicast-staging
