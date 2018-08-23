@@ -544,6 +544,8 @@
     - name: Create fisdemoprod app
       shell: oc new-app --file {{clone_destination}}/3Scale/FuseBankingProd/project.yaml -n fisdemoprod -p MAVEN_MIRROR_URL=http://nexus-sharedservices.{{domain_name_suffix}}//repository/maven-all-public -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
 
+    - name: Create Fuse Console for fisdemoprod
+      shell: oc new-app -n fisdemoprod -f https://raw.githubusercontent.com/jboss-fuse/application-templates/application-templates-2.1.fuse-000081-redhat-4/fis-console-namespace-template.json
 ###################################################
 # Create the fis demo pieline project and application
 #####################################################
