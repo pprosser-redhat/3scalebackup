@@ -264,8 +264,11 @@
       shell: oc delete pod {{system_redis_container}} -n amp
 
 # The db update will have updated the randomly generated password, need to put it back to that store in the copied db
-    - name: "Reset 3Scale Portal Endpoint"
+    - name: "Reset 3Scale Portal Endpoint in PROD gateway"
       shell: oc set env dc/apicast-production THREESCALE_PORTAL_ENDPOINT=http://redhat12@system-master:3000/master/api/proxy/configs -n amp
+# The db update will have updated the randomly generated password, need to put it back to that store in the copied db
+    - name: "Reset 3Scale Portal Endpoint in Staging gateway"
+      shell: oc set env dc/apicast-staging THREESCALE_PORTAL_ENDPOINT=http://redhat12@system-master:3000/master/api/proxy/configs -n amp
 
 # Add my extra gateway api routes as I'm not using Wildcards
     - name: Create AMP application routes from cloned repo
