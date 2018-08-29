@@ -42,7 +42,7 @@ objects:
         forcePull: true
         from:
           kind: ImageStreamTag
-          name: fis-java-openshift:2.0
+          name: fuse-java-openshift:1.0
           namespace: openshift
         incremental: true
       type: Source
@@ -96,7 +96,7 @@ objects:
         forcePull: true
         from:
           kind: ImageStreamTag
-          name: fis-java-openshift:2.0
+          name: fuse-java-openshift:1.0
           namespace: openshift
         incremental: true
       type: Source
@@ -153,7 +153,7 @@ objects:
         forcePull: true
         from:
           kind: ImageStreamTag
-          name: fis-java-openshift:2.0
+          name: fuse-java-openshift:1.0
           namespace: openshift
         incremental: true
       type: Source
