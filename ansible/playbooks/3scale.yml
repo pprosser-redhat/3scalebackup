@@ -77,52 +77,25 @@
 #####################################################
 
     - name:           Create RH SSO project
-      openshift_raw:
-        host:         "{{ocp_url}}"
-        username:     "{{ocp_username}}"
-        password:     "{{ocp_password}}"
-        api_version:  v1
-        verify_ssl:   no
-        kind:         Project
-        name:         sso
-        description:  RH SSO
-        display_name: "RH SSO"
-        state:        present
+      shell:          oc new-project sso --description='RH SSO' --display-name='RH SSO'
 
     - name: Create sso service account
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-serviceaccounts.yml') | from_yaml }}"
-        state: present
+      shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-serviceaccounts.yml -n sso
 
     - name: Create secrets - jgroups
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-secrets-jgroups.yml') | from_yaml }}"
-        state: present
+      shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-secrets-jgroups.yml -n sso
 
     - name: Create secrets - https
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-secrets-https.yml') | from_yaml }}"
-        state: present
+      shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-secrets-https.yml -n sso
 
     - name: Create sso pvc
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-pvc.yml') | from_yaml }}"
-        state: present
+      shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-pvc.yml -n sso
 
     - name: Create SSO application from cloned repo
       shell: oc new-app  --file "{{clone_destination}}/3Scale/sso_backup/project.yaml" -n sso -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" -p KEYSTORE_PASSWORD="{{keystore_password}}"
+
+#    - name: Create SSO application from cloned repo
+#      shell: oc new-app  --file "{{clone_destination}}/3Scale/sso_backup/project.yaml" -n sso -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" -p KEYSTORE_PASSWORD="{{keystore_password}}"
 
 # Wait for SSO to start before continuing
     - name: Is SSO started?
@@ -160,17 +133,7 @@
 # Create project to deploy 3Scale Management Platform
 #####################################################
     - name:           Create 3Scale AMP project
-      openshift_raw:
-        host:         "{{ocp_url}}"
-        username:     "{{ocp_username}}"
-        password:     "{{ocp_password}}"
-        api_version:  v1
-        verify_ssl:   no
-        kind:         Project
-        name:         amp
-        description:  3Scale API Management Platform
-        display_name: "3Scale API Management Platform"
-        state:        present
+      shell:          oc new-project amp --description='3Scale API Management Platform' --display-name='3Scale API Management Platform'
 
 # Replace 192.168.99.100.nip.io with choosen wildcard domain_name_suffix
 
@@ -206,7 +169,7 @@
     - name: Get mysql Pod
       uri:
         validate_certs: no
-        url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=name=system-mysql"
+        url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=deploymentconfig=system-mysql"
         headers:
           Authorization: "Bearer {{ocptoken.stdout}}"
       register: mysql_pod
@@ -218,7 +181,7 @@
     - name: Get backend_redis pod
       uri:
         validate_certs: no
-        url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=name=backend-redis"
+        url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=deploymentconfig=backend-redis"
         headers:
           Authorization: "Bearer {{ocptoken.stdout}}"
       register: backend_redis_pod
@@ -230,7 +193,7 @@
     - name: Get system_redis pod
       uri:
         validate_certs: no
-        url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=name=system-redis"
+        url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=deploymentconfig=system-redis"
         headers:
           Authorization: "Bearer {{ocptoken.stdout}}"
       register: system_redis_pod
@@ -279,7 +242,7 @@
 
     # A helpful reminder of what to look out for post-update.
     - pause:
-      prompt: "Has the Redis caches fully recovered?"
+        prompt: "Has the Redis caches fully recovered?"
 
 ######## 3Scale physical setup complete ################################################
 # Now, a number of API calls to 3Scale will be made to change the wildcard domain name #
@@ -386,17 +349,7 @@
 # Create gogs repo
 
     - name:           Create Shared Services Project
-      openshift_raw:
-        host:         "{{ocp_url}}"
-        username:     "{{ocp_username}}"
-        password:     "{{ocp_password}}"
-        api_version:  v1
-        verify_ssl:   no
-        kind:         Project
-        name:         sharedservices
-        description:  Shared Services Project
-        display_name: "Shared Services Project"
-        state:        present
+      shell:          oc new-project sharedservices --description='Shared Services Project' --display-name='Shared Services Project'
 #
     - name: Create members application from cloned repo
       shell: oc new-app  -f http://bit.ly/openshift-gogs-persistent-template -n sharedservices --param=HOSTNAME=gogs-persistent.{{domain_name_suffix}}
@@ -409,7 +362,7 @@
 
     # Go and create a user in gogs before continuing and clone repo = not found away quick way of automating yet
     - pause:
-      prompt: "Manually provision a user in Gogs, and clone repo from https://github.com/pprosser-redhat/fuse-financial-cicd.git and call the new repo fuse-financial-cicd"
+        prompt: "Manually provision a user in Gogs, and clone repo from https://github.com/pprosser-redhat/fuse-financial-cicd.git and call the new repo fuse-financial-cicd"
 
 ##################################################
 # Create the members service api to use as part of the
@@ -417,49 +370,19 @@
 #####################################################
 
     - name:           Create members api project
-      openshift_raw:
-        host:         "{{ocp_url}}"
-        username:     "{{ocp_username}}"
-        password:     "{{ocp_password}}"
-        api_version:  v1
-        verify_ssl:   no
-        kind:         Project
-        name:         membersapp
-        description:  Members Service for 3Scale Demo
-        display_name: "Members Service for 3Scale Demo"
-        state:        present
+      shell:          oc new-project membersapp --description='Members Service for 3Scale Demo' --display-name='Members Service for 3Scale Demo'
 
     - name: Create service account - eap
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/members_backup/ansible_definitions/eap-serviceaccount.yml') | from_yaml }}"
-        state: present
+      shell: oc create -f {{clone_destination}}/3Scale/members_backup/ansible_definitions/eap-serviceaccount.yml -n membersapp
 
     - name: Create service account - eap7
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/members_backup/ansible_definitions/eap7-serviceaccount.yml') | from_yaml }}"
-        state: present
+      shell: oc create -f {{clone_destination}}/3Scale/members_backup/ansible_definitions/eap7-serviceaccount.yml -n membersapp
 
     - name: Create secrets - eap service account
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/members_backup/ansible_definitions/members-secret-eap-serviceaccount.yml') | from_yaml }}"
-        state: present
+      shell: oc create -f {{clone_destination}}/3Scale/members_backup/ansible_definitions/members-secret-eap-serviceaccount.yml -n membersapp
 
     - name: Create secrets - eap7 service account
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/members_backup/ansible_definitions/members-secret-eap7-serviceaccount.yml') | from_yaml }}"
-        state: present
+      shell: oc create -f {{clone_destination}}/3Scale/members_backup/ansible_definitions/members-secret-eap7-serviceaccount.yml -n membersapp
 #
 #    - name: Create members rolebindings
 #      openshift_raw:
@@ -476,35 +399,13 @@
 # Create the fis demo project and application
 #####################################################
     - name: Create fisdemo
-      openshift_raw:
-        host:         "{{ocp_url}}"
-        username:     "{{ocp_username}}"
-        password:     "{{ocp_password}}"
-        api_version:  v1
-        verify_ssl:   no
-        kind:         Project
-        name:         fisdemo
-        description:  Development and UAT environment for Agile Integration Banking Demo - Power by Red Hat Fuse
-        display_name: "Fuse Banking Demo - Dev and UAT"
-        state:        present
+      shell: oc new-project fisdemo --description='Development and UAT environment for Agile Integration Banking Demo - Power by Red Hat Fuse' --display-name='Fuse Banking Demo - Dev and UAT'
 
     - name: Create fisdemo apicast secrets
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        namespace:      "fisdemo"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/FuseBankingDevAndUat/ansible_definitions/secret-apicast.yaml') | from_yaml }}"
-        state: present
+      shell: oc create -f {{clone_destination}}/3Scale/FuseBankingDevAndUat/ansible_definitions/secret-apicast.yaml -n fisdemo
 
     - name: Create fisdemo mysql secrets
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        namespace:      "fisdemo"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/FuseBankingDevAndUat/ansible_definitions/secret-mysql.yaml') | from_yaml }}"
-        state: present
+      shell: oc create -f {{clone_destination}}/3Scale/FuseBankingDevAndUat/ansible_definitions/secret-mysql.yaml -n fisdemo
 
     - name: Create fisdemo app
       shell: oc new-app --file {{clone_destination}}/3Scale/FuseBankingDevAndUat/project.yaml -n fisdemo -p MAVEN_MIRROR_URL=http://nexus-sharedservices.{{domain_name_suffix}}/repository/maven-all-public -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
@@ -514,35 +415,13 @@
 #####################################################
 
     - name: Create fisdemoprod
-      openshift_raw:
-        host:         "{{ocp_url}}"
-        username:     "{{ocp_username}}"
-        password:     "{{ocp_password}}"
-        api_version:  v1
-        verify_ssl:   no
-        kind:         Project
-        name:         fisdemoprod
-        description:  Prod environment for Agile Integration Banking Demo - Power by Red Hat Fuse
-        display_name: "Fuse Banking Demo - PROD"
-        state:        present
+      shell: oc new-project fisdemoprod --description='Prod environment for Agile Integration Banking Demo - Power by Red Hat Fuse' --display-name='Fuse Banking Demo - PROD'
 
-    - name: Create fisdemoprod apicast secrets
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        namespace:      "fisdemoprod"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/FuseBankingProd/ansible_definitions/secret-apicast.yaml') | from_yaml }}"
-        state: present
+    - name: Create fisdemoprod apicast secret
+      shell: oc create -f {{clone_destination}}/3Scale/FuseBankingProd/ansible_definitions/secret-apicast.yaml -n fisdemoprod
 
     - name: Create fisdemoprod mysql secrets
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        namespace:      "fisdemoprod"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/FuseBankingProd/ansible_definitions/secret-mysql.yaml') | from_yaml }}"
-        state: present
+      shell: oc create -f {{clone_destination}}/3Scale/FuseBankingProd/ansible_definitions/secret-mysql.yaml -n fisdemoprod
 
     - name: Create fisdemoprod app
       shell: oc new-app --file {{clone_destination}}/3Scale/FuseBankingProd/project.yaml -n fisdemoprod -p MAVEN_MIRROR_URL=http://nexus-sharedservices.{{domain_name_suffix}}//repository/maven-all-public -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
@@ -554,17 +433,7 @@
 #####################################################
 
     - name: Create fisdemocicd
-      openshift_raw:
-        host:         "{{ocp_url}}"
-        username:     "{{ocp_username}}"
-        password:     "{{ocp_password}}"
-        api_version:  v1
-        verify_ssl:   no
-        kind:         Project
-        name:         fisdemocicd
-        description:  Fuse Banking Pipeline
-        display_name: "Fuse Banking Pipeline"
-        state:        present
+      shell: oc new-project fisdemocicd --description='Fuse Banking Pipeline' --display-name='Fuse Banking Pipeline'
 
     - name: Create Pipelines and Jenkins
       shell: oc new-app --file {{clone_destination}}/3Scale/FuseBankingPipeline/project.yaml -n fisdemocicd -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
@@ -583,28 +452,12 @@
 #####################################################
 
     - name: Create apicast
-      openshift_raw:
-        host:         "{{ocp_url}}"
-        username:     "{{ocp_username}}"
-        password:     "{{ocp_password}}"
-        api_version:  v1
-        verify_ssl:   no
-        kind:         Project
-        name:         apicast
-        description:  3Scale APIcast Gateway
-        display_name: "3Scale APIcast Gateway"
-        state:        present
+      shell: oc new-project apicast --description='3Scale APIcast Gateway' --display-name='3Scale APIcast Gateway'
 
     - name: Create apicast secrets
-      openshift_raw:
-        host:           "{{ocp_url}}"
-        username:       "{{ocp_username}}"
-        password:       "{{ocp_password}}"
-        namespace:      "apicast"
-        definition: "{{ lookup('file', '{{clone_destination}}/3Scale/3ScaleGateway/ansible_definitions/secret-apicast.yml') | from_yaml }}"
-        state: present
+      shell: oc create -f {{clone_destination}}/3Scale/3ScaleGateway/ansible_definitions/secret-apicast.yml -n apicast
 
-    - name: Create fisdemoprod app
+    - name: Create apicst gateway
       shell: oc new-app --file {{clone_destination}}/3Scale/3ScaleGateway/project.yaml -n apicast  -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
 
 
@@ -620,17 +473,7 @@
         clone: yes
 
     - name: Create fisdemogui
-      openshift_raw:
-        host:         "{{ocp_url}}"
-        username:     "{{ocp_username}}"
-        password:     "{{ocp_password}}"
-        api_version:  v1
-        verify_ssl:   no
-        kind:         Project
-        name:         fisdemogui
-        description:  Fuse Banking Demo - GUI
-        display_name: "Fuse Banking Demo - GUI"
-        state:        present
+      shell: oc new-project fisdemogui --description='Fuse Banking Demo - GUI' --display-name='Fuse Banking Demo - GUI'
 
     - name: Create fisdemogui build
       shell: oc new-build --image-stream=nodejs --binary=true --name=fisdemogui -n fisdemogui
