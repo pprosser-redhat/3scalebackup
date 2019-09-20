@@ -271,13 +271,6 @@ objects:
             initialDelaySeconds: 10
             periodSeconds: 30
             timeoutSeconds: 1
-          resources:
-            limits:
-              cpu: "2"
-              memory: 32Gi
-            requests:
-              cpu: "1"
-              memory: 1Gi
           volumeMounts:
           - mountPath: /var/lib/redis/data
             name: backend-redis-storage
@@ -444,13 +437,6 @@ objects:
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
-          resources:
-            limits:
-              cpu: 500m
-              memory: 32Gi
-            requests:
-              cpu: 150m
-              memory: 256Mi
           terminationMessagePath: /dev/termination-log
           volumeMounts:
           - mountPath: /var/lib/redis/data
@@ -567,13 +553,6 @@ objects:
           image: amp-backend:latest
           imagePullPolicy: IfNotPresent
           name: backend-cron
-          resources:
-            limits:
-              cpu: 150m
-              memory: 80Mi
-            requests:
-              cpu: 50m
-              memory: 40Mi
         initContainers:
         - command:
           - /opt/app/entrypoint.sh
@@ -717,13 +696,6 @@ objects:
               port: 3000
             initialDelaySeconds: 30
             timeoutSeconds: 5
-          resources:
-            limits:
-              cpu: "1"
-              memory: 700Mi
-            requests:
-              cpu: 500m
-              memory: 550Mi
     test: false
     triggers:
     - type: ConfigChange
@@ -866,13 +838,6 @@ objects:
           image: amp-backend:latest
           imagePullPolicy: IfNotPresent
           name: backend-worker
-          resources:
-            limits:
-              cpu: "1"
-              memory: 300Mi
-            requests:
-              cpu: 150m
-              memory: 50Mi
         initContainers:
         - command:
           - /opt/app/entrypoint.sh
@@ -1021,12 +986,6 @@ objects:
             initialDelaySeconds: 10
             periodSeconds: 30
             timeoutSeconds: 5
-          resources:
-            limits:
-              memory: 2Gi
-            requests:
-              cpu: 250m
-              memory: 512Mi
           volumeMounts:
           - mountPath: /var/lib/mysql/data
             name: mysql-storage
@@ -1160,13 +1119,6 @@ objects:
             initialDelaySeconds: 10
             periodSeconds: 30
             timeoutSeconds: 5
-          resources:
-            limits:
-              cpu: 250m
-              memory: 96Mi
-            requests:
-              cpu: 50m
-              memory: 64Mi
     test: false
     triggers:
     - type: ConfigChange
@@ -1971,13 +1923,6 @@ objects:
             initialDelaySeconds: 60
             periodSeconds: 30
             timeoutSeconds: 10
-          resources:
-            limits:
-              cpu: "1"
-              memory: 800Mi
-            requests:
-              cpu: 50m
-              memory: 600Mi
           volumeMounts:
           - mountPath: /opt/system/public/system
             name: system-storage
@@ -2219,13 +2164,6 @@ objects:
             initialDelaySeconds: 60
             periodSeconds: 30
             timeoutSeconds: 10
-          resources:
-            limits:
-              cpu: "1"
-              memory: 800Mi
-            requests:
-              cpu: 50m
-              memory: 600Mi
           volumeMounts:
           - mountPath: /opt/system/public/system
             name: system-storage
@@ -2466,13 +2404,6 @@ objects:
             initialDelaySeconds: 60
             periodSeconds: 30
             timeoutSeconds: 10
-          resources:
-            limits:
-              cpu: "1"
-              memory: 800Mi
-            requests:
-              cpu: 50m
-              memory: 600Mi
           volumeMounts:
           - mountPath: /opt/system/public/system
             name: system-storage
@@ -2752,13 +2683,6 @@ objects:
           image: amp-system:latest
           imagePullPolicy: IfNotPresent
           name: system-sidekiq
-          resources:
-            limits:
-              cpu: "1"
-              memory: 2Gi
-            requests:
-              cpu: 100m
-              memory: 500Mi
           volumeMounts:
           - mountPath: /opt/system/public/system
             name: system-storage
@@ -2884,13 +2808,6 @@ objects:
             tcpSocket:
               port: 9306
           name: system-sphinx
-          resources:
-            limits:
-              cpu: "1"
-              memory: 512Mi
-            requests:
-              cpu: 80m
-              memory: 250Mi
           volumeMounts:
           - mountPath: /opt/system/db/sphinx
             name: system-sphinx-database
@@ -3094,13 +3011,6 @@ objects:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 10
-          resources:
-            limits:
-              cpu: "1"
-              memory: 512Mi
-            requests:
-              cpu: 150m
-              memory: 250M
         initContainers:
         - command:
           - bash
@@ -3192,13 +3102,6 @@ objects:
               - psql -h 127.0.0.1 -U zync -q -d zync_production -c 'SELECT 1'
             initialDelaySeconds: 5
             timeoutSeconds: 1
-          resources:
-            limits:
-              cpu: 250m
-              memory: 2G
-            requests:
-              cpu: 50m
-              memory: 250M
           volumeMounts:
           - mountPath: /var/lib/pgsql/data
             name: zync-database-data
@@ -3372,13 +3275,6 @@ objects:
             initialDelaySeconds: 15
             periodSeconds: 30
             timeoutSeconds: 5
-          resources:
-            limits:
-              cpu: 100m
-              memory: 128Mi
-            requests:
-              cpu: 50m
-              memory: 64Mi
     test: false
     triggers:
     - type: ConfigChange
@@ -3494,13 +3390,6 @@ objects:
             initialDelaySeconds: 15
             periodSeconds: 30
             timeoutSeconds: 5
-          resources:
-            limits:
-              cpu: "1"
-              memory: 128Mi
-            requests:
-              cpu: 500m
-              memory: 64Mi
         initContainers:
         - command:
           - sh
@@ -3696,13 +3585,6 @@ objects:
           - containerPort: 8080
             name: http
             protocol: TCP
-          resources:
-            limits:
-              cpu: 500m
-              memory: 64Mi
-            requests:
-              cpu: 120m
-              memory: 32Mi
     test: false
     triggers:
     - type: ConfigChange
