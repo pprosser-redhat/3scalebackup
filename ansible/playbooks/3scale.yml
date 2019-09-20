@@ -212,16 +212,22 @@
 
 # load backend_redis cache
 
-    - name: "Inject backend_redis cache backup into container {{backend_redis_container}}"
-      shell: oc rsync {{clone_destination}}/3Scale/3Scale_backup/backend_redis/data {{backend_redis_container}}:/var/lib/redis -n amp
+    - name: "Inject backend_redis cache backup into container appendonly.aof {{backend_redis_container}}"
+      shell: oc cp {{clone_destination}}/3Scale/3Scale_backup/backend_redis/data/appendonly.aof {{backend_redis_container}}:/var/lib/redis/data -n amp
+
+    - name: "Inject backend_redis cache backup into container dump.rdb {{backend_redis_container}}"
+      shell: oc cp {{clone_destination}}/3Scale/3Scale_backup/backend_redis/data/dump.rdb {{backend_redis_container}}:/var/lib/redis/data -n amp
 
     - name: "restart backend_redis_container {{backend_redis_container}}"
       shell: oc delete pod {{backend_redis_container}} -n amp
 
 # load system_redis cache
 
-    - name: "Inject system_redis cache backup into container {{system_redis_container}}"
-      shell: oc rsync {{clone_destination}}/3Scale/3Scale_backup/system_redis/data {{system_redis_container}}:/var/lib/redis -n amp
+    - name: "Inject system_redis cache backup into container appendonly.aof {{system_redis_container}}"
+      shell: oc cp {{clone_destination}}/3Scale/3Scale_backup/system_redis/data/appendonly.aof {{system_redis_container}}:/var/lib/redis/data -n amp
+
+    - name: "Inject system_redis cache backup into container dump.rdb {{system_redis_container}}"
+      shell: oc cp {{clone_destination}}/3Scale/3Scale_backup/system_redis/data/dump.rdb {{system_redis_container}}:/var/lib/redis/data -n amp
 
     - name: "restart backend_redis_container {{system_redis_container}}"
       shell: oc delete pod {{system_redis_container}} -n amp
