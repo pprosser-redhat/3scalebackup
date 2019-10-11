@@ -148,7 +148,7 @@
 #####################################################
 
     - name: Create new 3Scale AMP from template
-      shell: oc new-app -n amp --file /{{clone_destination}}/3Scale/amptemplates/amp.yml --param WILDCARD_DOMAIN={{domain_name_suffix}} --param RWX_STORAGE_CLASS = ibmc-file-gold --param RWO_STORAGE_CLASS = ibmc-block-silver
+      shell: oc new-app -n amp --file /{{clone_destination}}/3Scale/amptemplates/amp.yml --param WILDCARD_DOMAIN={{domain_name_suffix}} --param RWX_STORAGE_CLASS = 'ibmc-file-gold'
 
 # Wait for 3Scale to start before continuing
     - name: Is 3Scale started?
