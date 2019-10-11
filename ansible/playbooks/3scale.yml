@@ -76,58 +76,58 @@
 # api authentication, and oauth login to admin/dev portals
 #####################################################
 
-    - name:           Create RH SSO project
-      shell:          oc new-project sso --description='RH SSO' --display-name='RH SSO'
+#    - name:           Create RH SSO project
+#      shell:          oc new-project sso --description='RH SSO' --display-name='RH SSO'
 
-    - name: Create sso service account
-      shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-serviceaccounts.yml -n sso
+#    - name: Create sso service account
+#      shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-serviceaccounts.yml -n sso
 
-    - name: Create secrets - jgroups
-      shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-secrets-jgroups.yml -n sso
+#    - name: Create secrets - jgroups
+#      shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-secrets-jgroups.yml -n sso
 
-    - name: Create secrets - https
-      shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-secrets-https.yml -n sso
+#    - name: Create secrets - https
+#      shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-secrets-https.yml -n sso
 
-    - name: Create sso pvc
-      shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-pvc.yml -n sso
+#    - name: Create sso pvc
+#      shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-pvc.yml -n sso
 
-    - name: Create SSO application from cloned repo
-      shell: oc new-app  --file "{{clone_destination}}/3Scale/sso_backup/project.yaml" -n sso -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" -p KEYSTORE_PASSWORD="{{keystore_password}}"
+#    - name: Create SSO application from cloned repo
+#      shell: oc new-app  --file "{{clone_destination}}/3Scale/sso_backup/project.yaml" -n sso -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" -p KEYSTORE_PASSWORD="{{keystore_password}}"
 
 #    - name: Create SSO application from cloned repo
 #      shell: oc new-app  --file "{{clone_destination}}/3Scale/sso_backup/project.yaml" -n sso -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" -p KEYSTORE_PASSWORD="{{keystore_password}}"
 
 # Wait for SSO to start before continuing
-    - name: Is SSO started?
-      uri:
-        validate_certs: no
-        url: https://secure-sso-sso.{{domain_name_suffix}}/auth/
-      register: testsso
-      until: testsso.status == 200
-      retries: 200
-      delay: 5
+#   - name: Is SSO started?
+#      uri:
+#        validate_certs: no
+#        url: https://secure-sso-sso.{{domain_name_suffix}}/auth/
+#      register: testsso
+#      until: testsso.status == 200
+#      retries: 200
+#      delay: 5
 
-    - name: Get OCP bearer token for API call
-      shell: oc whoami -t
-      register: ocptoken_sso
+#    - name: Get OCP bearer token for API call
+#      shell: oc whoami -t
+#      register: ocptoken_sso
 
-    - name: Get SSO mysql Pod
-      uri:
-        validate_certs: no
-        url: "{{ocp_url}}/api/v1/namespaces/sso/pods?labelSelector=deploymentConfig=sso-mysql"
-        headers:
-          Authorization: "Bearer {{ocptoken_sso.stdout}}"
-      register: ssomysql_pod
+#    - name: Get SSO mysql Pod
+#      uri:
+#        validate_certs: no
+#        url: "{{ocp_url}}/api/v1/namespaces/sso/pods?labelSelector=deploymentConfig=sso-mysql"
+#        headers:
+#          Authorization: "Bearer {{ocptoken_sso.stdout}}"
+#      register: ssomysql_pod
 
-    - name: Capture ssomysql pod name
-      set_fact:
-        ssomysql_container: "{{ssomysql_pod|json_query('json.items[0].metadata.name')}}"
+#    - name: Capture ssomysql pod name
+#      set_fact:
+#        ssomysql_container: "{{ssomysql_pod|json_query('json.items[0].metadata.name')}}"
 
-    - name: "Inject sso mysql backup into container {{ssomysql_container}}"
-      shell: oc rsync {{clone_destination}}/3Scale/3Scale_backup/sso/db_archive_dir {{ssomysql_container}}:/var/lib/mysql/data -n sso
+#    - name: "Inject sso mysql backup into container {{ssomysql_container}}"
+#      shell: oc rsync {{clone_destination}}/3Scale/3Scale_backup/sso/db_archive_dir {{ssomysql_container}}:/var/lib/mysql/data -n sso
 
-    - name: "Loading data into mysql"
-      shell: oc exec {{ssomysql_container}} -n sso -- bash -c "mysql -u root < /var/lib/mysql/data/db_archive_dir/all.sql"
+#    - name: "Loading data into mysql"
+#      shell: oc exec {{ssomysql_container}} -n sso -- bash -c "mysql -u root < /var/lib/mysql/data/db_archive_dir/all.sql"
 
 #####################################################
 # Create project to deploy 3Scale Management Platform
@@ -148,7 +148,7 @@
 #####################################################
 
     - name: Create new 3Scale AMP from template
-      shell: oc new-app -n amp --file /{{clone_destination}}/3Scale/amptemplates/amp.yml --param WILDCARD_DOMAIN={{domain_name_suffix}} --param RWX_STORAGE_CLASS = 'ibmc-file-gold'
+      shell: oc new-app -n amp --file /{{clone_destination}}/3Scale/amptemplates/amp.yml --param WILDCARD_DOMAIN={{domain_name_suffix}} --param RWX_STORAGE_CLASS="ibmc-file-gold"
 
 # Wait for 3Scale to start before continuing
     - name: Is 3Scale started?
