@@ -77,7 +77,7 @@ Restore Zync Database
 /var/lib/pgsql/data/backup
 oc rsync ~/projects/demolab/3scalebackup/3Scale_backup/backup_zync_db/data/ zync-database-4-xmtgc:/var/lib/pgsql/data/backup/
 oc rsh zync-database-4-xmtgc
-psql -h 127.0.0.1 -U zync -d zync_production < /var/lib/pgsql/data/backup/zync.sql
+psql -h 127.0.0.1 -U zync -d zync_production < /var/lib/pgsql/data/backup/data/zync.sql
 ========================
 Update Gateway endpoints
 ========================
