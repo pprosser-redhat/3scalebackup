@@ -64,130 +64,24 @@
     - name:           login to Openshift at the specified URL
       shell:          oc login {{ocp_url}} --username={{ocp_username}} --password={{ocp_password}}
 
-#####################################################
-# Create project to deploy 3Scale Management Platform
-#####################################################
-    - name:           Create 3Scale AMP project
-      shell:          oc new-project amp --description='3Scale API Management Platform' --display-name='3Scale API Management Platform'
+# load backup of zync database 
 
-# Replace 192.168.99.100.nip.io with choosen wildcard domain_name_suffix
+    - name: Get Zync Database Pod
+        uri:
+          validate_certs: no
+          url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=3scale.component-element=database"
+          headers:
+            Authorization: "Bearer {{ocptoken.stdout}}"
+        register: zync_pod
 
-    - name: Replace Wildcard name in AMP SQL database before Loading
-      replace:
-        path: '{{clone_destination}}/3Scale/3Scale_backup/db_archive_dir/all.sql'
-        regexp: 192.168.99.100.nip.io
-        replace: '{{domain_name_suffix}}'
-
-#####################################################
-# Create all AMP from template
-#####################################################
-
-    - name: Create new 3Scale AMP from template
-      shell: oc new-app -n amp --file /{{clone_destination}}/3Scale/amptemplates/amp.yml --param WILDCARD_DOMAIN={{domain_name_suffix}}
-
-# Wait for 3Scale to start before continuing
-    - name: Is 3Scale started?
-      uri:
-        validate_certs: no
-        url: https://3scale-admin.{{domain_name_suffix}}/p/login
-      register: test
-      until: test.status == 200
-      retries: 400
-      delay: 5
-
-# Capture pods names that need files injecting to recover 3SCale Correctly
-
-    - name: Get OCP bearer token for API call
-      shell: oc whoami -t
-      register: ocptoken
-
-    - name: Get mysql Pod
-      uri:
-        validate_certs: no
-        url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=3scale.component-element=mysql"
-        headers:
-          Authorization: "Bearer {{ocptoken.stdout}}"
-      register: mysql_pod
-
-    - name: Capture mysql pod name
+    - name: Capture zync database pod name
       set_fact:
-        mysql_container: "{{mysql_pod|json_query('json.items[0].metadata.name')}}"
+        zync_db_container: "{{zync_pod|json_query('json.items[0].metadata.name')}}"
 
-    - name: Get backend_redis pod
-      uri:
-        validate_certs: no
-        url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=3scale.component=backend,3scale.component-element=redis"
-        headers:
-          Authorization: "Bearer {{ocptoken.stdout}}"
-      register: backend_redis_pod
-
-    - name: Capture backend_redis_pod pod name
-      set_fact:
-        backend_redis_container: "{{backend_redis_pod|json_query('json.items[0].metadata.name')}}"
-
-    - name: Get system_redis pod
-      uri:
-        validate_certs: no
-        url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=3scale.component=system,3scale.component-element=redis"
-        headers:
-          Authorization: "Bearer {{ocptoken.stdout}}"
-      register: system_redis_pod
-
-    - name: Capture backend_redis_pod pod name
-      set_fact:
-        system_redis_container: "{{system_redis_pod|json_query('json.items[0].metadata.name')}}"
-
-# Copy the mysql backup file into the mysql container
-    - name: "Inject mysql backup into container {{mysql_container}}"
-      shell: oc rsync {{clone_destination}}/3Scale/3Scale_backup/db_archive_dir {{mysql_container}}:/var/lib/mysql/data -n amp
-
-# execute
-    - name: "Loading data into mysql"
-      shell: oc exec {{mysql_container}} -n amp -- bash -c "mysql -u root < /var/lib/mysql/data/db_archive_dir/all.sql"
-
-# load backend_redis cache
-
-    - name: "Inject backend_redis cache backup into container appendonly.aof {{backend_redis_container}}"
-      shell: oc cp {{clone_destination}}/3Scale/3Scale_backup/backend_redis/data/appendonly.aof {{backend_redis_container}}:/var/lib/redis/data -n amp
-
-    - name: "Inject backend_redis cache backup into container dump.rdb {{backend_redis_container}}"
-      shell: oc cp {{clone_destination}}/3Scale/3Scale_backup/backend_redis/data/dump.rdb {{backend_redis_container}}:/var/lib/redis/data -n amp
-
-    - name: "restart backend_redis_container {{backend_redis_container}}"
-      shell: oc delete pod {{backend_redis_container}} -n amp
-
-# load system_redis cache
-
-    - name: "Inject system_redis cache backup into container appendonly.aof {{system_redis_container}}"
-      shell: oc cp {{clone_destination}}/3Scale/3Scale_backup/system_redis/data/appendonly.aof {{system_redis_container}}:/var/lib/redis/data -n amp
-
-    - name: "Inject system_redis cache backup into container dump.rdb {{system_redis_container}}"
-      shell: oc cp {{clone_destination}}/3Scale/3Scale_backup/system_redis/data/dump.rdb {{system_redis_container}}:/var/lib/redis/data -n amp
-
-    - name: "restart backend_redis_container {{system_redis_container}}"
-      shell: oc delete pod {{system_redis_container}} -n amp
-
-# The db update will have updated the randomly generated password, need to put it back to that store in the copied db
-    - name: "Reset 3Scale Portal Endpoint in PROD gateway"
-      shell: oc set env dc/apicast-production THREESCALE_PORTAL_ENDPOINT=http://redhat12@system-master:3000/master/api/proxy/configs -n amp
-# The db update will have updated the randomly generated password, need to put it back to that store in the copied db
-    - name: "Reset 3Scale Portal Endpoint in Staging gateway"
-      shell: oc set env dc/apicast-staging THREESCALE_PORTAL_ENDPOINT=http://redhat12@system-master:3000/master/api/proxy/configs -n amp
-
-# Add my extra gateway api routes as I'm not using Wildcards
-    - name: Create AMP application routes from cloned repo
-      shell: oc new-app  --file "{{clone_destination}}/3Scale/backup_amp/project.yaml" -n amp -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" KEYSTORE_PASSWORD={{keystore_password}}
-
-
-    # Pause to make sure that 3Scale has fully revoverd from redis caches backups being installed
-
-    # A helpful reminder of what to look out for post-update.
-    - pause:
-        prompt: "Has the Redis caches fully recovered?"
-######## 3Scale physical setup complete ################################################
-# Now, a number of API calls to 3Scale will be made to change the wildcard domain name #
-########################################################################################
-
+# Copy the zync db backup file into the zync db container container
+    - name: "Inject zync backup into container {{zync_db_container}}"
+      shell: oc rsync {{clone_destination}}/3Scale/3Scale_backup/backup_zync_db/data {{zync_db_container}}:/var/lib/pgsql/data/backup -n amp
+   
 
 # Logout of Openshift
     - name:           logout of Openshift

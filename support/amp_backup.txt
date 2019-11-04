@@ -1,16 +1,21 @@
 Backup MySQL DB
 
-mysqldump --skip-lock-tables -h $SYSTEM_MYSQL_SERVICE_HOST -P $SYSTEM_MYSQL_SERVICE_PORT   -u $MYSQL_USER --password="$MYSQL_PASSWORD" --all-databases > /var/lib/mysql/data/db_archive_dir/all.sql
+mysqldump --skip-lock-tables -h $SYSTEM_MYSQL_SERVICE_HOST -P $SYSTEM_MYSQL_SERVICE_PORT   -u $MYSQL_USER --password="$MYSQL_PASSWORD" --all-databases > all.sql
 
-oc rsync  system-mysql-2-49dgn:/var/lib/mysql/data/db_archive_dir .
+oc rsync  system-mysql-4-59q9r:/opt/app-root/src/ .
 
 Backup both Redis servers using similer to example below
 
-oc rsync backend-redis-1-h8jf9:/var/lib/redis/data/appendonly.aof .
-oc rsync backend-redis-1-h8jf9:/var/lib/redis/data/dump.rdb .
+oc rsync backend-redis-3-fwn4m:/var/lib/redis/data/appendonly.aof .
+oc rsync backend-redis-3-fwn4m:/var/lib/redis/data/dump.rdb .
 
-oc rsync system-redis-1-97p6x:/var/lib/redis/data/dump.rdb .
-oc rsync system-redis-1-97p6x:/var/lib/redis/data/appendonly.aof .
+oc rsync system-redis-3-pggbc:/var/lib/redis/data/dump.rdb .
+oc rsync system-redis-3-pggbc:/var/lib/redis/data/appendonly.aof .
+
+Backup Postgres zync DB
+mkdir /var/lib/pgsql/data/backup
+pg_dump -h 127.0.0.1 -U zync -d zync_production -f /var/lib/pgsql/data/backup/zync.sql
+oc rsync zync-database-4-xmtgc:/var/lib/pgsql/data/backup/zync.sql .
 
 Back up AMP
 
@@ -65,6 +70,14 @@ oc rsync ~/projects/demolab/3scalebackup/3Scale_backup/system_redis/data system-
 
 restart both the backend redis, and rhe system redis
 
+========================
+Restore Zync Database 
+========================
+
+/var/lib/pgsql/data/backup
+oc rsync ~/projects/demolab/3scalebackup/3Scale_backup/backup_zync_db/data/ zync-database-4-xmtgc:/var/lib/pgsql/data/backup/
+oc rsh zync-database-4-xmtgc
+psql -h 127.0.0.1 -U zync -d zync_production < /var/lib/pgsql/data/backup/zync.sql
 ========================
 Update Gateway endpoints
 ========================

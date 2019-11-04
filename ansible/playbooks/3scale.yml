@@ -232,6 +232,24 @@
     - name: "restart backend_redis_container {{system_redis_container}}"
       shell: oc delete pod {{system_redis_container}} -n amp
 
+# load backup of zync database 
+
+    - name: Get Zync Database Pod
+        uri:
+          validate_certs: no
+          url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=3scale.component-element=database"
+          headers:
+            Authorization: "Bearer {{ocptoken.stdout}}"
+        register: zync_pod
+
+    - name: Capture zync database pod name
+      set_fact:
+        zync_db_container: "{{zync_pod|json_query('json.items[0].metadata.name')}}"
+
+# Copy the zync db backup file into the zync db container container
+    - name: "Inject zync backup into container {{zync_db_container}}"
+      shell: oc rsync {{clone_destination}}/3Scale/3Scale_backup/backup_zync_db/data {{zync_db_container}}:/var/lib/pgsql/data/backup -n amp
+      
 # The db update will have updated the randomly generated password, need to put it back to that store in the copied db
     - name: "Reset 3Scale Portal Endpoint in PROD gateway"
       shell: oc set env dc/apicast-production THREESCALE_PORTAL_ENDPOINT=http://redhat12@system-master:3000/master/api/proxy/configs -n amp

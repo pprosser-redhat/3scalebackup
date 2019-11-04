@@ -18,8 +18,8 @@ objects:
       openshift.io/display-name: AMP backend
     creationTimestamp: null
     labels:
-      3scale.component: backend
       app: ${APP_LABEL}
+      threescale_component: backend
     name: amp-backend
   spec:
     lookupPolicy:
@@ -55,8 +55,8 @@ objects:
       openshift.io/display-name: AMP Zync
     creationTimestamp: null
     labels:
-      3scale.component: zync
       app: ${APP_LABEL}
+      threescale_component: zync
     name: amp-zync
   spec:
     lookupPolicy:
@@ -92,8 +92,8 @@ objects:
       openshift.io/display-name: AMP APIcast
     creationTimestamp: null
     labels:
-      3scale.component: apicast
       app: ${APP_LABEL}
+      threescale_component: apicast
     name: amp-apicast
   spec:
     lookupPolicy:
@@ -126,48 +126,11 @@ objects:
   kind: ImageStream
   metadata:
     annotations:
-      openshift.io/display-name: AMP APIcast Wildcard Router
-    creationTimestamp: null
-    labels:
-      3scale.component: wildcard-router
-      app: ${APP_LABEL}
-    name: amp-wildcard-router
-  spec:
-    lookupPolicy:
-      local: false
-    tags:
-    - annotations:
-        openshift.io/display-name: AMP APIcast Wildcard Router (latest)
-      from:
-        kind: ImageStreamTag
-        name: ${AMP_RELEASE}
-      generation: null
-      importPolicy: {}
-      name: latest
-      referencePolicy:
-        type: ""
-    - annotations:
-        openshift.io/display-name: AMP APIcast Wildcard Router ${AMP_RELEASE}
-      from:
-        kind: DockerImage
-        name: ${AMP_ROUTER_IMAGE}
-      generation: null
-      importPolicy:
-        insecure: ${{IMAGESTREAM_TAG_IMPORT_INSECURE}}
-      name: ${AMP_RELEASE}
-      referencePolicy:
-        type: ""
-  status:
-    dockerImageRepository: ""
-- apiVersion: image.openshift.io/v1
-  kind: ImageStream
-  metadata:
-    annotations:
       openshift.io/display-name: AMP System
     creationTimestamp: null
     labels:
-      3scale.component: system
       app: ${APP_LABEL}
+      threescale_component: system
     name: amp-system
   spec:
     lookupPolicy:
@@ -199,24 +162,191 @@ objects:
 - apiVersion: image.openshift.io/v1
   kind: ImageStream
   metadata:
+    annotations:
+      openshift.io/display-name: Zync database PostgreSQL
     creationTimestamp: null
     labels:
-      3scale.component: system
-      3scale.component-element: postgresql
       app: ${APP_LABEL}
-    name: postgresql
+      threescale_component: system
+    name: zync-database-postgresql
   spec:
     lookupPolicy:
       local: false
     tags:
-    - annotations: null
+    - annotations:
+        openshift.io/display-name: Zync PostgreSQL (latest)
+      from:
+        kind: ImageStreamTag
+        name: ${AMP_RELEASE}
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+    - annotations:
+        openshift.io/display-name: Zync ${AMP_RELEASE} PostgreSQL
       from:
         kind: DockerImage
-        name: ${POSTGRESQL_IMAGE}
+        name: ${ZYNC_DATABASE_IMAGE}
       generation: null
       importPolicy:
         insecure: ${{IMAGESTREAM_TAG_IMPORT_INSECURE}}
-      name: "9.5"
+      name: ${AMP_RELEASE}
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/display-name: Backend Redis
+    creationTimestamp: null
+    labels:
+      app: ${APP_LABEL}
+      threescale_component: backend
+    name: backend-redis
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations:
+        openshift.io/display-name: Backend Redis (latest)
+      from:
+        kind: ImageStreamTag
+        name: ${AMP_RELEASE}
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+    - annotations:
+        openshift.io/display-name: Backend ${AMP_RELEASE} Redis
+      from:
+        kind: DockerImage
+        name: ${REDIS_IMAGE}
+      generation: null
+      importPolicy:
+        insecure: ${{IMAGESTREAM_TAG_IMPORT_INSECURE}}
+      name: ${AMP_RELEASE}
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/display-name: System Redis
+    creationTimestamp: null
+    labels:
+      app: ${APP_LABEL}
+      threescale_component: system
+    name: system-redis
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations:
+        openshift.io/display-name: System Redis (latest)
+      from:
+        kind: ImageStreamTag
+        name: ${AMP_RELEASE}
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+    - annotations:
+        openshift.io/display-name: System ${AMP_RELEASE} Redis
+      from:
+        kind: DockerImage
+        name: ${REDIS_IMAGE}
+      generation: null
+      importPolicy:
+        insecure: ${{IMAGESTREAM_TAG_IMPORT_INSECURE}}
+      name: ${AMP_RELEASE}
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/display-name: System Memcached
+    creationTimestamp: null
+    labels:
+      app: ${APP_LABEL}
+      threescale_component: system
+    name: system-memcached
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations:
+        openshift.io/display-name: System Memcached (latest)
+      from:
+        kind: ImageStreamTag
+        name: ${AMP_RELEASE}
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+    - annotations:
+        openshift.io/display-name: System ${AMP_RELEASE} Memcached
+      from:
+        kind: DockerImage
+        name: ${MEMCACHED_IMAGE}
+      generation: null
+      importPolicy:
+        insecure: ${{IMAGESTREAM_TAG_IMPORT_INSECURE}}
+      name: ${AMP_RELEASE}
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  imagePullSecrets:
+  - name: threescale-registry-auth
+  kind: ServiceAccount
+  metadata:
+    creationTimestamp: null
+    name: amp
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/display-name: System MySQL
+    creationTimestamp: null
+    labels:
+      app: ${APP_LABEL}
+      threescale_component: system
+    name: system-mysql
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations:
+        openshift.io/display-name: System MySQL (latest)
+      from:
+        kind: ImageStreamTag
+        name: ${AMP_RELEASE}
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+    - annotations:
+        openshift.io/display-name: System ${AMP_RELEASE} MySQL
+      from:
+        kind: DockerImage
+        name: ${SYSTEM_DATABASE_IMAGE}
+      generation: null
+      importPolicy:
+        insecure: ${{IMAGESTREAM_TAG_IMPORT_INSECURE}}
+      name: ${AMP_RELEASE}
       referencePolicy:
         type: ""
   status:
@@ -226,9 +356,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: backend
-      3scale.component-element: redis
       app: ${APP_LABEL}
+      threescale_component: backend
+      threescale_component_element: redis
     name: backend-redis
   spec:
     replicas: 1
@@ -241,10 +371,10 @@ objects:
       metadata:
         creationTimestamp: null
         labels:
-          3scale.component: backend
-          3scale.component-element: redis
           app: ${APP_LABEL}
           deploymentConfig: backend-redis
+          threescale_component: backend
+          threescale_component_element: redis
       spec:
         containers:
         - args:
@@ -253,7 +383,7 @@ objects:
           - "no"
           command:
           - /opt/rh/rh-redis32/root/usr/bin/redis-server
-          image: ${REDIS_IMAGE}
+          image: backend-redis:latest
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 10
@@ -271,11 +401,19 @@ objects:
             initialDelaySeconds: 10
             periodSeconds: 30
             timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: "2"
+              memory: 32Gi
+            requests:
+              cpu: "1"
+              memory: 1Gi
           volumeMounts:
           - mountPath: /var/lib/redis/data
             name: backend-redis-storage
           - mountPath: /etc/redis.d/
             name: redis-config
+        serviceAccountName: amp
         volumes:
         - name: backend-redis-storage
           persistentVolumeClaim:
@@ -289,6 +427,14 @@ objects:
     test: false
     triggers:
     - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - backend-redis
+        from:
+          kind: ImageStreamTag
+          name: backend-redis:latest
+      type: ImageChange
   status:
     availableReplicas: 0
     latestVersion: 0
@@ -301,9 +447,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: backend
-      3scale.component-element: redis
       app: ${APP_LABEL}
+      threescale_component: backend
+      threescale_component_element: redis
     name: backend-redis
   spec:
     ports:
@@ -366,18 +512,18 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
-      3scale.component-element: redis
       app: ${APP_LABEL}
+      threescale_component: system
+      threescale_component_element: redis
     name: redis-config
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: backend
-      3scale.component-element: redis
       app: ${APP_LABEL}
+      threescale_component: backend
+      threescale_component_element: redis
     name: backend-redis-storage
   spec:
     accessModes:
@@ -392,9 +538,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
-      3scale.component-element: redis
       app: ${APP_LABEL}
+      threescale_component: system
+      threescale_component_element: redis
     name: system-redis
   spec:
     replicas: 1
@@ -407,10 +553,10 @@ objects:
       metadata:
         creationTimestamp: null
         labels:
-          3scale.component: system
-          3scale.component-element: redis
           app: ${APP_LABEL}
           deploymentConfig: system-redis
+          threescale_component: system
+          threescale_component_element: redis
       spec:
         containers:
         - args:
@@ -419,7 +565,7 @@ objects:
           - "no"
           command:
           - /opt/rh/rh-redis32/root/usr/bin/redis-server
-          image: ${REDIS_IMAGE}
+          image: system-redis:latest
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 10
@@ -437,12 +583,20 @@ objects:
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: 500m
+              memory: 32Gi
+            requests:
+              cpu: 150m
+              memory: 256Mi
           terminationMessagePath: /dev/termination-log
           volumeMounts:
           - mountPath: /var/lib/redis/data
             name: system-redis-storage
           - mountPath: /etc/redis.d/
             name: redis-config
+        serviceAccountName: amp
         volumes:
         - name: system-redis-storage
           persistentVolumeClaim:
@@ -456,6 +610,14 @@ objects:
     test: false
     triggers:
     - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - system-redis
+        from:
+          kind: ImageStreamTag
+          name: system-redis:latest
+      type: ImageChange
   status:
     availableReplicas: 0
     latestVersion: 0
@@ -468,9 +630,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
-      3scale.component-element: redis
       app: ${APP_LABEL}
+      threescale_component: system
+      threescale_component_element: redis
     name: system-redis-storage
   spec:
     accessModes:
@@ -485,9 +647,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: backend
-      3scale.component-element: cron
       app: ${APP_LABEL}
+      threescale_component: backend
+      threescale_component_element: cron
     name: backend-cron
   spec:
     replicas: 1
@@ -506,10 +668,10 @@ objects:
       metadata:
         creationTimestamp: null
         labels:
-          3scale.component: backend
-          3scale.component-element: cron
           app: ${APP_LABEL}
           deploymentConfig: backend-cron
+          threescale_component: backend
+          threescale_component_element: cron
       spec:
         containers:
         - args:
@@ -553,6 +715,13 @@ objects:
           image: amp-backend:latest
           imagePullPolicy: IfNotPresent
           name: backend-cron
+          resources:
+            limits:
+              cpu: 150m
+              memory: 80Mi
+            requests:
+              cpu: 50m
+              memory: 40Mi
         initContainers:
         - command:
           - /opt/app/entrypoint.sh
@@ -561,16 +730,47 @@ objects:
           - until rake connectivity:redis_storage_queue_check; do sleep $SLEEP_SECONDS;
             done
           env:
-          - name: SLEEP_SECONDS
-            value: "1"
+          - name: CONFIG_REDIS_PROXY
+            valueFrom:
+              secretKeyRef:
+                key: REDIS_STORAGE_URL
+                name: backend-redis
+          - name: CONFIG_REDIS_SENTINEL_HOSTS
+            valueFrom:
+              secretKeyRef:
+                key: REDIS_STORAGE_SENTINEL_HOSTS
+                name: backend-redis
+          - name: CONFIG_REDIS_SENTINEL_ROLE
+            valueFrom:
+              secretKeyRef:
+                key: REDIS_STORAGE_SENTINEL_ROLE
+                name: backend-redis
           - name: CONFIG_QUEUES_MASTER_NAME
             valueFrom:
               secretKeyRef:
                 key: REDIS_QUEUES_URL
                 name: backend-redis
+          - name: CONFIG_QUEUES_SENTINEL_HOSTS
+            valueFrom:
+              secretKeyRef:
+                key: REDIS_QUEUES_SENTINEL_HOSTS
+                name: backend-redis
+          - name: CONFIG_QUEUES_SENTINEL_ROLE
+            valueFrom:
+              secretKeyRef:
+                key: REDIS_QUEUES_SENTINEL_ROLE
+                name: backend-redis
+          - name: RACK_ENV
+            valueFrom:
+              configMapKeyRef:
+                key: RACK_ENV
+                name: backend-environment
+          - name: SLEEP_SECONDS
+            value: "1"
           image: amp-backend:latest
           name: backend-redis-svc
           resources: {}
+        serviceAccountName: amp
     test: false
     triggers:
     - type: ConfigChange
@@ -595,9 +795,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: backend
-      3scale.component-element: listener
       app: ${APP_LABEL}
+      threescale_component: backend
+      threescale_component_element: listener
     name: backend-listener
   spec:
     replicas: 1
@@ -616,10 +816,10 @@ objects:
       metadata:
         creationTimestamp: null
         labels:
-          3scale.component: backend
-          3scale.component-element: listener
           app: ${APP_LABEL}
           deploymentConfig: backend-listener
+          threescale_component: backend
+          threescale_component_element: listener
       spec:
         containers:
         - args:
@@ -696,6 +896,14 @@ objects:
               port: 3000
             initialDelaySeconds: 30
             timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: "1"
+              memory: 700Mi
+            requests:
+              cpu: 500m
+              memory: 550Mi
+        serviceAccountName: amp
     test: false
     triggers:
     - type: ConfigChange
@@ -719,9 +927,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: backend
-      3scale.component-element: listener
       app: ${APP_LABEL}
+      threescale_component: backend
+      threescale_component_element: listener
     name: backend-listener
   spec:
     ports:
@@ -738,8 +946,8 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: backend
       app: ${APP_LABEL}
+      threescale_component: backend
     name: backend
   spec:
     host: backend-${TENANT_NAME}.${WILDCARD_DOMAIN}
@@ -759,9 +967,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: backend
-      3scale.component-element: worker
       app: ${APP_LABEL}
+      threescale_component: backend
+      threescale_component_element: worker
     name: backend-worker
   spec:
     replicas: 1
@@ -780,10 +988,10 @@ objects:
       metadata:
         creationTimestamp: null
         labels:
-          3scale.component: backend
-          3scale.component-element: worker
           app: ${APP_LABEL}
           deploymentConfig: backend-worker
+          threescale_component: backend
+          threescale_component_element: worker
       spec:
         containers:
         - args:
@@ -838,6 +1046,13 @@ objects:
           image: amp-backend:latest
           imagePullPolicy: IfNotPresent
           name: backend-worker
+          resources:
+            limits:
+              cpu: "1"
+              memory: 300Mi
+            requests:
+              cpu: 150m
+              memory: 50Mi
         initContainers:
         - command:
           - /opt/app/entrypoint.sh
@@ -846,16 +1061,47 @@ objects:
           - until rake connectivity:redis_storage_queue_check; do sleep $SLEEP_SECONDS;
             done
           env:
-          - name: SLEEP_SECONDS
-            value: "1"
+          - name: CONFIG_REDIS_PROXY
+            valueFrom:
+              secretKeyRef:
+                key: REDIS_STORAGE_URL
+                name: backend-redis
+          - name: CONFIG_REDIS_SENTINEL_HOSTS
+            valueFrom:
+              secretKeyRef:
+                key: REDIS_STORAGE_SENTINEL_HOSTS
+                name: backend-redis
+          - name: CONFIG_REDIS_SENTINEL_ROLE
+            valueFrom:
+              secretKeyRef:
+                key: REDIS_STORAGE_SENTINEL_ROLE
+                name: backend-redis
           - name: CONFIG_QUEUES_MASTER_NAME
             valueFrom:
               secretKeyRef:
                 key: REDIS_QUEUES_URL
                 name: backend-redis
+          - name: CONFIG_QUEUES_SENTINEL_HOSTS
+            valueFrom:
+              secretKeyRef:
+                key: REDIS_QUEUES_SENTINEL_HOSTS
+                name: backend-redis
+          - name: CONFIG_QUEUES_SENTINEL_ROLE
+            valueFrom:
+              secretKeyRef:
+                key: REDIS_QUEUES_SENTINEL_ROLE
+                name: backend-redis
+          - name: RACK_ENV
+            valueFrom:
+              configMapKeyRef:
+                key: RACK_ENV
+                name: backend-environment
+          - name: SLEEP_SECONDS
+            value: "1"
           image: amp-backend:latest
           name: backend-redis-svc
           resources: {}
+        serviceAccountName: amp
     test: false
     triggers:
     - type: ConfigChange
@@ -882,16 +1128,16 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: backend
       app: ${APP_LABEL}
+      threescale_component: backend
     name: backend-environment
 - apiVersion: v1
   kind: Secret
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: backend
       app: ${APP_LABEL}
+      threescale_component: backend
     name: backend-internal-api
   stringData:
     password: ${SYSTEM_BACKEND_PASSWORD}
@@ -902,8 +1148,8 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: backend
       app: ${APP_LABEL}
+      threescale_component: backend
     name: backend-redis
   stringData:
     REDIS_QUEUES_SENTINEL_HOSTS: ""
@@ -918,8 +1164,8 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: backend
       app: ${APP_LABEL}
+      threescale_component: backend
     name: backend-listener
   stringData:
     route_endpoint: https://backend-${TENANT_NAME}.${WILDCARD_DOMAIN}
@@ -930,9 +1176,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
-      3scale.component-element: mysql
       app: ${APP_LABEL}
+      threescale_component: system
+      threescale_component_element: mysql
     name: system-mysql
   spec:
     replicas: 1
@@ -945,26 +1191,32 @@ objects:
       metadata:
         creationTimestamp: null
         labels:
-          3scale.component: system
-          3scale.component-element: mysql
           app: ${APP_LABEL}
           deploymentConfig: system-mysql
+          threescale_component: system
+          threescale_component_element: mysql
       spec:
         containers:
         - env:
           - name: MYSQL_USER
-            value: ${MYSQL_USER}
+            valueFrom:
+              secretKeyRef:
+                key: DB_USER
+                name: system-database
           - name: MYSQL_PASSWORD
-            value: ${MYSQL_PASSWORD}
+            valueFrom:
+              secretKeyRef:
+                key: DB_PASSWORD
+                name: system-database
           - name: MYSQL_DATABASE
-            value: ${MYSQL_DATABASE}
+            value: ${SYSTEM_DATABASE}
           - name: MYSQL_ROOT_PASSWORD
-            value: ${MYSQL_ROOT_PASSWORD}
+            value: ${SYSTEM_DATABASE_ROOT_PASSWORD}
           - name: MYSQL_LOWER_CASE_TABLE_NAMES
             value: "1"
           - name: MYSQL_DEFAULTS_FILE
             value: /etc/my-extra/my.cnf
-          image: ${MYSQL_IMAGE}
+          image: system-mysql:latest
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 30
@@ -986,6 +1238,12 @@ objects:
             initialDelaySeconds: 10
             periodSeconds: 30
             timeoutSeconds: 5
+          resources:
+            limits:
+              memory: 2Gi
+            requests:
+              cpu: 250m
+              memory: 512Mi
           volumeMounts:
           - mountPath: /var/lib/mysql/data
             name: mysql-storage
@@ -993,6 +1251,7 @@ objects:
             name: mysql-extra-conf
           - mountPath: /etc/my-extra
             name: mysql-main-conf
+        serviceAccountName: amp
         volumes:
         - name: mysql-storage
           persistentVolumeClaim:
@@ -1006,6 +1265,14 @@ objects:
     test: false
     triggers:
     - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - system-mysql
+        from:
+          kind: ImageStreamTag
+          name: system-mysql:latest
+      type: ImageChange
   status:
     availableReplicas: 0
     latestVersion: 0
@@ -1013,6 +1280,25 @@ objects:
     replicas: 0
     unavailableReplicas: 0
     updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: ${APP_LABEL}
+      threescale_component: system
+      threescale_component_element: mysql
+    name: system-mysql
+  spec:
+    ports:
+    - name: system-mysql
+      port: 3306
+      protocol: TCP
+      targetPort: 3306
+    selector:
+      deploymentConfig: system-mysql
+  status:
+    loadBalancer: {}
 - apiVersion: v1
   data:
     my.cnf: |
@@ -1022,9 +1308,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
-      3scale.component-element: mysql
       app: ${APP_LABEL}
+      threescale_component: system
+      threescale_component_element: mysql
     name: mysql-main-conf
 - apiVersion: v1
   data:
@@ -1042,18 +1328,18 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
-      3scale.component-element: mysql
       app: ${APP_LABEL}
+      threescale_component: system
+      threescale_component_element: mysql
     name: mysql-extra-conf
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
-      3scale.component-element: mysql
       app: ${APP_LABEL}
+      threescale_component: system
+      threescale_component_element: mysql
     name: mysql-storage
   spec:
     accessModes:
@@ -1063,14 +1349,27 @@ objects:
       requests:
         storage: 1Gi
   status: {}
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: ${APP_LABEL}
+      threescale_component: system
+    name: system-database
+  stringData:
+    DB_PASSWORD: ${SYSTEM_DATABASE_PASSWORD}
+    DB_USER: ${SYSTEM_DATABASE_USER}
+    URL: mysql2://root:${SYSTEM_DATABASE_ROOT_PASSWORD}@system-mysql/${SYSTEM_DATABASE}
+  type: Opaque
 - apiVersion: apps.openshift.io/v1
   kind: DeploymentConfig
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
-      3scale.component-element: memcache
       app: ${APP_LABEL}
+      threescale_component: system
+      threescale_component_element: memcache
     name: system-memcache
   spec:
     replicas: 1
@@ -1089,17 +1388,17 @@ objects:
       metadata:
         creationTimestamp: null
         labels:
-          3scale.component: system
-          3scale.component-element: memcache
           app: ${APP_LABEL}
           deploymentConfig: system-memcache
+          threescale_component: system
+          threescale_component_element: memcache
       spec:
         containers:
         - command:
           - memcached
           - -m
           - "64"
-          image: ${MEMCACHED_IMAGE}
+          image: system-memcached:latest
           imagePullPolicy: IfNotPresent
           livenessProbe:
             initialDelaySeconds: 10
@@ -1119,9 +1418,25 @@ objects:
             initialDelaySeconds: 10
             periodSeconds: 30
             timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: 250m
+              memory: 96Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+        serviceAccountName: amp
     test: false
     triggers:
     - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - memcache
+        from:
+          kind: ImageStreamTag
+          name: system-memcached:latest
+      type: ImageChange
   status:
     availableReplicas: 0
     latestVersion: 0
@@ -1134,9 +1449,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
-      3scale.component-element: app
       app: ${APP_LABEL}
+      threescale_component: system
+      threescale_component_element: app
     name: system-storage
   spec:
     accessModes:
@@ -1152,9 +1467,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
-      3scale.component-element: provider-ui
       app: ${APP_LABEL}
+      threescale_component: system
+      threescale_component_element: provider-ui
     name: system-provider
   spec:
     ports:
@@ -1171,9 +1486,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
-      3scale.component-element: master-ui
       app: ${APP_LABEL}
+      threescale_component: system
+      threescale_component_element: master-ui
     name: system-master
   spec:
     ports:
@@ -1190,9 +1505,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
-      3scale.component-element: developer-ui
       app: ${APP_LABEL}
+      threescale_component: system
+      threescale_component_element: developer-ui
     name: system-developer
   spec:
     ports:
@@ -1204,99 +1519,14 @@ objects:
       deploymentConfig: system-app
   status:
     loadBalancer: {}
-- apiVersion: route.openshift.io/v1
-  kind: Route
-  metadata:
-    creationTimestamp: null
-    labels:
-      3scale.component: system
-      3scale.component-element: provider-ui
-      app: ${APP_LABEL}
-    name: system-provider-admin
-  spec:
-    host: ${TENANT_NAME}-admin.${WILDCARD_DOMAIN}
-    port:
-      targetPort: http
-    tls:
-      insecureEdgeTerminationPolicy: Allow
-      termination: edge
-    to:
-      kind: Service
-      name: system-provider
-      weight: null
-  status:
-    ingress: null
-- apiVersion: route.openshift.io/v1
-  kind: Route
-  metadata:
-    creationTimestamp: null
-    labels:
-      3scale.component: system
-      3scale.component-element: master-ui
-      app: ${APP_LABEL}
-    name: system-master
-  spec:
-    host: ${MASTER_NAME}.${WILDCARD_DOMAIN}
-    port:
-      targetPort: http
-    tls:
-      insecureEdgeTerminationPolicy: Allow
-      termination: edge
-    to:
-      kind: Service
-      name: system-master
-      weight: null
-  status:
-    ingress: null
-- apiVersion: route.openshift.io/v1
-  kind: Route
-  metadata:
-    creationTimestamp: null
-    labels:
-      3scale.component: system
-      3scale.component-element: developer-ui
-      app: ${APP_LABEL}
-    name: system-developer
-  spec:
-    host: ${TENANT_NAME}.${WILDCARD_DOMAIN}
-    port:
-      targetPort: http
-    tls:
-      insecureEdgeTerminationPolicy: Allow
-      termination: edge
-    to:
-      kind: Service
-      name: system-developer
-      weight: null
-  status:
-    ingress: null
 - apiVersion: v1
   kind: Service
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
-      3scale.component-element: mysql
       app: ${APP_LABEL}
-    name: system-mysql
-  spec:
-    ports:
-    - name: system-mysql
-      port: 3306
-      protocol: TCP
-      targetPort: 3306
-    selector:
-      deploymentConfig: system-mysql
-  status:
-    loadBalancer: {}
-- apiVersion: v1
-  kind: Service
-  metadata:
-    creationTimestamp: null
-    labels:
-      3scale.component: system
-      3scale.component-element: redis
-      app: ${APP_LABEL}
+      threescale_component: system
+      threescale_component_element: redis
     name: system-redis
   spec:
     ports:
@@ -1313,9 +1543,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
-      3scale.component-element: sphinx
       app: ${APP_LABEL}
+      threescale_component: system
+      threescale_component_element: sphinx
     name: system-sphinx
   spec:
     ports:
@@ -1332,9 +1562,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
-      3scale.component-element: memcache
       app: ${APP_LABEL}
+      threescale_component: system
+      threescale_component_element: memcache
     name: system-memcache
   spec:
     ports:
@@ -1368,7 +1598,9 @@ objects:
         published_service_plan_signup: true
         apicast_oidc: true
         policies: true
+        policy_registry: true
         proxy_private_base_path: true
+        service_mesh_integration: true
     service_discovery.yml: |
       production:
         enabled: <%= cluster_token_file_exists = File.exists?(cluster_token_file_path = '/var/run/secrets/kubernetes.io/serviceaccount/token') %>
@@ -1397,8 +1629,8 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
       app: ${APP_LABEL}
+      threescale_component: system
     name: system
 - apiVersion: v1
   data:
@@ -1413,9 +1645,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
-      3scale.component-element: smtp
       app: ${APP_LABEL}
+      threescale_component: system
+      threescale_component_element: smtp
     name: smtp
 - apiVersion: v1
   data:
@@ -1434,17 +1666,17 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
       app: ${APP_LABEL}
+      threescale_component: system
     name: system-environment
 - apiVersion: apps.openshift.io/v1
   kind: DeploymentConfig
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
-      3scale.component-element: app
       app: ${APP_LABEL}
+      threescale_component: system
+      threescale_component_element: app
     name: system-app
   spec:
     replicas: 1
@@ -1562,6 +1794,11 @@ objects:
                 secretKeyRef:
                   key: ADMIN_PASSWORD
                   name: system-seed
+            - name: USER_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  key: ADMIN_EMAIL
+                  name: system-seed
             - name: TENANT_NAME
               valueFrom:
                 secretKeyRef:
@@ -1591,20 +1828,65 @@ objects:
                 secretKeyRef:
                   key: SECRET_KEY_BASE
                   name: system-app
-            - name: REDIS_URL
-              valueFrom:
-                secretKeyRef:
-                  key: URL
-                  name: system-redis
             - name: MEMCACHE_SERVERS
               valueFrom:
                 secretKeyRef:
                   key: SERVERS
                   name: system-memcache
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  key: URL
+                  name: system-redis
+            - name: MESSAGE_BUS_REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  key: MESSAGE_BUS_URL
+                  name: system-redis
+            - name: REDIS_NAMESPACE
+              valueFrom:
+                secretKeyRef:
+                  key: NAMESPACE
+                  name: system-redis
+            - name: MESSAGE_BUS_REDIS_NAMESPACE
+              valueFrom:
+                secretKeyRef:
+                  key: MESSAGE_BUS_NAMESPACE
+                  name: system-redis
+            - name: REDIS_SENTINEL_HOSTS
+              valueFrom:
+                secretKeyRef:
+                  key: SENTINEL_HOSTS
+                  name: system-redis
+            - name: REDIS_SENTINEL_ROLE
+              valueFrom:
+                secretKeyRef:
+                  key: SENTINEL_ROLE
+                  name: system-redis
+            - name: MESSAGE_BUS_REDIS_SENTINEL_HOSTS
+              valueFrom:
+                secretKeyRef:
+                  key: MESSAGE_BUS_SENTINEL_HOSTS
+                  name: system-redis
+            - name: MESSAGE_BUS_REDIS_SENTINEL_ROLE
+              valueFrom:
+                secretKeyRef:
+                  key: MESSAGE_BUS_SENTINEL_ROLE
+                  name: system-redis
             - name: BACKEND_REDIS_URL
               valueFrom:
                 secretKeyRef:
                   key: REDIS_STORAGE_URL
+                  name: backend-redis
+            - name: BACKEND_REDIS_SENTINEL_HOSTS
+              valueFrom:
+                secretKeyRef:
+                  key: REDIS_STORAGE_SENTINEL_HOSTS
+                  name: backend-redis
+            - name: BACKEND_REDIS_SENTINEL_ROLE
+              valueFrom:
+                secretKeyRef:
+                  key: REDIS_STORAGE_SENTINEL_ROLE
                   name: backend-redis
             - name: APICAST_BACKEND_ROOT_ENDPOINT
               valueFrom:
@@ -1681,10 +1963,10 @@ objects:
       metadata:
         creationTimestamp: null
         labels:
-          3scale.component: system
-          3scale.component-element: app
           app: ${APP_LABEL}
           deploymentConfig: system-app
+          threescale_component: system
+          threescale_component_element: app
       spec:
         containers:
         - args:
@@ -1788,6 +2070,11 @@ objects:
               secretKeyRef:
                 key: ADMIN_PASSWORD
                 name: system-seed
+          - name: USER_EMAIL
+            valueFrom:
+              secretKeyRef:
+                key: ADMIN_EMAIL
+                name: system-seed
           - name: TENANT_NAME
             valueFrom:
               secretKeyRef:
@@ -1817,20 +2104,65 @@ objects:
               secretKeyRef:
                 key: SECRET_KEY_BASE
                 name: system-app
-          - name: REDIS_URL
-            valueFrom:
-              secretKeyRef:
-                key: URL
-                name: system-redis
           - name: MEMCACHE_SERVERS
             valueFrom:
               secretKeyRef:
                 key: SERVERS
                 name: system-memcache
+          - name: REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                key: URL
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_URL
+                name: system-redis
+          - name: REDIS_NAMESPACE
+            valueFrom:
+              secretKeyRef:
+                key: NAMESPACE
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_NAMESPACE
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_NAMESPACE
+                name: system-redis
+          - name: REDIS_SENTINEL_HOSTS
+            valueFrom:
+              secretKeyRef:
+                key: SENTINEL_HOSTS
+                name: system-redis
+          - name: REDIS_SENTINEL_ROLE
+            valueFrom:
+              secretKeyRef:
+                key: SENTINEL_ROLE
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_SENTINEL_HOSTS
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_SENTINEL_HOSTS
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_SENTINEL_ROLE
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_SENTINEL_ROLE
+                name: system-redis
           - name: BACKEND_REDIS_URL
             valueFrom:
               secretKeyRef:
                 key: REDIS_STORAGE_URL
+                name: backend-redis
+          - name: BACKEND_REDIS_SENTINEL_HOSTS
+            valueFrom:
+              secretKeyRef:
+                key: REDIS_STORAGE_SENTINEL_HOSTS
+                name: backend-redis
+          - name: BACKEND_REDIS_SENTINEL_ROLE
+            valueFrom:
+              secretKeyRef:
+                key: REDIS_STORAGE_SENTINEL_ROLE
                 name: backend-redis
           - name: APICAST_BACKEND_ROOT_ENDPOINT
             valueFrom:
@@ -1923,6 +2255,13 @@ objects:
             initialDelaySeconds: 60
             periodSeconds: 30
             timeoutSeconds: 10
+          resources:
+            limits:
+              cpu: "1"
+              memory: 800Mi
+            requests:
+              cpu: 50m
+              memory: 600Mi
           volumeMounts:
           - mountPath: /opt/system/public/system
             name: system-storage
@@ -2029,6 +2368,11 @@ objects:
               secretKeyRef:
                 key: ADMIN_PASSWORD
                 name: system-seed
+          - name: USER_EMAIL
+            valueFrom:
+              secretKeyRef:
+                key: ADMIN_EMAIL
+                name: system-seed
           - name: TENANT_NAME
             valueFrom:
               secretKeyRef:
@@ -2058,20 +2402,65 @@ objects:
               secretKeyRef:
                 key: SECRET_KEY_BASE
                 name: system-app
-          - name: REDIS_URL
-            valueFrom:
-              secretKeyRef:
-                key: URL
-                name: system-redis
           - name: MEMCACHE_SERVERS
             valueFrom:
               secretKeyRef:
                 key: SERVERS
                 name: system-memcache
+          - name: REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                key: URL
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_URL
+                name: system-redis
+          - name: REDIS_NAMESPACE
+            valueFrom:
+              secretKeyRef:
+                key: NAMESPACE
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_NAMESPACE
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_NAMESPACE
+                name: system-redis
+          - name: REDIS_SENTINEL_HOSTS
+            valueFrom:
+              secretKeyRef:
+                key: SENTINEL_HOSTS
+                name: system-redis
+          - name: REDIS_SENTINEL_ROLE
+            valueFrom:
+              secretKeyRef:
+                key: SENTINEL_ROLE
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_SENTINEL_HOSTS
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_SENTINEL_HOSTS
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_SENTINEL_ROLE
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_SENTINEL_ROLE
+                name: system-redis
           - name: BACKEND_REDIS_URL
             valueFrom:
               secretKeyRef:
                 key: REDIS_STORAGE_URL
+                name: backend-redis
+          - name: BACKEND_REDIS_SENTINEL_HOSTS
+            valueFrom:
+              secretKeyRef:
+                key: REDIS_STORAGE_SENTINEL_HOSTS
+                name: backend-redis
+          - name: BACKEND_REDIS_SENTINEL_ROLE
+            valueFrom:
+              secretKeyRef:
+                key: REDIS_STORAGE_SENTINEL_ROLE
                 name: backend-redis
           - name: APICAST_BACKEND_ROOT_ENDPOINT
             valueFrom:
@@ -2164,6 +2553,13 @@ objects:
             initialDelaySeconds: 60
             periodSeconds: 30
             timeoutSeconds: 10
+          resources:
+            limits:
+              cpu: "1"
+              memory: 800Mi
+            requests:
+              cpu: 50m
+              memory: 600Mi
           volumeMounts:
           - mountPath: /opt/system/public/system
             name: system-storage
@@ -2269,6 +2665,11 @@ objects:
               secretKeyRef:
                 key: ADMIN_PASSWORD
                 name: system-seed
+          - name: USER_EMAIL
+            valueFrom:
+              secretKeyRef:
+                key: ADMIN_EMAIL
+                name: system-seed
           - name: TENANT_NAME
             valueFrom:
               secretKeyRef:
@@ -2298,20 +2699,65 @@ objects:
               secretKeyRef:
                 key: SECRET_KEY_BASE
                 name: system-app
-          - name: REDIS_URL
-            valueFrom:
-              secretKeyRef:
-                key: URL
-                name: system-redis
           - name: MEMCACHE_SERVERS
             valueFrom:
               secretKeyRef:
                 key: SERVERS
                 name: system-memcache
+          - name: REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                key: URL
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_URL
+                name: system-redis
+          - name: REDIS_NAMESPACE
+            valueFrom:
+              secretKeyRef:
+                key: NAMESPACE
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_NAMESPACE
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_NAMESPACE
+                name: system-redis
+          - name: REDIS_SENTINEL_HOSTS
+            valueFrom:
+              secretKeyRef:
+                key: SENTINEL_HOSTS
+                name: system-redis
+          - name: REDIS_SENTINEL_ROLE
+            valueFrom:
+              secretKeyRef:
+                key: SENTINEL_ROLE
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_SENTINEL_HOSTS
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_SENTINEL_HOSTS
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_SENTINEL_ROLE
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_SENTINEL_ROLE
+                name: system-redis
           - name: BACKEND_REDIS_URL
             valueFrom:
               secretKeyRef:
                 key: REDIS_STORAGE_URL
+                name: backend-redis
+          - name: BACKEND_REDIS_SENTINEL_HOSTS
+            valueFrom:
+              secretKeyRef:
+                key: REDIS_STORAGE_SENTINEL_HOSTS
+                name: backend-redis
+          - name: BACKEND_REDIS_SENTINEL_ROLE
+            valueFrom:
+              secretKeyRef:
+                key: REDIS_STORAGE_SENTINEL_ROLE
                 name: backend-redis
           - name: APICAST_BACKEND_ROOT_ENDPOINT
             valueFrom:
@@ -2404,12 +2850,20 @@ objects:
             initialDelaySeconds: 60
             periodSeconds: 30
             timeoutSeconds: 10
+          resources:
+            limits:
+              cpu: "1"
+              memory: 800Mi
+            requests:
+              cpu: 50m
+              memory: 600Mi
           volumeMounts:
           - mountPath: /opt/system/public/system
             name: system-storage
             readOnly: true
           - mountPath: /opt/system-extra-configs
             name: system-config
+        serviceAccountName: amp
         volumes:
         - name: system-storage
           persistentVolumeClaim:
@@ -2449,9 +2903,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
-      3scale.component-element: sidekiq
       app: ${APP_LABEL}
+      threescale_component: system
+      threescale_component_element: sidekiq
     name: system-sidekiq
   spec:
     replicas: 1
@@ -2470,10 +2924,10 @@ objects:
       metadata:
         creationTimestamp: null
         labels:
-          3scale.component: system
-          3scale.component-element: sidekiq
           app: ${APP_LABEL}
           deploymentConfig: system-sidekiq
+          threescale_component: system
+          threescale_component_element: sidekiq
       spec:
         containers:
         - args:
@@ -2571,6 +3025,11 @@ objects:
               secretKeyRef:
                 key: ADMIN_PASSWORD
                 name: system-seed
+          - name: USER_EMAIL
+            valueFrom:
+              secretKeyRef:
+                key: ADMIN_EMAIL
+                name: system-seed
           - name: TENANT_NAME
             valueFrom:
               secretKeyRef:
@@ -2600,20 +3059,65 @@ objects:
               secretKeyRef:
                 key: SECRET_KEY_BASE
                 name: system-app
-          - name: REDIS_URL
-            valueFrom:
-              secretKeyRef:
-                key: URL
-                name: system-redis
           - name: MEMCACHE_SERVERS
             valueFrom:
               secretKeyRef:
                 key: SERVERS
                 name: system-memcache
+          - name: REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                key: URL
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_URL
+                name: system-redis
+          - name: REDIS_NAMESPACE
+            valueFrom:
+              secretKeyRef:
+                key: NAMESPACE
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_NAMESPACE
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_NAMESPACE
+                name: system-redis
+          - name: REDIS_SENTINEL_HOSTS
+            valueFrom:
+              secretKeyRef:
+                key: SENTINEL_HOSTS
+                name: system-redis
+          - name: REDIS_SENTINEL_ROLE
+            valueFrom:
+              secretKeyRef:
+                key: SENTINEL_ROLE
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_SENTINEL_HOSTS
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_SENTINEL_HOSTS
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_SENTINEL_ROLE
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_SENTINEL_ROLE
+                name: system-redis
           - name: BACKEND_REDIS_URL
             valueFrom:
               secretKeyRef:
                 key: REDIS_STORAGE_URL
+                name: backend-redis
+          - name: BACKEND_REDIS_SENTINEL_HOSTS
+            valueFrom:
+              secretKeyRef:
+                key: REDIS_STORAGE_SENTINEL_HOSTS
+                name: backend-redis
+          - name: BACKEND_REDIS_SENTINEL_ROLE
+            valueFrom:
+              secretKeyRef:
+                key: REDIS_STORAGE_SENTINEL_ROLE
                 name: backend-redis
           - name: APICAST_BACKEND_ROOT_ENDPOINT
             valueFrom:
@@ -2683,6 +3187,13 @@ objects:
           image: amp-system:latest
           imagePullPolicy: IfNotPresent
           name: system-sidekiq
+          resources:
+            limits:
+              cpu: "1"
+              memory: 2Gi
+            requests:
+              cpu: 100m
+              memory: 500Mi
           volumeMounts:
           - mountPath: /opt/system/public/system
             name: system-storage
@@ -2698,16 +3209,52 @@ objects:
             --fail --head http://system-master:3000/status; do sleep $SLEEP_SECONDS;
             done"
           env:
-          - name: SLEEP_SECONDS
-            value: "1"
           - name: REDIS_URL
             valueFrom:
               secretKeyRef:
                 key: URL
                 name: system-redis
+          - name: MESSAGE_BUS_REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_URL
+                name: system-redis
+          - name: REDIS_NAMESPACE
+            valueFrom:
+              secretKeyRef:
+                key: NAMESPACE
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_NAMESPACE
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_NAMESPACE
+                name: system-redis
+          - name: REDIS_SENTINEL_HOSTS
+            valueFrom:
+              secretKeyRef:
+                key: SENTINEL_HOSTS
+                name: system-redis
+          - name: REDIS_SENTINEL_ROLE
+            valueFrom:
+              secretKeyRef:
+                key: SENTINEL_ROLE
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_SENTINEL_HOSTS
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_SENTINEL_HOSTS
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_SENTINEL_ROLE
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_SENTINEL_ROLE
+                name: system-redis
+          - name: SLEEP_SECONDS
+            value: "1"
           image: amp-system:latest
           name: check-svc
           resources: {}
+        serviceAccountName: amp
         volumes:
         - emptyDir:
             medium: Memory
@@ -2749,9 +3296,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
-      3scale.component-element: sphinx
       app: ${APP_LABEL}
+      threescale_component: system
+      threescale_component_element: sphinx
     name: system-sphinx
   spec:
     replicas: 1
@@ -2770,10 +3317,10 @@ objects:
       metadata:
         creationTimestamp: null
         labels:
-          3scale.component: system
-          3scale.component-element: sphinx
           app: ${APP_LABEL}
           deploymentConfig: system-sphinx
+          threescale_component: system
+          threescale_component_element: sphinx
       spec:
         containers:
         - args:
@@ -2800,6 +3347,46 @@ objects:
             value: "5"
           - name: FULL_REINDEX_INTERVAL
             value: "60"
+          - name: REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                key: URL
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_URL
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_URL
+                name: system-redis
+          - name: REDIS_NAMESPACE
+            valueFrom:
+              secretKeyRef:
+                key: NAMESPACE
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_NAMESPACE
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_NAMESPACE
+                name: system-redis
+          - name: REDIS_SENTINEL_HOSTS
+            valueFrom:
+              secretKeyRef:
+                key: SENTINEL_HOSTS
+                name: system-redis
+          - name: REDIS_SENTINEL_ROLE
+            valueFrom:
+              secretKeyRef:
+                key: SENTINEL_ROLE
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_SENTINEL_HOSTS
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_SENTINEL_HOSTS
+                name: system-redis
+          - name: MESSAGE_BUS_REDIS_SENTINEL_ROLE
+            valueFrom:
+              secretKeyRef:
+                key: MESSAGE_BUS_SENTINEL_ROLE
+                name: system-redis
           image: amp-system:latest
           imagePullPolicy: IfNotPresent
           livenessProbe:
@@ -2808,6 +3395,13 @@ objects:
             tcpSocket:
               port: 9306
           name: system-sphinx
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi
+            requests:
+              cpu: 80m
+              memory: 250Mi
           volumeMounts:
           - mountPath: /opt/system/db/sphinx
             name: system-sphinx-database
@@ -2823,6 +3417,7 @@ objects:
           image: amp-system:latest
           name: system-master-svc
           resources: {}
+        serviceAccountName: amp
         volumes:
         - emptyDir: {}
           name: system-sphinx-database
@@ -2850,8 +3445,8 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
       app: ${APP_LABEL}
+      threescale_component: system
     name: system-events-hook
   stringData:
     PASSWORD: ${SYSTEM_BACKEND_SHARED_SECRET}
@@ -2862,19 +3457,26 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
       app: ${APP_LABEL}
+      threescale_component: system
     name: system-redis
   stringData:
-    URL: redis://system-redis:6379/1
+    MESSAGE_BUS_NAMESPACE: ${SYSTEM_MESSAGE_BUS_REDIS_NAMESPACE}
+    MESSAGE_BUS_SENTINEL_HOSTS: ""
+    MESSAGE_BUS_SENTINEL_ROLE: ""
+    MESSAGE_BUS_URL: ${SYSTEM_MESSAGE_BUS_REDIS_URL}
+    NAMESPACE: ${SYSTEM_REDIS_NAMESPACE}
+    SENTINEL_HOSTS: ""
+    SENTINEL_ROLE: ""
+    URL: ${SYSTEM_REDIS_URL}
   type: Opaque
 - apiVersion: v1
   kind: Secret
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
       app: ${APP_LABEL}
+      threescale_component: system
     name: system-master-apicast
   stringData:
     ACCESS_TOKEN: ${APICAST_ACCESS_TOKEN}
@@ -2886,24 +3488,15 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
       app: ${APP_LABEL}
-    name: system-database
-  stringData:
-    URL: mysql2://root:${MYSQL_ROOT_PASSWORD}@system-mysql/${MYSQL_DATABASE}
-  type: Opaque
-- apiVersion: v1
-  kind: Secret
-  metadata:
-    creationTimestamp: null
-    labels:
-      3scale.component: system
-      app: ${APP_LABEL}
+      threescale_component: system
     name: system-seed
   stringData:
     ADMIN_ACCESS_TOKEN: ${ADMIN_ACCESS_TOKEN}
+    ADMIN_EMAIL: ${ADMIN_EMAIL}
     ADMIN_PASSWORD: ${ADMIN_PASSWORD}
     ADMIN_USER: ${ADMIN_USERNAME}
+    MASTER_ACCESS_TOKEN: ${MASTER_ACCESS_TOKEN}
     MASTER_DOMAIN: ${MASTER_NAME}
     MASTER_PASSWORD: ${MASTER_PASSWORD}
     MASTER_USER: ${MASTER_USER}
@@ -2914,8 +3507,8 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
       app: ${APP_LABEL}
+      threescale_component: system
     name: system-recaptcha
   stringData:
     PRIVATE_KEY: ${RECAPTCHA_PRIVATE_KEY}
@@ -2926,8 +3519,8 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
       app: ${APP_LABEL}
+      threescale_component: system
     name: system-app
   stringData:
     SECRET_KEY_BASE: ${SYSTEM_APP_SECRET_KEY_BASE}
@@ -2937,19 +3530,85 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: system
       app: ${APP_LABEL}
+      threescale_component: system
     name: system-memcache
   stringData:
     SERVERS: system-memcache:11211
   type: Opaque
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    creationTimestamp: null
+    name: zync-que-role
+  rules:
+  - apiGroups:
+    - apps.openshift.io
+    resources:
+    - deploymentconfigs
+    verbs:
+    - get
+    - list
+  - apiGroups:
+    - ""
+    resources:
+    - pods
+    - replicationcontrollers
+    verbs:
+    - get
+    - list
+  - apiGroups:
+    - route.openshift.io
+    resources:
+    - routes
+    verbs:
+    - get
+    - list
+    - create
+    - delete
+    - patch
+    - update
+  - apiGroups:
+    - route.openshift.io
+    resources:
+    - routes/status
+    verbs:
+    - get
+  - apiGroups:
+    - route.openshift.io
+    resources:
+    - routes/custom-host
+    verbs:
+    - create
+- apiVersion: v1
+  imagePullSecrets:
+  - name: threescale-registry-auth
+  kind: ServiceAccount
+  metadata:
+    creationTimestamp: null
+    name: zync-que-sa
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    creationTimestamp: null
+    name: zync-que-rolebinding
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: zync-que-role
+  subjects:
+  - kind: ServiceAccount
+    name: zync-que-sa
 - apiVersion: apps.openshift.io/v1
   kind: DeploymentConfig
   metadata:
+    annotations:
+      prometheus.io/port: "9393"
+      prometheus.io/scrape: "true"
     creationTimestamp: null
     labels:
-      3scale.component: zync
       app: ${APP_LABEL}
+      threescale_component: zync
     name: zync
   spec:
     replicas: 1
@@ -2961,9 +3620,9 @@ objects:
       metadata:
         creationTimestamp: null
         labels:
-          3scale.component: zync
           app: ${APP_LABEL}
           deploymentConfig: zync
+          threescale_component: zync
       spec:
         containers:
         - env:
@@ -2986,6 +3645,14 @@ objects:
               secretKeyRef:
                 key: ZYNC_AUTHENTICATION_TOKEN
                 name: zync
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
           image: amp-zync:latest
           livenessProbe:
             failureThreshold: 10
@@ -3011,6 +3678,13 @@ objects:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 10
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi
+            requests:
+              cpu: 150m
+              memory: 250M
         initContainers:
         - command:
           - bash
@@ -3027,6 +3701,7 @@ objects:
           image: amp-zync:latest
           name: zync-db-svc
           resources: {}
+        serviceAccountName: amp
     test: false
     triggers:
     - type: ConfigChange
@@ -3051,9 +3726,119 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: zync
-      3scale.component-element: database
       app: ${APP_LABEL}
+      threescale_component: zync
+    name: zync-que
+  spec:
+    replicas: 1
+    selector:
+      deploymentConfig: zync-que
+    strategy:
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          prometheus.io/port: "9394"
+          prometheus.io/scrape: "true"
+        creationTimestamp: null
+        labels:
+          app: ${APP_LABEL}
+          deploymentConfig: zync-que
+      spec:
+        containers:
+        - args:
+          - -c
+          - bundle exec rake 'que[--worker-count 10]'
+          command:
+          - /usr/bin/bash
+          env:
+          - name: RAILS_LOG_TO_STDOUT
+            value: "true"
+          - name: RAILS_ENV
+            value: production
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                key: DATABASE_URL
+                name: zync
+          - name: SECRET_KEY_BASE
+            valueFrom:
+              secretKeyRef:
+                key: SECRET_KEY_BASE
+                name: zync
+          - name: ZYNC_AUTHENTICATION_TOKEN
+            valueFrom:
+              secretKeyRef:
+                key: ZYNC_AUTHENTICATION_TOKEN
+                name: zync
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          image: amp-zync:latest
+          imagePullPolicy: Always
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /metrics
+              port: 9394
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 60
+          name: que
+          ports:
+          - containerPort: 9394
+            name: metrics
+            protocol: TCP
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi
+            requests:
+              cpu: 250m
+              memory: 250M
+        restartPolicy: Always
+        serviceAccountName: zync-que-sa
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - que
+        from:
+          kind: ImageStreamTag
+          name: amp-zync:latest
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: ${APP_LABEL}
+      threescale_component: zync
+      threescale_component_element: database
     name: zync-database
   spec:
     replicas: 1
@@ -3066,10 +3851,10 @@ objects:
       metadata:
         creationTimestamp: null
         labels:
-          3scale.component: zync
-          3scale.component-element: database
           app: ${APP_LABEL}
           deploymentConfig: zync-database
+          threescale_component: zync
+          threescale_component_element: database
       spec:
         containers:
         - env:
@@ -3102,10 +3887,18 @@ objects:
               - psql -h 127.0.0.1 -U zync -q -d zync_production -c 'SELECT 1'
             initialDelaySeconds: 5
             timeoutSeconds: 1
+          resources:
+            limits:
+              cpu: 250m
+              memory: 2G
+            requests:
+              cpu: 50m
+              memory: 250M
           volumeMounts:
           - mountPath: /var/lib/pgsql/data
             name: zync-database-data
         restartPolicy: Always
+        serviceAccountName: amp
         volumes:
         - emptyDir: {}
           name: zync-database-data
@@ -3118,7 +3911,7 @@ objects:
         - postgresql
         from:
           kind: ImageStreamTag
-          name: postgresql:9.5
+          name: zync-database-postgresql:latest
       type: ImageChange
   status:
     availableReplicas: 0
@@ -3132,8 +3925,8 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: zync
       app: ${APP_LABEL}
+      threescale_component: zync
     name: zync
   spec:
     ports:
@@ -3150,9 +3943,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: zync
-      3scale.component-element: database
       app: ${APP_LABEL}
+      threescale_component: zync
+      threescale_component_element: database
     name: zync-database
   spec:
     ports:
@@ -3169,8 +3962,8 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: zync
       app: ${APP_LABEL}
+      threescale_component: zync
     name: zync
   stringData:
     DATABASE_URL: postgresql://zync:${ZYNC_DATABASE_PASSWORD}@zync-database:5432/zync_production
@@ -3183,9 +3976,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: apicast
-      3scale.component-element: staging
       app: ${APP_LABEL}
+      threescale_component: apicast
+      threescale_component_element: staging
     name: apicast-staging
   spec:
     replicas: 1
@@ -3207,10 +4000,10 @@ objects:
           prometheus.io/scrape: "true"
         creationTimestamp: null
         labels:
-          3scale.component: apicast
-          3scale.component-element: staging
           app: ${APP_LABEL}
           deploymentConfig: apicast-staging
+          threescale_component: apicast
+          threescale_component_element: staging
       spec:
         containers:
         - env:
@@ -3245,11 +4038,6 @@ objects:
             value: "0"
           - name: THREESCALE_DEPLOYMENT_ENV
             value: staging
-          - name: REDIS_URL
-            valueFrom:
-              secretKeyRef:
-                key: STAGING_URL
-                name: apicast-redis
           image: amp-apicast:latest
           imagePullPolicy: IfNotPresent
           livenessProbe:
@@ -3275,6 +4063,14 @@ objects:
             initialDelaySeconds: 15
             periodSeconds: 30
             timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+        serviceAccountName: amp
     test: false
     triggers:
     - type: ConfigChange
@@ -3298,9 +4094,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: apicast
-      3scale.component-element: production
       app: ${APP_LABEL}
+      threescale_component: apicast
+      threescale_component_element: production
     name: apicast-production
   spec:
     replicas: 1
@@ -3322,10 +4118,10 @@ objects:
           prometheus.io/scrape: "true"
         creationTimestamp: null
         labels:
-          3scale.component: apicast
-          3scale.component-element: production
           app: ${APP_LABEL}
           deploymentConfig: apicast-production
+          threescale_component: apicast
+          threescale_component_element: production
       spec:
         containers:
         - env:
@@ -3360,11 +4156,6 @@ objects:
             value: "300"
           - name: THREESCALE_DEPLOYMENT_ENV
             value: production
-          - name: REDIS_URL
-            valueFrom:
-              secretKeyRef:
-                key: PRODUCTION_URL
-                name: apicast-redis
           image: amp-apicast:latest
           imagePullPolicy: IfNotPresent
           livenessProbe:
@@ -3390,6 +4181,13 @@ objects:
             initialDelaySeconds: 15
             periodSeconds: 30
             timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: "1"
+              memory: 128Mi
+            requests:
+              cpu: 500m
+              memory: 64Mi
         initContainers:
         - command:
           - sh
@@ -3402,6 +4200,7 @@ objects:
           image: amp-apicast:latest
           name: system-master-svc
           resources: {}
+        serviceAccountName: amp
     test: false
     triggers:
     - type: ConfigChange
@@ -3426,9 +4225,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: apicast
-      3scale.component-element: staging
       app: ${APP_LABEL}
+      threescale_component: apicast
+      threescale_component_element: staging
     name: apicast-staging
   spec:
     ports:
@@ -3449,9 +4248,9 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: apicast
-      3scale.component-element: production
       app: ${APP_LABEL}
+      threescale_component: apicast
+      threescale_component_element: production
     name: apicast-production
   spec:
     ports:
@@ -3467,50 +4266,6 @@ objects:
       deploymentConfig: apicast-production
   status:
     loadBalancer: {}
-- apiVersion: route.openshift.io/v1
-  kind: Route
-  metadata:
-    creationTimestamp: null
-    labels:
-      3scale.component: apicast
-      3scale.component-element: staging
-      app: ${APP_LABEL}
-    name: api-apicast-staging
-  spec:
-    host: api-${TENANT_NAME}-apicast-staging.${WILDCARD_DOMAIN}
-    port:
-      targetPort: gateway
-    tls:
-      insecureEdgeTerminationPolicy: Allow
-      termination: edge
-    to:
-      kind: Service
-      name: apicast-staging
-      weight: null
-  status:
-    ingress: null
-- apiVersion: route.openshift.io/v1
-  kind: Route
-  metadata:
-    creationTimestamp: null
-    labels:
-      3scale.component: apicast
-      3scale.component-element: production
-      app: ${APP_LABEL}
-    name: api-apicast-production
-  spec:
-    host: api-${TENANT_NAME}-apicast-production.${WILDCARD_DOMAIN}
-    port:
-      targetPort: gateway
-    tls:
-      insecureEdgeTerminationPolicy: Allow
-      termination: edge
-    to:
-      kind: Service
-      name: apicast-production
-      weight: null
-  status:
-    ingress: null
 - apiVersion: v1
   data:
     APICAST_MANAGEMENT_API: ${APICAST_MANAGEMENT_API}
@@ -3520,136 +4275,14 @@ objects:
   metadata:
     creationTimestamp: null
     labels:
-      3scale.component: apicast
       app: ${APP_LABEL}
+      threescale_component: apicast
     name: apicast-environment
-- apiVersion: v1
-  kind: Secret
-  metadata:
-    creationTimestamp: null
-    labels:
-      3scale.component: apicast
-      app: ${APP_LABEL}
-    name: apicast-redis
-  stringData:
-    PRODUCTION_URL: redis://system-redis:6379/1
-    STAGING_URL: redis://system-redis:6379/2
-  type: Opaque
-- apiVersion: apps.openshift.io/v1
-  kind: DeploymentConfig
-  metadata:
-    creationTimestamp: null
-    labels:
-      3scale.component: apicast
-      3scale.component-element: wildcard-router
-      app: ${APP_LABEL}
-    name: apicast-wildcard-router
-  spec:
-    replicas: 1
-    selector:
-      deploymentConfig: apicast-wildcard-router
-    strategy:
-      resources: {}
-      rollingParams:
-        intervalSeconds: 1
-        maxSurge: 25%
-        maxUnavailable: 25%
-        timeoutSeconds: 1800
-        updatePeriodSeconds: 1
-      type: Rolling
-    template:
-      metadata:
-        creationTimestamp: null
-        labels:
-          3scale.component: apicast
-          3scale.component-element: wildcard-router
-          app: ${APP_LABEL}
-          deploymentConfig: apicast-wildcard-router
-      spec:
-        containers:
-        - env:
-          - name: API_HOST
-            valueFrom:
-              secretKeyRef:
-                key: BASE_URL
-                name: system-master-apicast
-          image: amp-wildcard-router:latest
-          imagePullPolicy: IfNotPresent
-          livenessProbe:
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            tcpSocket:
-              port: http
-          name: apicast-wildcard-router
-          ports:
-          - containerPort: 8080
-            name: http
-            protocol: TCP
-    test: false
-    triggers:
-    - type: ConfigChange
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - apicast-wildcard-router
-        from:
-          kind: ImageStreamTag
-          name: amp-wildcard-router:latest
-      type: ImageChange
-  status:
-    availableReplicas: 0
-    latestVersion: 0
-    observedGeneration: 0
-    replicas: 0
-    unavailableReplicas: 0
-    updatedReplicas: 0
-- apiVersion: v1
-  kind: Service
-  metadata:
-    creationTimestamp: null
-    labels:
-      3scale.component: apicast
-      3scale.component-element: wildcard-router
-      app: ${APP_LABEL}
-    name: apicast-wildcard-router
-  spec:
-    ports:
-    - name: http
-      port: 8080
-      protocol: TCP
-      targetPort: http
-    selector:
-      deploymentConfig: apicast-wildcard-router
-  status:
-    loadBalancer: {}
-- apiVersion: route.openshift.io/v1
-  kind: Route
-  metadata:
-    creationTimestamp: null
-    labels:
-      3scale.component: apicast
-      3scale.component-element: wildcard-router
-      app: ${APP_LABEL}
-    name: apicast-wildcard-router
-  spec:
-    host: apicast-wildcard.${WILDCARD_DOMAIN}
-    port:
-      targetPort: http
-    tls:
-      insecureEdgeTerminationPolicy: Allow
-      termination: edge
-    to:
-      kind: Service
-      name: apicast-wildcard-router
-      weight: null
-    wildcardPolicy: ${WILDCARD_POLICY}
-  status:
-    ingress: null
 parameters:
 - description: AMP release tag.
   name: AMP_RELEASE
   required: true
-  value: 2.4.0
+  value: "2.6"
 - description: Used for object app labels
   name: APP_LABEL
   required: true
@@ -3664,61 +4297,63 @@ parameters:
   value: "null"
 - name: AMP_BACKEND_IMAGE
   required: true
-  value: registry.access.redhat.com/3scale-amp24/backend
+  value: registry.redhat.io/3scale-amp26/backend
 - name: AMP_ZYNC_IMAGE
   required: true
-  value: registry.access.redhat.com/3scale-amp24/zync
+  value: registry.redhat.io/3scale-amp26/zync
 - name: AMP_APICAST_IMAGE
   required: true
-  value: registry.access.redhat.com/3scale-amp24/apicast-gateway
-- name: AMP_ROUTER_IMAGE
-  required: true
-  value: registry.access.redhat.com/3scale-amp22/wildcard-router
+  value: registry.redhat.io/3scale-amp26/apicast-gateway
 - name: AMP_SYSTEM_IMAGE
   required: true
-  value: registry.access.redhat.com/3scale-amp24/system
-- description: Postgresql image to use
-  name: POSTGRESQL_IMAGE
+  value: registry.redhat.io/3scale-amp26/system
+- description: Zync's PostgreSQL image to use
+  name: ZYNC_DATABASE_IMAGE
   required: true
-  value: registry.access.redhat.com/rhscl/postgresql-95-rhel7:9.5
-- description: Mysql image to use
-  name: MYSQL_IMAGE
-  required: true
-  value: registry.access.redhat.com/rhscl/mysql-57-rhel7:5.7
+  value: registry.redhat.io/rhscl/postgresql-10-rhel7
 - description: Memcached image to use
   name: MEMCACHED_IMAGE
   required: true
-  value: registry.access.redhat.com/3scale-amp20/memcached
+  value: registry.redhat.io/3scale-amp20/memcached
 - description: Set to true if the server may bypass certificate verification or connect
     directly over HTTP during image import.
   name: IMAGESTREAM_TAG_IMPORT_INSECURE
   required: true
   value: "false"
+- description: System MySQL image to use
+  name: SYSTEM_DATABASE_IMAGE
+  required: true
+  value: registry.redhat.io/rhscl/mysql-57-rhel7:5.7
 - description: Redis image to use
   name: REDIS_IMAGE
   required: true
-  value: registry.access.redhat.com/rhscl/redis-32-rhel7:3.2
-- description: Username for MySQL user that will be used for accessing the database.
-  displayName: MySQL User
-  name: MYSQL_USER
+  value: registry.redhat.io/rhscl/redis-32-rhel7:3.2
+- description: Username for System's MySQL user that will be used for accessing the
+    database.
+  displayName: System MySQL User
+  name: SYSTEM_DATABASE_USER
   required: true
   value: mysql
-- description: Password for the MySQL user.
-  displayName: MySQL Password
+- description: Password for the System's MySQL user.
+  displayName: System MySQL Password
   from: '[a-z0-9]{8}'
   generate: expression
-  name: MYSQL_PASSWORD
+  name: SYSTEM_DATABASE_PASSWORD
   required: true
-- description: Name of the MySQL database accessed.
-  displayName: MySQL Database Name
-  name: MYSQL_DATABASE
+- description: Name of the System's MySQL database accessed.
+  displayName: System MySQL Database Name
+  name: SYSTEM_DATABASE
   required: true
   value: system
 - description: Password for Root user.
-  displayName: MySQL Root password.
+  displayName: System MySQL Root password.
   from: '[a-z0-9]{8}'
   generate: expression
-  name: MYSQL_ROOT_PASSWORD
+  name: SYSTEM_DATABASE_ROOT_PASSWORD
+  required: true
+- description: Root domain for the wildcard routes. Eg. example.com will generate
+    3scale-admin.example.com.
+  name: WILDCARD_DOMAIN
   required: true
 - description: Internal 3scale API username for internal 3scale api auth.
   name: SYSTEM_BACKEND_USERNAME
@@ -3746,6 +4381,7 @@ parameters:
 - name: ADMIN_USERNAME
   required: true
   value: admin
+- name: ADMIN_EMAIL
 - description: Admin Access Token with all scopes and write permissions for API access.
   from: '[a-z0-9]{16}'
   generate: expression
@@ -3769,8 +4405,22 @@ parameters:
   name: RECAPTCHA_PUBLIC_KEY
 - description: reCAPTCHA secret key (used in spam protection)
   name: RECAPTCHA_PRIVATE_KEY
-- description: Password for the PostgreSQL connection user.
-  displayName: PostgreSQL Connection Password
+- description: Define the external system-redis to connect to
+  name: SYSTEM_REDIS_URL
+  required: true
+  value: redis://system-redis:6379/1
+- description: Define the external system-redis message bus to connect to. By default
+    the same value as SYSTEM_REDIS_URL but with the logical database incremented by
+    1 and the result applied mod 16
+  name: SYSTEM_MESSAGE_BUS_REDIS_URL
+- description: Define the namespace to be used by System's Redis Database. The empty
+    value means not namespaced
+  name: SYSTEM_REDIS_NAMESPACE
+- description: Define the namespace to be used by System's Message Bus Redis Database.
+    The empty value means not namespaced
+  name: SYSTEM_MESSAGE_BUS_REDIS_NAMESPACE
+- description: Password for the Zync Database PostgreSQL connection user.
+  displayName: Zync Database PostgreSQL Connection Password
   from: '[a-zA-Z0-9]{16}'
   generate: expression
   name: ZYNC_DATABASE_PASSWORD
@@ -3804,11 +4454,3 @@ parameters:
   name: APICAST_REGISTRY_URL
   required: true
   value: http://apicast-staging:8090/policies
-- description: Root domain for the wildcard routes. Eg. example.com will generate
-    3scale-admin.example.com.
-  name: WILDCARD_DOMAIN
-  required: true
-- description: Use "Subdomain" to create a wildcard route for apicast wildcard router
-  name: WILDCARD_POLICY
-  required: true
-  value: None
