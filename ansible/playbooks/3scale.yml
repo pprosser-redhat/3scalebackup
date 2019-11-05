@@ -169,7 +169,7 @@
     - name: Get mysql Pod
       uri:
         validate_certs: no
-        url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=3scale.component-element=mysql"
+        url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=threescale_component_element=mysql"
         headers:
           Authorization: "Bearer {{ocptoken.stdout}}"
       register: mysql_pod
@@ -181,7 +181,7 @@
     - name: Get backend_redis pod
       uri:
         validate_certs: no
-        url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=3scale.component=backend,3scale.component-element=redis"
+        url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=threescale_component=backend,threescale_component_element=redis"
         headers:
           Authorization: "Bearer {{ocptoken.stdout}}"
       register: backend_redis_pod
@@ -193,7 +193,7 @@
     - name: Get system_redis pod
       uri:
         validate_certs: no
-        url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=3scale.component=system,3scale.component-element=redis"
+        url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=threescale_component=system,threescale_component_element=redis"
         headers:
           Authorization: "Bearer {{ocptoken.stdout}}"
       register: system_redis_pod
@@ -204,11 +204,11 @@
 
 # Copy the mysql backup file into the mysql container
     - name: "Inject mysql backup into container {{mysql_container}}"
-      shell: oc rsync {{clone_destination}}/3Scale/3Scale_backup/db_archive_dir {{mysql_container}}:/var/lib/mysql/data -n amp
+      shell: oc rsync {{clone_destination}}/3Scale/3Scale_backup/db_archive_dir {{mysql_container}}:/opt/app-root/src -n amp
 
 # execute
     - name: "Loading data into mysql"
-      shell: oc exec {{mysql_container}} -n amp -- bash -c "mysql -u root < /var/lib/mysql/data/db_archive_dir/all.sql"
+      shell: oc exec {{mysql_container}} -n amp -- bash -c "mysql -u root < /opt/app-root/src/db_archive_dir/all.sql"
 
 # load backend_redis cache
 
@@ -237,7 +237,7 @@
     - name: Get Zync Database Pod
       uri:
         validate_certs: no
-        url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=3scale.component-element=database"
+        url: "{{ocp_url}}/api/v1/namespaces/amp/pods?labelSelector=labelSelector=threescale_component=zync,threescale_component_element=database"
         headers:
           Authorization: "Bearer {{ocptoken.stdout}}"
       register: zync_pod
@@ -253,7 +253,7 @@
 # Restore the database
     - name: "Loading data into zync database"
       shell: oc exec {{zync_db_container}} -n amp -- bash -c "psql -h 127.0.0.1 -U zync -d zync_production < /var/lib/pgsql/data/backup/data/zync.sql"
-      
+
 # The db update will have updated the randomly generated password, need to put it back to that store in the copied db
     - name: "Reset 3Scale Portal Endpoint in PROD gateway"
       shell: oc set env dc/apicast-production THREESCALE_PORTAL_ENDPOINT=http://redhat12@system-master:3000/master/api/proxy/configs -n amp

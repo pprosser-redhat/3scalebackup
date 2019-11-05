@@ -403,11 +403,11 @@ objects:
             timeoutSeconds: 1
           resources:
             limits:
-              cpu: "2"
-              memory: 32Gi
+              cpu: 
+              memory: 
             requests:
-              cpu: "1"
-              memory: 1Gi
+              cpu: 
+              memory: 
           volumeMounts:
           - mountPath: /var/lib/redis/data
             name: backend-redis-storage
@@ -585,11 +585,11 @@ objects:
             timeoutSeconds: 5
           resources:
             limits:
-              cpu: 500m
-              memory: 32Gi
+              cpu: 
+              memory: 
             requests:
-              cpu: 150m
-              memory: 256Mi
+              cpu: 
+              memory: 
           terminationMessagePath: /dev/termination-log
           volumeMounts:
           - mountPath: /var/lib/redis/data
@@ -717,11 +717,11 @@ objects:
           name: backend-cron
           resources:
             limits:
-              cpu: 150m
-              memory: 80Mi
+              cpu: 
+              memory: 
             requests:
-              cpu: 50m
-              memory: 40Mi
+              cpu: 
+              memory: 
         initContainers:
         - command:
           - /opt/app/entrypoint.sh
@@ -898,11 +898,11 @@ objects:
             timeoutSeconds: 5
           resources:
             limits:
-              cpu: "1"
-              memory: 700Mi
+              cpu:
+              memory: 
             requests:
-              cpu: 500m
-              memory: 550Mi
+              cpu: 
+              memory: 
         serviceAccountName: amp
     test: false
     triggers:
@@ -1048,11 +1048,11 @@ objects:
           name: backend-worker
           resources:
             limits:
-              cpu: "1"
-              memory: 300Mi
+              cpu: 
+              memory: 
             requests:
-              cpu: 150m
-              memory: 50Mi
+              cpu: 
+              memory: 
         initContainers:
         - command:
           - /opt/app/entrypoint.sh
@@ -1240,10 +1240,10 @@ objects:
             timeoutSeconds: 5
           resources:
             limits:
-              memory: 2Gi
+              memory: 
             requests:
-              cpu: 250m
-              memory: 512Mi
+              cpu: 
+              memory: 
           volumeMounts:
           - mountPath: /var/lib/mysql/data
             name: mysql-storage
@@ -1420,11 +1420,11 @@ objects:
             timeoutSeconds: 5
           resources:
             limits:
-              cpu: 250m
-              memory: 96Mi
+              cpu: 
+              memory: 
             requests:
-              cpu: 50m
-              memory: 64Mi
+              cpu: 
+              memory: 
         serviceAccountName: amp
     test: false
     triggers:
@@ -2257,11 +2257,11 @@ objects:
             timeoutSeconds: 10
           resources:
             limits:
-              cpu: "1"
-              memory: 800Mi
+              cpu: 
+              memory: 
             requests:
-              cpu: 50m
-              memory: 600Mi
+              cpu: 
+              memory: 
           volumeMounts:
           - mountPath: /opt/system/public/system
             name: system-storage
@@ -2555,11 +2555,11 @@ objects:
             timeoutSeconds: 10
           resources:
             limits:
-              cpu: "1"
-              memory: 800Mi
+              cpu: 
+              memory: 
             requests:
-              cpu: 50m
-              memory: 600Mi
+              cpu: 
+              memory: 
           volumeMounts:
           - mountPath: /opt/system/public/system
             name: system-storage
@@ -2852,11 +2852,11 @@ objects:
             timeoutSeconds: 10
           resources:
             limits:
-              cpu: "1"
-              memory: 800Mi
+              cpu: 
+              memory: 
             requests:
-              cpu: 50m
-              memory: 600Mi
+              cpu: 
+              memory: 
           volumeMounts:
           - mountPath: /opt/system/public/system
             name: system-storage
@@ -3189,11 +3189,11 @@ objects:
           name: system-sidekiq
           resources:
             limits:
-              cpu: "1"
-              memory: 2Gi
+              cpu: 
+              memory: 
             requests:
-              cpu: 100m
-              memory: 500Mi
+              cpu: 
+              memory: 
           volumeMounts:
           - mountPath: /opt/system/public/system
             name: system-storage
@@ -3397,11 +3397,11 @@ objects:
           name: system-sphinx
           resources:
             limits:
-              cpu: "1"
-              memory: 512Mi
+              cpu: 
+              memory: 
             requests:
-              cpu: 80m
-              memory: 250Mi
+              cpu: 
+              memory: 
           volumeMounts:
           - mountPath: /opt/system/db/sphinx
             name: system-sphinx-database
@@ -3680,11 +3680,11 @@ objects:
             timeoutSeconds: 10
           resources:
             limits:
-              cpu: "1"
-              memory: 512Mi
+              cpu: 
+              memory: 
             requests:
-              cpu: 150m
-              memory: 250M
+              cpu: 
+              memory: 
         initContainers:
         - command:
           - bash
@@ -3805,11 +3805,11 @@ objects:
             protocol: TCP
           resources:
             limits:
-              cpu: "1"
-              memory: 512Mi
+              cpu: 
+              memory: 
             requests:
-              cpu: 250m
-              memory: 250M
+              cpu: 
+              memory: 
         restartPolicy: Always
         serviceAccountName: zync-que-sa
         terminationGracePeriodSeconds: 30
@@ -3889,11 +3889,11 @@ objects:
             timeoutSeconds: 1
           resources:
             limits:
-              cpu: 250m
-              memory: 2G
+              cpu: 
+              memory: 
             requests:
-              cpu: 50m
-              memory: 250M
+              cpu: 
+              memory: 
           volumeMounts:
           - mountPath: /var/lib/pgsql/data
             name: zync-database-data
@@ -4065,11 +4065,11 @@ objects:
             timeoutSeconds: 5
           resources:
             limits:
-              cpu: 100m
-              memory: 128Mi
+              cpu: 
+              memory: 
             requests:
-              cpu: 50m
-              memory: 64Mi
+              cpu: 
+              memory: 
         serviceAccountName: amp
     test: false
     triggers:
@@ -4183,11 +4183,11 @@ objects:
             timeoutSeconds: 5
           resources:
             limits:
-              cpu: "1"
-              memory: 128Mi
+              cpu: 
+              memory: 
             requests:
-              cpu: 500m
-              memory: 64Mi
+              cpu: 
+              memory: 
         initContainers:
         - command:
           - sh

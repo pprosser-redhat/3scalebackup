@@ -141,3 +141,7 @@ curl -v  -X POST "https://3scale-admin.192.168.99.100.nip.io/admin/api/services/
 
 
 =======================================================================================
+oc create secret docker-registry threescale-registry-auth \
+  --docker-server=registry.redhat.io \
+  --docker-username="1212394|3Scale" \
+  --docker-password="eyJhbGciOiJSUzUxMiJ9.eyJzdWIiOiJhOTgwNWQwNjE1MzA0ZmUyYTIzMmYwMTA3MWEwODZkNCJ9.bVEGo-1L4hkN1uqiR232XBlq4uOPuK800fep_v9e8Je_FtnCDexw2ehvc5JnFfCUWM0QTFoXoYA39DmTAxW1zfbUdoeJPNqqGbl4RnIVV-ALrldwzrP_9-VtKMI08IPDnAnpVShm7wZC7f41XYEPV_z4yZVpflO-E11GZV5lu_GfYHDh2RnXkgqFgJz1PSQN-J7lrpODaHa_wKF2iHH0ao_-34EdSb3eaaHw5Bd2NvYxMREpR3dF4YoAnYwDRAE5pMCJELe4Lo8mXGvYPAR7y7Dh2JpTAvSF94mxTkmpQJw9mBjV89RSf8uwUleLT1kvk2yGz15LJuG54Vy1mqyjSrhUPH3ekV3RK5y-1uYVGnOjcvoN5OoOGaCQw6T-LNlAQVcquhMXG-b4M4fv7IWsorU5D8Ou52QPajm-F059MVXOFo33GbnSASwz7_eH15y6XUWrwcpuLGiCObyB6bZCk4nAeaq3uZq2fgTlXMOOKWxDGnUW0mTVWg9KPQL57yrFvdJhbziqbNU20NiU4oLnO9Cp_rsav2u-_CybQqa7OyTwfnFEmm8AfEJmHPTnKZSTA-lItqWYYnrbpzMFmChZMtvVBIodJFqsOPeQe66h8Qjn3L0_xDVBFbdHFtT06xk_r8I6Kzi8T_L9cNFRqjLIVqZKnXn7Cu2XrGN26uiXoD8"
