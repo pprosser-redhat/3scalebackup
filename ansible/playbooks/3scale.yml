@@ -74,7 +74,7 @@
         update: yes
         clone: yes
         force: yes
-        version: 3Scale24
+        version: 3Scale26
 
 
 # Login to Openshift using oc client - I can't get the openshift_raw module to authenticate
