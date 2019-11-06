@@ -5,13 +5,13 @@ clone_destination: /tmp/3scaletmp
 branch_version: 3Scale26
 
 # OCP login details
-ocp_url: https://ocp.penryn.demolab.local:8443
-ocp_username: pprosser
-ocp_password: DerbyR@D02
-domain_name_suffix: apps.penryn.demolab.local
+ocp_url: 
+ocp_username: 
+ocp_password: 
+domain_name_suffix: 
 
 # keystore password
-keystore_password: redhat123
+keystore_password: 
 
 # Red Hat Registry service accoount
 secret_user: 
