@@ -1,0 +1,34 @@
+---
+#file: main.yml
+#####################################################
+# Start by deploying RH SSO - this is uses for oauth
+# api authentication, and oauth login to admin/dev portals
+#####################################################
+
+- name: Create RH SSO project
+  shell: oc new-project sso --description='RH SSO' --display-name='RH SSO'
+
+- name: Create sso service account
+  shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-serviceaccounts.yml -n sso
+
+- name: Create secrets - jgroups
+  shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-secrets-jgroups.yml -n sso
+
+- name: Create secrets - https
+  shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-secrets-https.yml -n sso
+
+- name: Create sso pvc
+  shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-pvc.yml -n sso
+
+- name: Create SSO application from cloned repo
+  shell: oc new-app  --file "{{clone_destination}}/3Scale/sso_backup/project.yaml" -n sso -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" -p KEYSTORE_PASSWORD="{{keystore_password}}"
+
+# Wait for SSO to start before continuing
+- name: Is SSO started?
+  uri:
+    validate_certs: no
+    url: https://secure-sso-sso.{{domain_name_suffix}}/auth/
+  register: testsso
+  until: testsso.status == 200
+  retries: 200
+  delay: 5

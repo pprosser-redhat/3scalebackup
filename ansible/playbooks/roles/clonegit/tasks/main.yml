@@ -1,0 +1,10 @@
+---
+# Clone repo
+- name: "Clone base git repo from {{git_repo}}"
+  git:
+    repo: "{{git_repo}}"
+    dest: "{{clone_destination}}/3Scale"
+    update: yes
+    clone: yes
+    force: yes
+    version: "{{branch_version}}"

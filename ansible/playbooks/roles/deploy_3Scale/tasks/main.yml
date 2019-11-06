@@ -1,0 +1,28 @@
+---
+# file: main.yml
+
+# Create project to deploy 3Scale Management Platform
+
+- name: Create 3Scale AMP project
+  shell: oc new-project amp --description='3Scale API Management Platform' --display-name='3Scale API Management Platform'
+  ignore_errors: yes
+
+# Create secret to all Openshift to pull from Red Hat Registry
+- name: Create secret to pull from  Red hat registry
+  shell: oc create secret docker-registry redhat-pull-secret --docker-username='{{secret_user}}' --docker-password='{{secret_token}}' --docker-server={{registry}}
+
+# Create all AMP from template
+
+- name: Create new 3Scale AMP from template
+  shell: oc new-app -n amp --file /{{clone_destination}}/3Scale/amptemplates/amp.yml --param WILDCARD_DOMAIN={{domain_name_suffix}}
+
+# Wait for 3Scale to start before continuing
+
+- name: Is 3Scale started?
+  uri:
+    validate_certs: no
+    url: https://3scale-admin.{{domain_name_suffix}}/p/login
+  register: test
+  until: test.status == 200
+  retries: 400
+  delay: 5

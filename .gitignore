@@ -1,1 +1,3 @@
 ansible/playbooks/test.yml
+ansible/playbooks/_modules
+ansible/playbooks/group_vars/all

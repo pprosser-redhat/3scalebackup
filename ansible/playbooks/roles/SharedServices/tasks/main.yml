@@ -1,0 +1,21 @@
+---
+# file: main.yml
+# Create shared services gogs and nexus
+# Create gogs repo
+
+- name:           Create Shared Services Project
+  shell:          oc new-project sharedservices --description='Shared Services Project' --display-name='Shared Services Project'
+
+- name: Create members application from cloned repo
+  shell: oc new-app  -f http://bit.ly/openshift-gogs-persistent-template -n sharedservices --param=HOSTNAME=gogs-persistent.{{domain_name_suffix}}
+
+# Create Persistent Nexus Repository
+
+- name: Download nexus template
+  shell: oc create -f https://raw.githubusercontent.com/OpenShiftDemos/nexus/master/nexus3-persistent-template.yaml -n sharedservices
+- name: Create Nexus Repository
+  shell: oc new-app nexus3-persistent -n sharedservices
+  
+# Go and create a user in gogs before continuing and clone repo = not found away quick way of automating yet
+- pause:
+    prompt: "Manually provision a user in Gogs, and clone repo from https://github.com/pprosser-redhat/fuse-financial-cicd.git and call the new repo fuse-financial-cicd"

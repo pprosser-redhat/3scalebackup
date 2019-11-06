@@ -1,0 +1,8 @@
+---
+- hosts: localhost
+
+  roles:
+    - clonegit
+    - login_ocp
+    - deploy_3Scale
+    - load_3Scale_settings

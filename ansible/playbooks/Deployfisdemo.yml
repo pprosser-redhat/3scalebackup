@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+
+  roles:
+    - clonegit
+    - login_ocp
+    - loadfisservices

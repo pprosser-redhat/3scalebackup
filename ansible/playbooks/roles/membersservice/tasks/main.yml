@@ -1,0 +1,19 @@
+---
+# file: main.yml
+# Create the members service api to use as part of the
+# 3Scale demo
+
+- name: Create members api project
+  shell: oc new-project membersapp --description='Members Service for 3Scale Demo' --display-name='Members Service for 3Scale Demo'
+
+- name: Create service account - eap
+  shell: oc create -f {{clone_destination}}/3Scale/members_backup/ansible_definitions/eap-serviceaccount.yml -n membersapp
+
+- name: Create service account - eap7
+  shell: oc create -f {{clone_destination}}/3Scale/members_backup/ansible_definitions/eap7-serviceaccount.yml -n membersapp
+
+- name: Create secrets - eap service account
+  shell: oc create -f {{clone_destination}}/3Scale/members_backup/ansible_definitions/members-secret-eap-serviceaccount.yml -n membersapp
+
+- name: Create secrets - eap7 service account
+  shell: oc create -f {{clone_destination}}/3Scale/members_backup/ansible_definitions/members-secret-eap7-serviceaccount.yml -n membersapp

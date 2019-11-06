@@ -1,0 +1,55 @@
+---
+# file: main.yml
+# Replace 192.168.99.100.nip.io with choosen wildcard domain_name_suffix
+
+###################################################
+# Create the fis demo project and application
+#####################################################
+- name: Create fisdemo
+  shell: oc new-project fisdemo --description='Development and UAT environment for Agile Integration Banking Demo - Power by Red Hat Fuse' --display-name='Fuse Banking Demo - Dev and UAT'
+
+- name: Create fisdemo apicast secrets
+  shell: oc create -f {{clone_destination}}/3Scale/FuseBankingDevAndUat/ansible_definitions/secret-apicast.yaml -n fisdemo
+
+- name: Create fisdemo mysql secrets
+  shell: oc create -f {{clone_destination}}/3Scale/FuseBankingDevAndUat/ansible_definitions/secret-mysql.yaml -n fisdemo
+
+- name: Create fisdemo app
+  shell: oc new-app --file {{clone_destination}}/3Scale/FuseBankingDevAndUat/project.yaml -n fisdemo -p MAVEN_MIRROR_URL=http://nexus-sharedservices.{{domain_name_suffix}}/repository/maven-all-public -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
+
+###################################################
+# Create the fis demo prod project and application
+#####################################################
+
+- name: Create fisdemoprod
+  shell: oc new-project fisdemoprod --description='Prod environment for Agile Integration Banking Demo - Power by Red Hat Fuse' --display-name='Fuse Banking Demo - PROD'
+
+- name: Create fisdemoprod apicast secret
+  shell: oc create -f {{clone_destination}}/3Scale/FuseBankingProd/ansible_definitions/secret-apicast.yaml -n fisdemoprod
+
+- name: Create fisdemoprod mysql secrets
+  shell: oc create -f {{clone_destination}}/3Scale/FuseBankingProd/ansible_definitions/secret-mysql.yaml -n fisdemoprod
+
+- name: Create fisdemoprod app
+  shell: oc new-app --file {{clone_destination}}/3Scale/FuseBankingProd/project.yaml -n fisdemoprod -p MAVEN_MIRROR_URL=http://nexus-sharedservices.{{domain_name_suffix}}//repository/maven-all-public -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
+- name: Create Fuse Console for fisdemoprod
+  shell: oc new-app -n fisdemoprod -f https://raw.githubusercontent.com/jboss-fuse/application-templates/application-templates-2.1.fuse-000081-redhat-4/fis-console-namespace-template.json
+###################################################
+# Create the fis demo pieline project and application
+#####################################################
+
+- name: Create fisdemocicd
+  shell: oc new-project fisdemocicd --description='Fuse Banking Pipeline' --display-name='Fuse Banking Pipeline'
+
+- name: Create Pipelines and Jenkins
+  shell: oc new-app --file {{clone_destination}}/3Scale/FuseBankingPipeline/project.yaml -n fisdemocicd -p DOMAIN_NAME_SUFFIX={{domain_name_suffix}}
+
+- name: Create Pipelines and Jenkins
+  shell: oc adm policy add-role-to-user edit system:serviceaccount:fisdemocicd:jenkins -n fisdemo
+
+- name: Create Pipelines and Jenkins
+  shell: oc adm policy add-role-to-user system:image-puller system:serviceaccount:fisdemoprod:jenkins -n fisdemo
+
+- name: Create Pipelines and Jenkins
+  shell: oc adm policy add-role-to-user edit system:serviceaccount:fisdemocicd:jenkins -n fisdemoprod
+
