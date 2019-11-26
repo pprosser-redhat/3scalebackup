@@ -10,6 +10,7 @@ items:
     resources:
       requests:
         storage: 1Gi
+    storageClassName: ibmc-block-gold
 kind: List
 metadata:
   resourceVersion: ""
