@@ -1,4 +1,4 @@
-# Git variables - do not load with proper data to Git
+# Git variables
 
 git_repo: https://github.com/pprosser-redhat/3scalebackup.git
 clone_destination: /tmp/3scaletmp
@@ -6,16 +6,14 @@ branch_version: 3Scale26
 
 # OCP login details
 ocp_url: 
-ocp_username: 
-ocp_password: 
-domain_name_suffix: 
+ocp_login_token:
 
 # keystore password
 keystore_password: 
 
 # Red Hat Registry service accoount
 secret_user: 
-secret_token
+secret_token: 
 registry: registry.redhat.io
 
 #3Scale token 
