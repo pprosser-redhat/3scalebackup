@@ -80,6 +80,23 @@ objects:
       type: ImageChange
     - type: ConfigChange
 - apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: sso-mysql-claim
+      application: sso
+    name: sso-mysql-claim
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    dataSource: null
+    resources:
+      requests:
+        storage: 5Gi
+    storageClassName: ibmc-block-gold
+  status: {}
+- apiVersion: v1
   kind: DeploymentConfig
   metadata:
     creationTimestamp: null
@@ -392,23 +409,6 @@ objects:
     type: ClusterIP
   status:
     loadBalancer: {}
-- apiVersion: v1
-  kind: PersistentVolumeClaim
-  metadata:
-    creationTimestamp: null
-    labels:
-      app: sso-mysql-claim
-      application: sso
-    name: sso-mysql-claim
-  spec:
-    accessModes:
-    - ReadWriteOnce
-    dataSource: null
-    resources:
-      requests:
-        storage: 5Gi
-    storageClassName: ibmc-block-gold
-  status: {}
 parameters:
   - description: Domain name suffix - added to all routes
     displayName: Domain Name Suffix
