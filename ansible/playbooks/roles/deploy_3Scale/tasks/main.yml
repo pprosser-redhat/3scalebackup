@@ -10,11 +10,7 @@
 
 # Create secret to all Openshift to pull from Red Hat Registry
 - name: Create secret to pull from  Red hat registry
-  shell: oc create secret docker-registry threescale-registry-auth   --docker-server=registry.redhat.io   --docker-username="11212394|ibmcloud"   --docker-password="eyJhbGciOiJSUzUxMiJ9.eyJzdWIiOiJiYjMwNGQxYTZmODk0NGE1OGNjMjhjMmJmZDQ3MDllZCJ9.eTt5Q4nJzEJeSFLU1RD2TjFVPjx9gwln1SZgz2rm94nlQ8SOgTIQXzb9e-w23mTrtG2mSAERWjKnAk0BngstpFfzOT5lpQ1TGOw6s_G6IF4bBCbqHW5iR37aV7lrcaMDUKx3CLEODBYqHEPA0D_C3OIKUOV7M3EU5Nx09fbLFizJSm4icXPwxgGOd9iHukV0WBTCG_FErmnrq_tWQmh_SbC8t3fSLmUtHrkAF6xduK1NCWFtbjzBePeQUm0SioJrbwyNvgyZvsLIq-YbpzSQ8t0hq0wbZQtrxM6hDuTNwL8L0HXyMPzta-R2530mvsCHE56NhuAtFjB5zJXBH_h6LB6StcOiW0PiRNEaVrwuQvF-2ovSORmM6Wpq5cjZvj-gyqmfwFLMscILfZbxvzBUXbkfgzNRhX2j6RjGo9CxVyukErpVDAJfQkCFDair1oDkTZOex8nyquwa6n8qjF-92FSGkgEGUy5ji4VkxpopLygzkEaPQEXN-x7t80sP39U8ZtzPHiq_FchpnNXuBrWCyUzjcLDr9nbzXbALsGz1dw60CRPw7a_A8gWX2hMzVb9tlERGaBuWKvaTNFlKM65V1vzOQb9yNHf_-_hxSWd_6MRPje-dw-Ycx7oFAU6NhBeUj305Um6Cere3a2i6tGJ9ssgtyMfOMHAePMcHNWOl-e8"
-
-# Create secret to all Openshift to pull from Red Hat Registry
-#- name: Create secret to pull from  Red hat registry
-#  shell: oc create secret docker-registry redhat-pull-secret --docker-username='{{secret_user}}' --docker-password='{{secret_token}}' --docker-server={{registry}}
+  shell: oc create secret docker-registry threescale-registry-auth   --docker-server=registry.redhat.io   --docker-username="{{secret_user}}"   --docker-password="{{secret_token}}"
 
 # Create all AMP from template
 
