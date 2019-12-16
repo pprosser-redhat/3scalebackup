@@ -7,9 +7,10 @@
   shell: oc new-project amp --description='3Scale API Management Platform' --display-name='3Scale API Management Platform'
   ignore_errors: yes
 
+
 # Create secret to all Openshift to pull from Red Hat Registry
 - name: Create secret to pull from  Red hat registry
-  shell: oc create secret docker-registry redhat-pull-secret --docker-username='{{secret_user}}' --docker-password='{{secret_token}}' --docker-server={{registry}}
+  shell: oc create secret docker-registry threescale-registry-auth   --docker-server=registry.redhat.io   --docker-username="{{secret_user}}"   --docker-password="{{secret_token}}"
 
 # Create all AMP from template
 
