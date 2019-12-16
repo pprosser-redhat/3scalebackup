@@ -532,7 +532,7 @@ objects:
     resources:
       requests:
         storage: 1Gi
-    storageClassName: ibmc-block-gold
+    storageClassName: ${{RWX_STORAGE_CLASS}}
   status: {}
 - apiVersion: apps.openshift.io/v1
   kind: DeploymentConfig
@@ -642,7 +642,7 @@ objects:
     resources:
       requests:
         storage: 1Gi
-    storageClassName: ibmc-block-gold
+    storageClassName: ${{RWX_STORAGE_CLASS}}
   status: {}
 - apiVersion: apps.openshift.io/v1
   kind: DeploymentConfig
@@ -1350,7 +1350,7 @@ objects:
     resources:
       requests:
         storage: 1Gi
-    storageClassName: ibmc-block-gold
+    storageClassName: ${{RWX_STORAGE_CLASS}}
   status: {}
 - apiVersion: v1
   kind: Secret
@@ -1463,7 +1463,7 @@ objects:
     resources:
       requests:
         storage: 100Mi
-    storageClassName: ibmc-file-gold
+    storageClassName: ${{RWX_STORAGE_CLASS}}
   status: {}
 - apiVersion: v1
   kind: Service

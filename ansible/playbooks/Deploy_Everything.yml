@@ -4,10 +4,10 @@
   roles:
     - clonegit
     - login_ocp
-    - deploy_sso
-    - load_sso_settings
-    - deploy_3Scale
-    - load_3Scale_settings
-    - SharedServices
-    - membersservice
+#   - deploy_sso
+#    - load_sso_settings
+#    - deploy_3Scale
+#    - load_3Scale_settings
+#    - SharedServices
+#    - membersservice
     
