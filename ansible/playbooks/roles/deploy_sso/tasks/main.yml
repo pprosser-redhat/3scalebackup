@@ -53,7 +53,7 @@
   shell: keytool -import -file /tmp/xpaas.crt -alias xpaas.ca -keystore /tmp/truststore.jks -storepass {{keystore_password}} -noprompt
 
 - name: create secrets for HTTPS and JGroup keystores
-  shell: oc secret new sso-app-secret keystore.jks jgroups.jceks truststore.jks
+  shell: oc secret new sso-app-secret /tmp/keystore.jks /tmp/jgroups.jceks /tmp/truststore.jks
 
 - name: Link secrets to the defailt account service
   shell: oc secrets link default sso-app-secret
@@ -62,7 +62,7 @@
   shell: oc new-app --template=sso73-mysql-persistent
 
 - name: cleanup all temp cert files
-  shell: rm /tmp/keystore.jks /tmp/xpaas.crt /tmp/xpaas.key /tmp/truststore.jks /tmp/jgroups.jceks /tmp/sso.crt /tmp/sso.csr
+  shell: rm /tmp/keystore.jks /tmp/xpaas.crt /tmp/xpaas.key /tmp/truststore.jks /tmp/jgroups.jceks /tmp/sso.crt /tmp/sso.csr /tmp/truststore.jks
 
 - name: Is SSO started?
   uri: 
