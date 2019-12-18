@@ -59,7 +59,7 @@
   shell: oc secrets link default sso-app-secret
 
 - name: create SSO application and database
-  shell: oc new-app --template=sso73-mysql-persistent
+  shell: oc new-app --template=sso73-mysql-persistent -p HTTPS_SECRET="sso-app-secret" -p HTTPS_KEYSTORE="keystore.jks" -p HTTPS_NAME="jboss" -p HTTPS_PASSWORD="{{keystore_password}}" -p JGROUPS_ENCRYPT_SECRET="sso-app-secret" -p JGROUPS_ENCRYPT_KEYSTORE="jgroups.jceks" -p JGROUPS_ENCRYPT_NAME="secret-key" -p JGROUPS_ENCRYPT_PASSWORD="{{keystore_password}}" -p SSO_ADMIN_USERNAME="admin" -p SSO_ADMIN_PASSWORD="redhat" -p SSO_REALM="demorealm" -p SSO_TRUSTSTORE="truststore.jks" -p SSO_TRUSTSTORE_PASSWORD="{{keystore_password}}" -p SSO_TRUSTSTORE_SECRET="sso-app-secret"
 
 - name: cleanup all temp cert files
   shell: rm /tmp/keystore.jks /tmp/xpaas.crt /tmp/xpaas.key /tmp/truststore.jks /tmp/jgroups.jceks /tmp/sso.crt /tmp/sso.csr
