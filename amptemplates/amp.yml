@@ -402,12 +402,6 @@ objects:
             periodSeconds: 30
             timeoutSeconds: 1
           resources:
-            limits:
-              cpu: 
-              memory: 
-            requests:
-              cpu: 
-              memory: 
           volumeMounts:
           - mountPath: /var/lib/redis/data
             name: backend-redis-storage
@@ -585,12 +579,6 @@ objects:
             periodSeconds: 10
             timeoutSeconds: 5
           resources:
-            limits:
-              cpu: 
-              memory: 
-            requests:
-              cpu: 
-              memory: 
           terminationMessagePath: /dev/termination-log
           volumeMounts:
           - mountPath: /var/lib/redis/data
@@ -718,12 +706,6 @@ objects:
           imagePullPolicy: IfNotPresent
           name: backend-cron
           resources:
-            limits:
-              cpu: 
-              memory: 
-            requests:
-              cpu: 
-              memory: 
         initContainers:
         - command:
           - /opt/app/entrypoint.sh
@@ -899,12 +881,6 @@ objects:
             initialDelaySeconds: 30
             timeoutSeconds: 5
           resources:
-            limits:
-              cpu:
-              memory: 
-            requests:
-              cpu: 
-              memory: 
         serviceAccountName: amp
     test: false
     triggers:
@@ -1049,11 +1025,6 @@ objects:
           imagePullPolicy: IfNotPresent
           name: backend-worker
           resources:
-            limits:
-              cpu: 
-              memory: 
-            requests:
-              cpu: 
               memory: 
         initContainers:
         - command:
@@ -1241,11 +1212,6 @@ objects:
             periodSeconds: 30
             timeoutSeconds: 5
           resources:
-            limits:
-              memory: 
-            requests:
-              cpu: 
-              memory: 
           volumeMounts:
           - mountPath: /var/lib/mysql/data
             name: mysql-storage
@@ -1422,12 +1388,6 @@ objects:
             periodSeconds: 30
             timeoutSeconds: 5
           resources:
-            limits:
-              cpu: 
-              memory: 
-            requests:
-              cpu: 
-              memory: 
         serviceAccountName: amp
     test: false
     triggers:
@@ -2260,12 +2220,6 @@ objects:
             periodSeconds: 30
             timeoutSeconds: 10
           resources:
-            limits:
-              cpu: 
-              memory: 
-            requests:
-              cpu: 
-              memory: 
           volumeMounts:
           - mountPath: /opt/system/public/system
             name: system-storage
@@ -2558,12 +2512,6 @@ objects:
             periodSeconds: 30
             timeoutSeconds: 10
           resources:
-            limits:
-              cpu: 
-              memory: 
-            requests:
-              cpu: 
-              memory: 
           volumeMounts:
           - mountPath: /opt/system/public/system
             name: system-storage
@@ -2855,12 +2803,6 @@ objects:
             periodSeconds: 30
             timeoutSeconds: 10
           resources:
-            limits:
-              cpu: 
-              memory: 
-            requests:
-              cpu: 
-              memory: 
           volumeMounts:
           - mountPath: /opt/system/public/system
             name: system-storage
@@ -3192,12 +3134,6 @@ objects:
           imagePullPolicy: IfNotPresent
           name: system-sidekiq
           resources:
-            limits:
-              cpu: 
-              memory: 
-            requests:
-              cpu: 
-              memory: 
           volumeMounts:
           - mountPath: /opt/system/public/system
             name: system-storage
@@ -3399,13 +3335,6 @@ objects:
             tcpSocket:
               port: 9306
           name: system-sphinx
-          resources:
-            limits:
-              cpu: 
-              memory: 
-            requests:
-              cpu: 
-              memory: 
           volumeMounts:
           - mountPath: /opt/system/db/sphinx
             name: system-sphinx-database
@@ -3683,12 +3612,6 @@ objects:
             successThreshold: 1
             timeoutSeconds: 10
           resources:
-            limits:
-              cpu: 
-              memory: 
-            requests:
-              cpu: 
-              memory: 
         initContainers:
         - command:
           - bash
@@ -3808,12 +3731,6 @@ objects:
             name: metrics
             protocol: TCP
           resources:
-            limits:
-              cpu: 
-              memory: 
-            requests:
-              cpu: 
-              memory: 
         restartPolicy: Always
         serviceAccountName: zync-que-sa
         terminationGracePeriodSeconds: 30
@@ -3892,12 +3809,6 @@ objects:
             initialDelaySeconds: 5
             timeoutSeconds: 1
           resources:
-            limits:
-              cpu: 
-              memory: 
-            requests:
-              cpu: 
-              memory: 
           volumeMounts:
           - mountPath: /var/lib/pgsql/data
             name: zync-database-data
@@ -4068,12 +3979,6 @@ objects:
             periodSeconds: 30
             timeoutSeconds: 5
           resources:
-            limits:
-              cpu: 
-              memory: 
-            requests:
-              cpu: 
-              memory: 
         serviceAccountName: amp
     test: false
     triggers:
@@ -4186,12 +4091,6 @@ objects:
             periodSeconds: 30
             timeoutSeconds: 5
           resources:
-            limits:
-              cpu: 
-              memory: 
-            requests:
-              cpu: 
-              memory: 
         initContainers:
         - command:
           - sh
