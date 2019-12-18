@@ -61,6 +61,9 @@
 - name: create SSO application and database
   shell: oc new-app --template=sso73-mysql-persistent
 
+- name: cleanup all temp cert files
+  shell: rm /tmp/keystore.jks /tmp/xpaas.crt /tmp/xpaas.key /tmp/truststore.jks /tmp/jgroups.jceks /tmp/sso.crt /tmp/sso.csr
+
 - name: Is SSO started?
   uri: 
     validate_certs: no
