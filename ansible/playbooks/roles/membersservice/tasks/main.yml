@@ -19,4 +19,4 @@
   shell: oc create -f {{clone_destination}}/3Scale/members_backup/ansible_definitions/members-secret-eap7-serviceaccount.yml -n membersapp
 
 - name: Create members application from cloned repo
-      shell: oc new-app  --file "{{clone_destination}}/3Scale/members_backup/project.yaml" -n membersapp -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" -p MAVEN_MIRROR_URL="http://nexus-sharedservices.{{domain_name_suffix}}/repository/maven-all-public"
+  shell: oc new-app  --file "{{clone_destination}}/3Scale/members_backup/project.yaml" -n membersapp -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" -p MAVEN_MIRROR_URL="http://nexus-sharedservices.{{domain_name_suffix}}/repository/maven-all-public"
