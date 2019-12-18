@@ -8,24 +8,61 @@
 - name: Create RH SSO project
   shell: oc new-project sso --description='RH SSO' --display-name='RH SSO'
 
-- name: Create sso service account
-  shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-serviceaccounts.yml -n sso
+#- name: Create sso service account
+#  shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-serviceaccounts.yml -n sso
 
-- name: Create secrets - jgroups
-  shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-secrets-jgroups.yml -n sso
+#- name: Create secrets - jgroups
+#  shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-secrets-jgroups.yml -n sso
 
-- name: Create secrets - https
-  shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-secrets-https.yml -n sso
+#- name: Create secrets - https
+#  shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-secrets-https.yml -n sso
 
-- name: Create sso pvc
-  shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-pvc.yml -n sso
+#- name: Create sso pvc
+#  shell: oc create -f {{clone_destination}}/3Scale/sso_backup/ansible_definitions/sso-pvc.yml -n sso
 
-- name: Create SSO application from cloned repo
-  shell: oc new-app  --file "{{clone_destination}}/3Scale/sso_backup/project.yaml" -n sso -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" -p KEYSTORE_PASSWORD="{{keystore_password}}"
+#- name: Create SSO application from cloned repo
+#  shell: oc new-app  --file "{{clone_destination}}/3Scale/sso_backup/project.yaml" -n sso -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" -p KEYSTORE_PASSWORD="{{keystore_password}}"
 
 # Wait for SSO to start before continuing
+
+- name: Add view policy to user
+  shell: oc policy add-role-to-user view system:serviceaccount:$(oc project -q):default
+
+- name: Generate CA Certificate 
+  shell: openssl req -new -newkey rsa:4096 -x509 -keyout /tmp/xpaas.key -out /tmp/xpaas.crt -days 365 -subj "/CN=xpaas-sso-demo.ca" -passout pass:{{keystore_password}}
+
+- name: Generate certificate for HTTPS keystore
+  shell: keytool -genkeypair -keyalg RSA -keysize 2048 -dname "CN=secure-sso-sso-app-demo.openshift.example.com" -alias jboss -keystore /tmp/keystore.jks -storepass {{keystore_password}} -keypass {{keystore_password}}
+
+- name: Generate signed Cert request for HTTPS keystore
+  shell: keytool -certreq -keyalg rsa -alias jboss -keystore /tmp/keystore.jks -file /tmp/sso.csr -storepass {{keystore_password}}
+
+- name: Sign the certificate sign request with the CA cert
+  shell: openssl x509 -req -CA /tmp/xpaas.crt -CAkey /tmp/xpaas.key -in /tmp/sso.csr -out /tmp/sso.crt -days 365 -CAcreateserial -passin pass:{{keystore_password}}
+
+- name: Import the CA cert into the HTTPS keystore
+  shell: keytool -import -file /tmp/xpaas.crt -alias xpaas.ca -keystore /tmp/keystore.jks -storepass {{keystore_password}} -noprompt
+
+- name: Import signed cert signed request into HTTPS keystore
+  shell: keytool -import -file /tmp/sso.crt -alias jboss -keystore /tmp/keystore.jks -storepass {{keystore_password}}
+
+- name: Generate a secure key for JGroups Keystore
+  shell: keytool -genseckey -alias secret-key -storetype JCEKS -keystore /tmp/jgroups.jceks -storepass {{keystore_password}} -keypass {{keystore_password}}
+
+- name: Import certificae into new SSO truststore
+  shell: keytool -import -file /tmp/xpaas.crt -alias xpaas.ca -keystore /tmp/truststore.jks -storepass {{keystore_password}} -noprompt
+
+- name: create secrets for HTTPS and JGroup keystores
+- shell: oc secret new sso-app-secret keystore.jks jgroups.jceks truststore.jks
+
+- name: Link secrets to the defailt account service
+  shell: oc secrets link default sso-app-secret
+
+- name: create SSO application and database
+  shell: oc new-app --template=sso73-mysql-persistent
+
 - name: Is SSO started?
-  uri:
+  uri: 
     validate_certs: no
     url: https://secure-sso-sso.{{domain_name_suffix}}/auth/
   register: testsso
