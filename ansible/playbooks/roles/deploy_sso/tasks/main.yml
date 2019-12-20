@@ -66,7 +66,7 @@
 
 - name: Is SSO started?
   uri: 
-    validate_certs: no
+    validate_certs: false
     url: https://secure-sso-sso.{{domain_name_suffix}}/auth/
   register: testsso
   until: testsso.status == 200
