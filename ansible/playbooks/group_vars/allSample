@@ -19,4 +19,7 @@ registry: registry.redhat.io
 #3Scale token 
 amp_token: 
 
+# Openshift Route information
+domain_name_suffix:
 
+maven_mirror_url: http://nexus-sharedservices.{{domain_name_suffix}}/repository/maven-all-public
