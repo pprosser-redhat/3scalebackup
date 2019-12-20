@@ -111,7 +111,7 @@
 
 # Add my extra gateway api routes as I'm not using Wildcards
 - name: Create AMP application routes from cloned repo
-  shell: oc new-app  --file "{{clone_destination}}/3Scale/ansible/load_3Scale_settings/files/project.yaml" -n amp -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" KEYSTORE_PASSWORD={{keystore_password}}
+  shell: oc new-app  --file "{{clone_destination}}/3Scale/ansible/playbooks/roles/load_3Scale_settings/files/project.yaml" -n amp -p DOMAIN_NAME_SUFFIX="{{domain_name_suffix}}" KEYSTORE_PASSWORD={{keystore_password}}
   ignore_errors: yes
 
     # Pause to make sure that 3Scale has fully revoverd from redis caches backups being installed
