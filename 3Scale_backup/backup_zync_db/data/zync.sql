@@ -1013,7 +1013,7 @@ COPY public.applications (id, tenant_id, service_id, created_at, updated_at) FRO
 --
 
 COPY public.ar_internal_metadata (key, value, created_at, updated_at) FROM stdin;
-environment	production	2019-10-18 17:21:02.94076	2019-10-18 17:21:02.94076
+environment	production	2019-12-20 12:20:29.006856	2019-12-20 12:20:29.006856
 \.
 
 
@@ -1030,6 +1030,11 @@ COPY public.clients (id, service_id, tenant_id, client_id, created_at, updated_a
 --
 
 COPY public.entries (id, data, tenant_id, model_id, created_at, updated_at) FROM stdin;
+1	\N	2	1	2019-12-20 12:28:43.712442	2019-12-20 12:28:43.712442
+2	{"links": [{"rel": "mapping_rules", "href": "/admin/api/services/6/proxy/mapping_rules"}, {"rel": "self", "href": "/admin/api/services/6/proxy"}, {"rel": "service", "href": "/admin/api/services/6"}], "endpoint": "https://membersregistrationservice-oauth-3scale-apicast-production.apps.derby-b2da.open.redhat.com:443", "created_at": "2018-02-02T14:46:33Z", "service_id": 6, "updated_at": "2019-12-20T12:07:24Z", "api_backend": "http://eap-app-membersapp.apps.derby-b2da.open.redhat.com:80", "auth_app_id": "app_id", "auth_app_key": "app_key", "lock_version": 33, "secret_token": "Shared_secret_sent_from_proxy_to_API_backend_1f5da50085677493", "api_test_path": "/", "auth_user_key": "user_key", "error_no_match": "No Mapping Rule matched", "policies_config": [{"name": "apicast", "enabled": true, "version": "builtin", "configuration": {}}], "hostname_rewrite": "", "oidc_issuer_type": "keycloak", "sandbox_endpoint": "https://membersregistrationservice-oauth-3scale-apicast-staging.apps.apps.derby-b2da.open.redhat.com:443", "deployment_option": "hosted", "error_auth_failed": "Authentication failed", "error_auth_missing": "Authentication parameters missing", "credentials_location": "headers", "oidc_issuer_endpoint": "http://3scale-admin:4515e009-ee60-4039-8d5a-1578ecec4349@sso-sso.apps.derby-b2da.open.redhat.com/auth/realms/3scale", "error_limits_exceeded": "Usage limit exceeded", "error_status_no_match": 404, "error_headers_no_match": "text/plain; charset=us-ascii", "error_status_auth_failed": 403, "error_headers_auth_failed": "text/plain; charset=us-ascii", "error_status_auth_missing": 403, "error_headers_auth_missing": "text/plain; charset=us-ascii", "error_status_limits_exceeded": 429, "error_headers_limits_exceeded": "text/plain; charset=us-ascii"}	2	2	2019-12-20 12:28:43.86718	2019-12-20 12:28:43.86718
+3	\N	2	1	2019-12-20 12:28:47.871156	2019-12-20 12:28:47.871156
+4	\N	2	3	2019-12-20 12:30:15.184079	2019-12-20 12:30:15.184079
+5	{"links": [{"rel": "mapping_rules", "href": "/admin/api/services/5/proxy/mapping_rules"}, {"rel": "self", "href": "/admin/api/services/5/proxy"}, {"rel": "service", "href": "/admin/api/services/5"}], "endpoint": "https://membersregistrationservice-3scale-apicast-production.apps.derby-b2da.open.redhat.com:443", "created_at": "2018-02-02T09:14:08Z", "service_id": 5, "updated_at": "2019-12-20T12:07:24Z", "api_backend": "http://eap-app-membersapp.apps.derby-b2da.open.redhat.com:80", "auth_app_id": "app_id", "auth_app_key": "app_key", "lock_version": 73, "secret_token": "Shared_secret_sent_from_proxy_to_API_backend_92a928d9ba84f8ba", "api_test_path": "/membersweb/rest/v2/members", "auth_user_key": "user-key", "error_no_match": "No Mapping Rule matched", "policies_config": [{"name": "apicast", "enabled": true, "version": "builtin", "configuration": {}}], "api_test_success": true, "hostname_rewrite": "", "sandbox_endpoint": "https://membersregistrationservice-3scale-apicast-staging.apps.derby-b2da.open.redhat.com:443", "deployment_option": "hosted", "error_auth_failed": "Authentication failed", "error_auth_missing": "Authentication parameters missing", "credentials_location": "headers", "error_limits_exceeded": "Usage limit exceeded", "error_status_no_match": 404, "error_headers_no_match": "text/plain; charset=us-ascii", "error_status_auth_failed": 403, "error_headers_auth_failed": "text/plain; charset=us-ascii", "error_status_auth_missing": 403, "error_headers_auth_missing": "text/plain; charset=us-ascii", "error_status_limits_exceeded": 429, "error_headers_limits_exceeded": "text/plain; charset=us-ascii"}	2	4	2019-12-20 12:30:15.358571	2019-12-20 12:30:15.358571
 \.
 
 
@@ -1038,6 +1043,10 @@ COPY public.entries (id, data, tenant_id, model_id, created_at, updated_at) FROM
 --
 
 COPY public.integration_states (id, started_at, finished_at, success, model_id, entry_id, integration_id, created_at, updated_at) FROM stdin;
+1	2019-12-20 12:28:44.028374	2019-12-20 12:28:44.128715	t	2	2	1	2019-12-20 12:28:44.01789	2019-12-20 12:28:44.129112
+3	2019-12-20 12:28:44.026088	2019-12-20 12:28:44.194003	t	2	2	2	2019-12-20 12:28:44.019425	2019-12-20 12:28:44.194476
+2	2019-12-20 12:28:47.913048	2019-12-20 12:28:47.918668	t	1	3	1	2019-12-20 12:28:44.018675	2019-12-20 12:28:47.918968
+4	2019-12-20 12:30:23.246461	2019-12-20 12:30:23.287525	t	4	5	3	2019-12-20 12:30:15.396003	2019-12-20 12:30:23.287927
 \.
 
 
@@ -1046,6 +1055,9 @@ COPY public.integration_states (id, started_at, finished_at, success, model_id, 
 --
 
 COPY public.integrations (id, configuration, type, tenant_id, model_id, created_at, updated_at, state) FROM stdin;
+1	{"endpoint": "http://3scale-admin:4515e009-ee60-4039-8d5a-1578ecec4349@sso-sso.apps.derby-b2da.open.redhat.com/auth/realms/3scale"}	Integration::Keycloak	2	1	2019-12-20 12:28:43.913992	2019-12-20 12:28:43.913992	active
+2	{}	Integration::Kubernetes	2	2	2019-12-20 12:28:43.933042	2019-12-20 12:28:43.933042	active
+3	{}	Integration::Kubernetes	2	4	2019-12-20 12:30:15.381047	2019-12-20 12:30:15.381047	active
 \.
 
 
@@ -1054,6 +1066,12 @@ COPY public.integrations (id, configuration, type, tenant_id, model_id, created_
 --
 
 COPY public.message_bus (id, channel, value, added_at) FROM stdin;
+1	/integration/Z2lkOi8venluYy9TZXJ2aWNlLzY$|$Z2lkOi8venluYy9UZW5hbnQvMg	{"data":{"entry_data":null,"integration":"gid://zync/Integration::Keycloak/1","model":"gid://zync/Model/1","service":"Integration::KeycloakService","record":"gid://zync/Service/6","success":true},"user_ids":["Z2lkOi8venluYy9UZW5hbnQvMg"],"group_ids":null,"client_ids":null}	2019-12-20 12:28:44.114913
+2	/integration/Z2lkOi8venluYy9Qcm94eS82$|$Z2lkOi8venluYy9UZW5hbnQvMg	{"data":{"entry_data":{"links":[{"rel":"mapping_rules","href":"/admin/api/services/6/proxy/mapping_rules"},{"rel":"self","href":"/admin/api/services/6/proxy"},{"rel":"service","href":"/admin/api/services/6"}],"endpoint":"https://membersregistrationservice-oauth-3scale-apicast-production.apps.derby-b2da.open.redhat.com:443","created_at":"2018-02-02T14:46:33Z","service_id":6,"updated_at":"2019-12-20T12:07:24Z","api_backend":"http://eap-app-membersapp.apps.derby-b2da.open.redhat.com:80","auth_app_id":"app_id","auth_app_key":"app_key","lock_version":33,"secret_token":"Shared_secret_sent_from_proxy_to_API_backend_1f5da50085677493","api_test_path":"/","auth_user_key":"user_key","error_no_match":"No Mapping Rule matched","policies_config":[{"name":"apicast","enabled":true,"version":"builtin","configuration":{}}],"hostname_rewrite":"","oidc_issuer_type":"keycloak","sandbox_endpoint":"https://membersregistrationservice-oauth-3scale-apicast-staging.apps.apps.derby-b2da.open.redhat.com:443","deployment_option":"hosted","error_auth_failed":"Authentication failed","error_auth_missing":"Authentication parameters missing","credentials_location":"headers","oidc_issuer_endpoint":"http://3scale-admin:4515e009-ee60-4039-8d5a-1578ecec4349@sso-sso.apps.derby-b2da.open.redhat.com/auth/realms/3scale","error_limits_exceeded":"Usage limit exceeded","error_status_no_match":404,"error_headers_no_match":"text/plain; charset=us-ascii","error_status_auth_failed":403,"error_headers_auth_failed":"text/plain; charset=us-ascii","error_status_auth_missing":403,"error_headers_auth_missing":"text/plain; charset=us-ascii","error_status_limits_exceeded":429,"error_headers_limits_exceeded":"text/plain; charset=us-ascii"},"integration":"gid://zync/Integration::Keycloak/1","model":"gid://zync/Model/2","service":"Integration::KeycloakService","record":"gid://zync/Proxy/6","success":true},"user_ids":["Z2lkOi8venluYy9UZW5hbnQvMg"],"group_ids":null,"client_ids":null}	2019-12-20 12:28:44.187941
+3	/integration/Z2lkOi8venluYy9Qcm94eS82$|$Z2lkOi8venluYy9UZW5hbnQvMg	{"data":{"entry_data":{"links":[{"rel":"mapping_rules","href":"/admin/api/services/6/proxy/mapping_rules"},{"rel":"self","href":"/admin/api/services/6/proxy"},{"rel":"service","href":"/admin/api/services/6"}],"endpoint":"https://membersregistrationservice-oauth-3scale-apicast-production.apps.derby-b2da.open.redhat.com:443","created_at":"2018-02-02T14:46:33Z","service_id":6,"updated_at":"2019-12-20T12:07:24Z","api_backend":"http://eap-app-membersapp.apps.derby-b2da.open.redhat.com:80","auth_app_id":"app_id","auth_app_key":"app_key","lock_version":33,"secret_token":"Shared_secret_sent_from_proxy_to_API_backend_1f5da50085677493","api_test_path":"/","auth_user_key":"user_key","error_no_match":"No Mapping Rule matched","policies_config":[{"name":"apicast","enabled":true,"version":"builtin","configuration":{}}],"hostname_rewrite":"","oidc_issuer_type":"keycloak","sandbox_endpoint":"https://membersregistrationservice-oauth-3scale-apicast-staging.apps.apps.derby-b2da.open.redhat.com:443","deployment_option":"hosted","error_auth_failed":"Authentication failed","error_auth_missing":"Authentication parameters missing","credentials_location":"headers","oidc_issuer_endpoint":"http://3scale-admin:4515e009-ee60-4039-8d5a-1578ecec4349@sso-sso.apps.derby-b2da.open.redhat.com/auth/realms/3scale","error_limits_exceeded":"Usage limit exceeded","error_status_no_match":404,"error_headers_no_match":"text/plain; charset=us-ascii","error_status_auth_failed":403,"error_headers_auth_failed":"text/plain; charset=us-ascii","error_status_auth_missing":403,"error_headers_auth_missing":"text/plain; charset=us-ascii","error_status_limits_exceeded":429,"error_headers_limits_exceeded":"text/plain; charset=us-ascii"},"integration":"gid://zync/Integration::Kubernetes/2","model":"gid://zync/Model/2","service":"Integration::KubernetesService","record":"gid://zync/Proxy/6","success":true},"user_ids":["Z2lkOi8venluYy9UZW5hbnQvMg"],"group_ids":null,"client_ids":null}	2019-12-20 12:28:44.204883
+4	/integration/Z2lkOi8venluYy9TZXJ2aWNlLzY$|$Z2lkOi8venluYy9UZW5hbnQvMg	{"data":{"entry_data":null,"integration":"gid://zync/Integration::Keycloak/1","model":"gid://zync/Model/1","service":"Integration::KeycloakService","record":"gid://zync/Service/6","success":true},"user_ids":["Z2lkOi8venluYy9UZW5hbnQvMg"],"group_ids":null,"client_ids":null}	2019-12-20 12:28:47.9286
+5	/integration/Z2lkOi8venluYy9Qcm94eS81$|$Z2lkOi8venluYy9UZW5hbnQvMg	{"data":{"entry_data":{"links":[{"rel":"mapping_rules","href":"/admin/api/services/5/proxy/mapping_rules"},{"rel":"self","href":"/admin/api/services/5/proxy"},{"rel":"service","href":"/admin/api/services/5"}],"endpoint":"https://membersregistrationservice-3scale-apicast-production.apps.derby-b2da.open.redhat.com:443","created_at":"2018-02-02T09:14:08Z","service_id":5,"updated_at":"2019-12-20T12:07:24Z","api_backend":"http://eap-app-membersapp.apps.derby-b2da.open.redhat.com:80","auth_app_id":"app_id","auth_app_key":"app_key","lock_version":73,"secret_token":"Shared_secret_sent_from_proxy_to_API_backend_92a928d9ba84f8ba","api_test_path":"/membersweb/rest/v2/members","auth_user_key":"user-key","error_no_match":"No Mapping Rule matched","policies_config":[{"name":"apicast","enabled":true,"version":"builtin","configuration":{}}],"api_test_success":true,"hostname_rewrite":"","sandbox_endpoint":"https://membersregistrationservice-3scale-apicast-staging.apps.derby-b2da.open.redhat.com:443","deployment_option":"hosted","error_auth_failed":"Authentication failed","error_auth_missing":"Authentication parameters missing","credentials_location":"headers","error_limits_exceeded":"Usage limit exceeded","error_status_no_match":404,"error_headers_no_match":"text/plain; charset=us-ascii","error_status_auth_failed":403,"error_headers_auth_failed":"text/plain; charset=us-ascii","error_status_auth_missing":403,"error_headers_auth_missing":"text/plain; charset=us-ascii","error_status_limits_exceeded":429,"error_headers_limits_exceeded":"text/plain; charset=us-ascii"},"integration":"gid://zync/Integration::Kubernetes/3","model":"gid://zync/Model/4","service":"Integration::KubernetesService","record":"gid://zync/Proxy/5","success":true},"user_ids":["Z2lkOi8venluYy9UZW5hbnQvMg"],"group_ids":null,"client_ids":null}	2019-12-20 12:30:15.458504
+6	/integration/Z2lkOi8venluYy9Qcm94eS81$|$Z2lkOi8venluYy9UZW5hbnQvMg	{"data":{"entry_data":{"links":[{"rel":"mapping_rules","href":"/admin/api/services/5/proxy/mapping_rules"},{"rel":"self","href":"/admin/api/services/5/proxy"},{"rel":"service","href":"/admin/api/services/5"}],"endpoint":"https://membersregistrationservice-3scale-apicast-production.apps.derby-b2da.open.redhat.com:443","created_at":"2018-02-02T09:14:08Z","service_id":5,"updated_at":"2019-12-20T12:07:24Z","api_backend":"http://eap-app-membersapp.apps.derby-b2da.open.redhat.com:80","auth_app_id":"app_id","auth_app_key":"app_key","lock_version":73,"secret_token":"Shared_secret_sent_from_proxy_to_API_backend_92a928d9ba84f8ba","api_test_path":"/membersweb/rest/v2/members","auth_user_key":"user-key","error_no_match":"No Mapping Rule matched","policies_config":[{"name":"apicast","enabled":true,"version":"builtin","configuration":{}}],"api_test_success":true,"hostname_rewrite":"","sandbox_endpoint":"https://membersregistrationservice-3scale-apicast-staging.apps.derby-b2da.open.redhat.com:443","deployment_option":"hosted","error_auth_failed":"Authentication failed","error_auth_missing":"Authentication parameters missing","credentials_location":"headers","error_limits_exceeded":"Usage limit exceeded","error_status_no_match":404,"error_headers_no_match":"text/plain; charset=us-ascii","error_status_auth_failed":403,"error_headers_auth_failed":"text/plain; charset=us-ascii","error_status_auth_missing":403,"error_headers_auth_missing":"text/plain; charset=us-ascii","error_status_limits_exceeded":429,"error_headers_limits_exceeded":"text/plain; charset=us-ascii"},"integration":"gid://zync/Integration::Kubernetes/3","model":"gid://zync/Model/4","service":"Integration::KubernetesService","record":"gid://zync/Proxy/5","success":true},"user_ids":["Z2lkOi8venluYy9UZW5hbnQvMg"],"group_ids":null,"client_ids":null}	2019-12-20 12:30:23.297818
 \.
 
 
@@ -1070,6 +1088,10 @@ COPY public.metrics (id, service_id, tenant_id, created_at, updated_at) FROM std
 --
 
 COPY public.models (id, tenant_id, record_type, record_id, created_at, updated_at) FROM stdin;
+1	2	Service	6	2019-12-20 12:28:43.583909	2019-12-20 12:28:43.583909
+2	2	Proxy	6	2019-12-20 12:28:43.665478	2019-12-20 12:28:43.665478
+3	2	Service	5	2019-12-20 12:30:15.163787	2019-12-20 12:30:15.163787
+4	2	Proxy	5	2019-12-20 12:30:15.214	2019-12-20 12:30:15.214
 \.
 
 
@@ -1078,6 +1100,12 @@ COPY public.models (id, tenant_id, record_type, record_id, created_at, updated_a
 --
 
 COPY public.notifications (id, model_id, data, tenant_id, created_at, updated_at) FROM stdin;
+1	1	{"id": 6, "type": "Service", "action": "update", "format": "json", "tenant_id": 2, "controller": "notifications", "service_id": 6, "notification": {"id": 6, "tenant_id": 2}, "parent_event_id": "fc882ddf-4956-4328-9efe-4217e1f9adf0", "parent_event_type": "ZyncEvent"}	2	2019-12-20 12:28:43.586346	2019-12-20 12:28:43.586346
+2	1	{"id": 6, "type": "Service", "action": "update", "format": "json", "tenant_id": 2, "controller": "notifications", "service_id": 6, "notification": {"id": 6, "tenant_id": 2}, "oidc_endpoint": "http://3scale-admin:4515e009-ee60-4039-8d5a-1578ecec4349@sso-sso.apps.derby-b2da.open.redhat.com/auth/realms/3scale", "parent_event_id": "fa2ddf6f-575a-4d56-a3c1-3f3f07f6475b", "parent_event_type": "ZyncEvent"}	2	2019-12-20 12:28:43.607833	2019-12-20 12:28:43.607833
+3	2	{"id": 6, "type": "Proxy", "action": "update", "format": "json", "tenant_id": 2, "controller": "notifications", "service_id": 6, "notification": {"id": 6, "tenant_id": 2}, "parent_event_id": "bd6c8aab-adab-48c7-a7e3-390a3ea66f84", "parent_event_type": "Domains::ProxyDomainsChangedEvent"}	2	2019-12-20 12:28:43.668914	2019-12-20 12:28:43.668914
+4	2	{"id": 6, "type": "Proxy", "action": "update", "format": "json", "tenant_id": 2, "controller": "notifications", "service_id": 6, "notification": {"id": 6, "tenant_id": 2}, "oidc_endpoint": "http://3scale-admin:4515e009-ee60-4039-8d5a-1578ecec4349@sso-sso.apps.derby-b2da.open.redhat.com/auth/realms/3scale", "parent_event_id": "7ca5db19-eb95-4fa6-bc0a-d792484a2060", "parent_event_type": "OIDC::ProxyChangedEvent"}	2	2019-12-20 12:28:43.696653	2019-12-20 12:28:43.696653
+5	3	{"id": 5, "type": "Service", "action": "update", "format": "json", "tenant_id": 2, "controller": "notifications", "service_id": 5, "notification": {"id": 5, "tenant_id": 2}, "parent_event_id": "a71b50ec-536f-4625-b4ac-d467962395de", "parent_event_type": "ZyncEvent"}	2	2019-12-20 12:30:15.165669	2019-12-20 12:30:15.165669
+6	4	{"id": 5, "type": "Proxy", "action": "update", "format": "json", "tenant_id": 2, "controller": "notifications", "service_id": 5, "notification": {"id": 5, "tenant_id": 2}, "parent_event_id": "f0d12c0f-dfc7-4bae-9bcf-bcf2c5f5257b", "parent_event_type": "Domains::ProxyDomainsChangedEvent"}	2	2019-12-20 12:30:15.21586	2019-12-20 12:30:15.21586
 \.
 
 
@@ -1094,6 +1122,8 @@ COPY public.providers (id, tenant_id, created_at, updated_at) FROM stdin;
 --
 
 COPY public.proxies (id, tenant_id, service_id, created_at, updated_at) FROM stdin;
+6	2	6	2019-12-20 12:28:43.661777	2019-12-20 12:28:43.661777
+5	2	5	2019-12-20 12:30:15.210632	2019-12-20 12:30:15.210632
 \.
 
 
@@ -1110,7 +1140,7 @@ COPY public.que_jobs (priority, run_at, id, job_class, error_count, last_error_m
 --
 
 COPY public.que_lockers (pid, worker_count, worker_priorities, ruby_pid, ruby_hostname, queues, listening) FROM stdin;
-5954	10	{NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}	1	zync-que-2-hxcl4	{default}	t
+209	10	{NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}	1	zync-que-2-k4s5v	{default}	t
 \.
 
 
@@ -1153,6 +1183,8 @@ COPY public.schema_migrations (version) FROM stdin;
 --
 
 COPY public.services (id, tenant_id, created_at, updated_at) FROM stdin;
+6	2	2019-12-20 12:28:43.568542	2019-12-20 12:28:43.568542
+5	2	2019-12-20 12:30:15.160937	2019-12-20 12:30:15.160937
 \.
 
 
@@ -1161,6 +1193,7 @@ COPY public.services (id, tenant_id, created_at, updated_at) FROM stdin;
 --
 
 COPY public.tenants (id, endpoint, access_token, created_at, updated_at) FROM stdin;
+2	https://3scale-admin.apps.derby-b2da.open.redhat.com/	1c49a99863efc9c8c55eaeb7a691e3212cb8cd2af758180386969da03cfdc8dc	2019-12-20 12:28:43.401399	2019-12-20 12:28:43.401399
 \.
 
 
@@ -1169,6 +1202,10 @@ COPY public.tenants (id, endpoint, access_token, created_at, updated_at) FROM st
 --
 
 COPY public.update_states (id, started_at, finished_at, success, model_id, created_at, updated_at) FROM stdin;
+2	2019-12-20 12:28:43.789341	2019-12-20 12:28:43.869208	t	2	2019-12-20 12:28:43.78816	2019-12-20 12:28:43.869487
+1	2019-12-20 12:28:47.865502	2019-12-20 12:28:47.872571	t	1	2019-12-20 12:28:43.656017	2019-12-20 12:28:47.872875
+3	2019-12-20 12:30:15.180082	2019-12-20 12:30:15.185365	t	3	2019-12-20 12:30:15.178803	2019-12-20 12:30:15.185692
+4	2019-12-20 12:30:15.228718	2019-12-20 12:30:15.360672	t	4	2019-12-20 12:30:15.227539	2019-12-20 12:30:15.360952
 \.
 
 
@@ -1198,28 +1235,28 @@ SELECT pg_catalog.setval('public.clients_id_seq', 1, false);
 -- Name: entries_id_seq; Type: SEQUENCE SET; Schema: public; Owner: zync
 --
 
-SELECT pg_catalog.setval('public.entries_id_seq', 1, false);
+SELECT pg_catalog.setval('public.entries_id_seq', 5, true);
 
 
 --
 -- Name: integration_states_id_seq; Type: SEQUENCE SET; Schema: public; Owner: zync
 --
 
-SELECT pg_catalog.setval('public.integration_states_id_seq', 1, false);
+SELECT pg_catalog.setval('public.integration_states_id_seq', 5, true);
 
 
 --
 -- Name: integrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: zync
 --
 
-SELECT pg_catalog.setval('public.integrations_id_seq', 1, false);
+SELECT pg_catalog.setval('public.integrations_id_seq', 3, true);
 
 
 --
 -- Name: message_bus_id_seq; Type: SEQUENCE SET; Schema: public; Owner: zync
 --
 
-SELECT pg_catalog.setval('public.message_bus_id_seq', 1, false);
+SELECT pg_catalog.setval('public.message_bus_id_seq', 6, true);
 
 
 --
@@ -1233,14 +1270,14 @@ SELECT pg_catalog.setval('public.metrics_id_seq', 1, false);
 -- Name: models_id_seq; Type: SEQUENCE SET; Schema: public; Owner: zync
 --
 
-SELECT pg_catalog.setval('public.models_id_seq', 1, false);
+SELECT pg_catalog.setval('public.models_id_seq', 4, true);
 
 
 --
 -- Name: notifications_id_seq; Type: SEQUENCE SET; Schema: public; Owner: zync
 --
 
-SELECT pg_catalog.setval('public.notifications_id_seq', 1, false);
+SELECT pg_catalog.setval('public.notifications_id_seq', 6, true);
 
 
 --
@@ -1261,7 +1298,7 @@ SELECT pg_catalog.setval('public.proxies_id_seq', 1, false);
 -- Name: que_jobs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: zync
 --
 
-SELECT pg_catalog.setval('public.que_jobs_id_seq', 1, false);
+SELECT pg_catalog.setval('public.que_jobs_id_seq', 19, true);
 
 
 --
@@ -1282,7 +1319,7 @@ SELECT pg_catalog.setval('public.tenants_id_seq', 1, false);
 -- Name: update_states_id_seq; Type: SEQUENCE SET; Schema: public; Owner: zync
 --
 
-SELECT pg_catalog.setval('public.update_states_id_seq', 1, false);
+SELECT pg_catalog.setval('public.update_states_id_seq', 4, true);
 
 
 --
