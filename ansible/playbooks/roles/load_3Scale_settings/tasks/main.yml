@@ -5,7 +5,7 @@
 - name: Replace Wildcard name in AMP SQL database before Loading
   replace:
     path: '{{clone_destination}}/3Scale/3Scale_backup/db_archive_dir/all.sql'
-    regexp: apps.penryn.demolab.local
+    regexp: apps.derby-b2da.open.redhat.com
     replace: '{{domain_name_suffix}}'
 
 # Capture pods names that need files injecting to recover 3SCale Correctly
